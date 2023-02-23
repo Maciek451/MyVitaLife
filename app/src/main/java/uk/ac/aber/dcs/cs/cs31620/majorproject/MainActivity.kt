@@ -10,19 +10,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import uk.ac.aber.dcs.cs.cs31620.majorproject.ui.navigation.Screen
 import uk.ac.aber.dcs.cs.cs31620.majorproject.ui.theme.MajorProjectTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MajorProjectTheme {
+            MajorProjectTheme(dynamicColor = false) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    BuildNavigationGraph()
                 }
             }
         }
@@ -30,14 +34,20 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+private fun BuildNavigationGraph() {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = Screen.StartScreen.route
+    ) {
+//        composable(Screen.StartScreen.route) { Screen.StartScreen(navController) }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    MajorProjectTheme {
-        Greeting("Android")
+    MajorProjectTheme(dynamicColor = false) {
+        BuildNavigationGraph()
     }
 }

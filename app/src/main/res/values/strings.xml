@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Major Project</string>
+    <string name="change_languages_button">button_1</string>
+    <string name="clear_dict_button">button_2</string>
+    <string name="nav_drawer_menu">burger_icon</string>
+    <string name="daily_steps">Daily steps</string>
+    <string name="nutrition">Nutrition</string>
+    <string name="journal">Journal</string>
+    <string name="insights">Insights</string>
+    <string name="sleep">Sleep</string>
 </resources>
