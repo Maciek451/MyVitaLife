@@ -9,12 +9,12 @@ sealed class Screen(
     object Journal : Screen("journal")
     object Nutrition : Screen("nutrition")
     object Sleep : Screen("sleep")
+    object ProvideName : Screen("provide_name")
 }
 val screens = listOf(
-    Screen.StartScreen,
     Screen.DailySteps,
     Screen.Insights,
     Screen.Journal,
     Screen.Nutrition,
-    Screen.Sleep
+    Screen.Sleep,
 )

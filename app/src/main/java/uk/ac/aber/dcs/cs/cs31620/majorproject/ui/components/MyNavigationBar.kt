@@ -4,21 +4,27 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs.cs31620.majorproject.R
 import uk.ac.aber.dcs.cs.cs31620.majorproject.ui.navigation.Screen
 import uk.ac.aber.dcs.cs.cs31620.majorproject.ui.navigation.screens
+import uk.ac.aber.dcs.cs.cs31620.majorproject.ui.theme.MajorProjectTheme
 
 @Composable
-fun NavigationBar(navController: NavController) {
+fun NavigationBar(
+    navController: NavController
+) {
     val icons = mapOf(
         Screen.DailySteps to IconGroup(
             filledIcon = Icons.Filled.DirectionsWalk,
@@ -46,7 +52,8 @@ fun NavigationBar(navController: NavController) {
             label = stringResource(id = R.string.sleep)
         ),
     )
-    androidx.compose.material3.NavigationBar {
+
+    NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
         screens.forEach { screen ->
@@ -81,5 +88,14 @@ fun NavigationBar(navController: NavController) {
                 }
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun NavigationBarPreview() {
+    val navController = rememberNavController()
+    MajorProjectTheme(dynamicColor = false) {
+        NavigationBar(navController)
     }
 }

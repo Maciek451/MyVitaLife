@@ -1,7 +1,6 @@
 package uk.ac.aber.dcs.cs.cs31620.majorproject.ui.components
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material.TopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -18,14 +17,13 @@ import uk.ac.aber.dcs.cs.cs31620.majorproject.ui.theme.MajorProjectTheme
 @Composable
 fun TopLevelScaffold(
     navController: NavHostController,
-    floatingActionButton: @Composable () -> Unit = { },
     pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {}
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
-    NavigationDrawer(
-        navController = navController,
+    MainPageNavigationDrawer(
+        navController,
         drawerState = drawerState,
         closeDrawer = {
             coroutineScope.launch {
@@ -53,18 +51,5 @@ fun TopLevelScaffold(
                 pageContent(innerPadding)
             }
         )
-    }
-}
-
-/**
- * Preview function for Top Level Scaffold
- *
- */
-@Composable
-@Preview
-private fun TopLevelScaffoldPreview() {
-    val navController = rememberNavController()
-    MajorProjectTheme(dynamicColor = false) {
-        TopLevelScaffold(navController)
     }
 }

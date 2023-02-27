@@ -1,11 +1,10 @@
-package uk.ac.aber.dcs.cs.cs31620.majorproject.ui.daily_steps
+package uk.ac.aber.dcs.cs.cs31620.majorproject.ui.sleep
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 
 @Composable
-fun DailyStepsScreen(
+fun SleepScreen(
     navController: NavHostController
 
 ) {
