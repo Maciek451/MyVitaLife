@@ -5,12 +5,13 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    namespace 'uk.ac.aber.dcs.cs39440.myvitalife'
+    compileSdk 33
 
     defaultConfig {
-        applicationId "uk.ac.aber.dcs.cs.cs31620.majorproject"
+        applicationId "uk.ac.aber.dcs.cs39440.myvitalife"
         minSdk 27
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -44,7 +45,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion '1.2.0'
     }
     packagingOptions {
         resources {

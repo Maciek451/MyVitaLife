@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Major Project</string>
+    <string name="app_name">MyVitaLife</string>
     <string name="nav_drawer_menu">burger_icon</string>
     <string name="daily_steps">Daily steps</string>
     <string name="nutrition">Nutrition</string>
@@ -10,4 +10,17 @@
     <string name="hydration_image">Hydration screen (image)</string>
     <string name="eating_image">Eating screen (image)</string>
     <string name="provide_name_image">Provide Name (image)</string>
+    <string name="sleep_image">Sleep screen (image)</string>
+    <string name="add_button">+ Add</string>
+    <string name="new_goal_button">New goal</string>
+    <string name="lets_go_button">Let\'s go!</string>
+    <string name="daily_steps_text">Set up your daily steps goal!</string>
+    <string name="nutrition_text1">Add your daily hydration goal!</string>
+    <string name="nutrition_text2">Add your food</string>
+    <string name="sleep_text">Add your sleep record</string>
+    <string name="users_name">User\'s name</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="click_to_confirm">Click to confirm</string>
+    <string name="confirmation_text">Confirmation text</string>
+    <string name="confirm_button">Confirm</string>
 </resources>
