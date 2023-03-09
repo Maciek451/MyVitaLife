@@ -12,8 +12,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_food.AddFoodScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_goal.AddGoalScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood.AddMoodScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood_or_goal.AddMoodOrGoalScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_sleep.AddSleepScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_steps.AddStepsScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_water.AddWaterScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.provide_name.ProvideNameScreen
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.daily_steps.DailyStepsScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.steps.StepsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.InsightsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.journal.JournalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
@@ -21,6 +28,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition.NutritionScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.sleep.SleepScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.starting_screen.StartingScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.time_and_date.TimeAndDateScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,13 +54,21 @@ private fun BuildNavigationGraph() {
         navController = navController,
         startDestination = Screen.ProvideName.route
     ) {
-        composable(Screen.DailySteps.route) { DailyStepsScreen(navController)}
+        composable(Screen.Steps.route) { StepsScreen(navController)}
         composable(Screen.StartScreen.route) { StartingScreen(navController)}
         composable(Screen.Sleep.route) { SleepScreen(navController)}
         composable(Screen.Insights.route) { InsightsScreen(navController)}
         composable(Screen.Nutrition.route) { NutritionScreen(navController)}
         composable(Screen.Journal.route) { JournalScreen(navController)}
         composable(Screen.ProvideName.route) { ProvideNameScreen(navController)}
+        composable(Screen.AddSleep.route) { AddSleepScreen(navController)}
+        composable(Screen.TimeAndDate.route) { TimeAndDateScreen(navController) }
+        composable(Screen.AddMoodOrGoal.route) { AddMoodOrGoalScreen(navController) }
+        composable(Screen.AddMood.route) { AddMoodScreen(navController) }
+        composable(Screen.AddGoal.route) { AddGoalScreen(navController) }
+        composable(Screen.AddSteps.route) { AddStepsScreen(navController) }
+        composable(Screen.AddWater.route) { AddWaterScreen(navController) }
+        composable(Screen.AddFood.route) { AddFoodScreen(navController) }
     }
 }
 

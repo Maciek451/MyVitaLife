@@ -1,13 +1,13 @@
-package uk.ac.aber.dcs.cs39440.myvitalife.ui.daily_steps
+package uk.ac.aber.dcs.cs39440.myvitalife.ui.steps
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Surface
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavHostController
@@ -23,19 +23,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 @Composable
-fun DailyStepsScreen(
+fun StepsScreen(
     navController: NavHostController
 ) {
-    TopLevelScaffold(navController = navController) { innerPadding ->
-        androidx.compose.material3.Surface(
+    TopLevelScaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(Screen.AddSteps.route)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add"
+                )
+            }
+        },
+        navController = navController
+    ) { innerPadding ->
+        Surface(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            DailyStepsScreenContent(
+            StepsScreenContent(
                 modifier = Modifier.padding(8.dp)
             )
         }
@@ -43,7 +58,7 @@ fun DailyStepsScreen(
 }
 
 @Composable
-fun DailyStepsScreenContent(
+fun StepsScreenContent(
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -65,12 +80,6 @@ fun DailyStepsScreenContent(
             contentDescription = stringResource(R.string.daily_steps_image),
             contentScale = ContentScale.Crop
         )
-        Button(
-            onClick = { /*TODO*/ },
-            modifier = Modifier.padding(top = 10.dp)
-        ) {
-            Text(text = stringResource(id = R.string.new_goal_button))
-        }
     }
 }
 
@@ -79,6 +88,6 @@ fun DailyStepsScreenContent(
 fun DailyStepsPreview() {
     val navController = rememberNavController()
     MyVitaLifeTheme(dynamicColor = false) {
-        DailyStepsScreen(navController)
+        StepsScreen(navController)
     }
 }

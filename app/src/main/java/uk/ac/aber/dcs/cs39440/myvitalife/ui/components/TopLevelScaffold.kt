@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TopLevelScaffold(
     navController: NavHostController,
+    floatingActionButton: @Composable () -> Unit = { },
     pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {}
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -44,6 +45,7 @@ fun TopLevelScaffold(
             bottomBar = {
                 NavigationBar(navController)
             },
+            floatingActionButton = floatingActionButton,
             content = { innerPadding ->
                 pageContent(innerPadding)
             }

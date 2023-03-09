@@ -16,12 +16,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.datastore.DataStore
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
+private lateinit var analytics: FirebaseAnalytics
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProvideNameScreen(
     navController: NavHostController
@@ -29,12 +35,8 @@ fun ProvideNameScreen(
     var usersName by remember {
         mutableStateOf("")
     }
-    var isDialogOpen by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    val dataStore = DataStore(context)
-    val firstTimeVal = dataStore.getString("IS_FIRST_TIME").collectAsState(initial = "")
-    val firstTime = firstTimeVal.value?.isEmpty() == true || firstTimeVal.value == null
-    val scope = rememberCoroutineScope()
+    analytics = FirebaseAnalytics.getInstance(context)
 
     Column(
         modifier = Modifier
@@ -73,11 +75,11 @@ fun ProvideNameScreen(
 //                else {
 //                    isDialogOpen = true
 //                }
+                analytics.logEvent("click", null)
                 navController.navigate(Screen.Journal.route)
             },
             modifier = Modifier
                 .padding(top = 10.dp),
-            enabled = usersName.isNotEmpty()
         ) {
             Text(text = stringResource(id = R.string.lets_go_button))
         }
@@ -86,7 +88,6 @@ fun ProvideNameScreen(
             onClick = {
                 navController.navigate(Screen.Journal.route)
             },
-            enabled = !firstTime,
             modifier = Modifier
                 .padding(top = 8.dp)
         ) {

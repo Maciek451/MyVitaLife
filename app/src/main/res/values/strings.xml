@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MyVitaLife</string>
     <string name="nav_drawer_menu">burger_icon</string>
-    <string name="daily_steps">Daily steps</string>
+    <string name="steps">Steps</string>
     <string name="nutrition">Nutrition</string>
     <string name="journal">Journal</string>
     <string name="insights">Insights</string>
@@ -23,4 +23,33 @@
     <string name="click_to_confirm">Click to confirm</string>
     <string name="confirmation_text">Confirmation text</string>
     <string name="confirm_button">Confirm</string>
+    <string name="rate_your_sleep">Rate your sleep</string>
+    <string name="how_do_you_feel">How do you feel?</string>
+    <string name="save_button">Save</string>
+    <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
+    <string name="add_your_entry">Add your entry</string>
+    <string name="add_your_mood">Add your mood</string>
+    <string name="add_your_mood_description">How are you today?</string>
+    <string name="add_your_goal">Add your goal</string>
+    <string name="add_your_goal_description">What do you want to improve?</string>
+    <string name="empty_journal">Add new entry to your journal</string>
+    <string name="empty_journal_image">Empty journal image</string>
+    <string name="add_mood_image">Add mood image</string>
+    <string name="add_goal_image">Add goal image</string>
+    <string name="amazing">Amazing</string>
+    <string name="good">Good</string>
+    <string name="neutral">Neutral</string>
+    <string name="bad">Bad</string>
+    <string name="awful">Awful</string>
+    <string name="add_a_note">Add a note</string>
+    <string name="add_mood_image2">Add mood image 2</string>
+    <string name="add_goal_image2">Add goal image2</string>
+    <string name="mood_counter">Mood counter</string>
+    <string name="total">Total:</string>
+    <string name="pick_a_date">Pick a date to inspect your records</string>
+    <string name="amount_of_water">How much water do you want to drink daily?</string>
+    <string name="cup_size">How much milliliters does your cup have</string>
+    <string name="add_steps_image">Add steps image</string>
+    <string name="daily_goal_steps">What is your daily steps goal?</string>
 </resources>

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
@@ -21,95 +23,92 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 @Composable
 fun NutritionScreen(
-    navController: NavHostController
+    navController: NavHostController,
 ) {
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
     TopLevelScaffold(
-        navController
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    if (selectedTabIndex == 0) {
+                        navController.navigate(Screen.AddWater.route)
+                    } else {
+                        navController.navigate(Screen.AddFood.route)
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add"
+                )
+            }
+        },
+        navController = navController
     ) { innerPadding ->
         Surface(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            NutritionScreenContent(
-                modifier = Modifier.padding(8.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun NutritionScreenContent(
-    modifier: Modifier = Modifier
-) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
-    Column(
-        modifier = Modifier
-            .padding(start = 8.dp, end = 8.dp)
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TabRow(
-            selectedTabIndex = selectedTabIndex
-        ) {
-            Tab(
-                text = { Text("Hydration") },
-                selected = selectedTabIndex == 0,
-                onClick = { selectedTabIndex = 0 }
-            )
-            Tab(
-                text = { Text("Eating") },
-                selected = selectedTabIndex == 1,
-                onClick = { selectedTabIndex = 1 }
-            )
-        }
-        when (selectedTabIndex) {
-            0 -> {
-                Text(
-                    modifier = Modifier
-                        .padding(top = 30.dp),
-                    text = stringResource(id = R.string.nutrition_text1),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.hydrationimage),
-                    contentDescription = stringResource(R.string.hydration_image),
-                    contentScale = ContentScale.Crop
-                )
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.padding(top = 10.dp)
+            Column(
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TabRow(
+                    selectedTabIndex = selectedTabIndex
                 ) {
-                    Text(text = stringResource(id = R.string.add_button))
+                    Tab(
+                        text = { Text("Hydration") },
+                        selected = selectedTabIndex == 0,
+                        onClick = { selectedTabIndex = 0 }
+                    )
+                    Tab(
+                        text = { Text("Eating") },
+                        selected = selectedTabIndex == 1,
+                        onClick = { selectedTabIndex = 1 }
+                    )
                 }
-            }
-            1 -> {
-                Text(
-                    modifier = Modifier
-                        .padding(top = 30.dp),
-                    text = stringResource(id = R.string.nutrition_text2),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center
-                )
-                Image(
-                    modifier = Modifier
-                        .size(300.dp),
-                    painter = painterResource(id = R.drawable.eatingimage),
-                    contentDescription = stringResource(R.string.eating_image),
-                    contentScale = ContentScale.Crop
-                )
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.padding(top = 10.dp)
-                ) {
-                    Text(text = stringResource(id = R.string.add_button))
+                when (selectedTabIndex) {
+                    0 -> {
+                        Text(
+                            modifier = Modifier
+                                .padding(top = 30.dp),
+                            text = stringResource(id = R.string.nutrition_text1),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.hydrationimage),
+                            contentDescription = stringResource(R.string.hydration_image),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                    1 -> {
+                        Text(
+                            modifier = Modifier
+                                .padding(top = 30.dp),
+                            text = stringResource(id = R.string.nutrition_text2),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        Image(
+                            modifier = Modifier
+                                .size(300.dp),
+                            painter = painterResource(id = R.drawable.eatingimage),
+                            contentDescription = stringResource(R.string.eating_image),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
         }

@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 @Composable
@@ -30,15 +31,28 @@ fun SleepScreen(
     navController: NavHostController
 ) {
     TopLevelScaffold(
-        navController
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(Screen.AddSleep.route)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add"
+                )
+            }
+        },
+        navController = navController
     ) { innerPadding ->
         Surface(
-            modifier = androidx.compose.ui.Modifier
+            modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
             SleepScreenContent(
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                navController = navController
             )
         }
     }
@@ -46,6 +60,7 @@ fun SleepScreen(
 
 @Composable
 fun SleepScreenContent(
+    navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -67,12 +82,6 @@ fun SleepScreenContent(
             contentDescription = stringResource(R.string.sleep_image),
             contentScale = ContentScale.Crop
         )
-        Button(
-            onClick = { /*TODO*/ },
-            modifier = Modifier.padding(top = 10.dp)
-        ) {
-            Text(text = stringResource(id = R.string.add_button))
-        }
     }
 }
 

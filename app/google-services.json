@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "610690542009",
+    "project_id": "myvitalife-2af20",
+    "storage_bucket": "myvitalife-2af20.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610690542009:android:b30283eb4c7db15da56e68",
+        "android_client_info": {
+          "package_name": "uk.ac.aber.dcs.cs39440.myvitalife"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "610690542009-j6onimp9g9c2acmq7pc648nviidssnd1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuJ9SoHu4pJIm3SdJsqzBPX4pAosl8n4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "610690542009-j6onimp9g9c2acmq7pc648nviidssnd1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
