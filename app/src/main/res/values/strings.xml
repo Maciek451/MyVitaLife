@@ -13,12 +13,12 @@
     <string name="sleep_image">Sleep screen (image)</string>
     <string name="add_button">+ Add</string>
     <string name="new_goal_button">New goal</string>
-    <string name="lets_go_button">Let\'s go!</string>
+    <string name="login_button">Login</string>
     <string name="daily_steps_text">Set up your daily steps goal!</string>
     <string name="nutrition_text1">Add your daily hydration goal!</string>
     <string name="nutrition_text2">Add your food</string>
     <string name="sleep_text">Add your sleep record</string>
-    <string name="users_name">User\'s name</string>
+    <string name="user_name">User name</string>
     <string name="cancel_button">Cancel</string>
     <string name="click_to_confirm">Click to confirm</string>
     <string name="confirmation_text">Confirmation text</string>
@@ -52,4 +52,5 @@
     <string name="cup_size">How much milliliters does your cup have</string>
     <string name="add_steps_image">Add steps image</string>
     <string name="daily_goal_steps">What is your daily steps goal?</string>
+    <string name="password">Password</string>
 </resources>

@@ -17,7 +17,6 @@ sealed class Screen(
     object AddGoal : Screen("add_goal")
     object AddSteps : Screen("add_steps")
     object AddWater : Screen("add_water")
-    object AddFood : Screen("add_food")
 }
 val screens = listOf(
     Screen.Steps,

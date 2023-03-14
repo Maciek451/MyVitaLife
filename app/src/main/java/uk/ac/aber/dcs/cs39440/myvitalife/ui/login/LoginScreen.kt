@@ -1,10 +1,9 @@
-package uk.ac.aber.dcs.cs39440.myvitalife.ui.provide_name
+package uk.ac.aber.dcs.cs39440.myvitalife.ui.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -17,24 +16,27 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch
+import com.google.firebase.database.FirebaseDatabase
 import uk.ac.aber.dcs.cs39440.myvitalife.R
-import uk.ac.aber.dcs.cs39440.myvitalife.datastore.DataStore
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 private lateinit var analytics: FirebaseAnalytics
+private lateinit var db: FirebaseDatabase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProvideNameScreen(
     navController: NavHostController
 ) {
-    var usersName by remember {
+
+    var name by remember {
         mutableStateOf("")
     }
+    var password by remember {
+        mutableStateOf("")
+    }
+
     val context = LocalContext.current
     analytics = FirebaseAnalytics.getInstance(context)
 
@@ -54,11 +56,22 @@ fun ProvideNameScreen(
         )
 
         OutlinedTextField(
-            value = usersName,
+            value = name,
             label = {
-                Text(text = stringResource(id = R.string.users_name))
+                Text(text = stringResource(id = R.string.user_name))
             },
-            onValueChange = { usersName = it },
+            onValueChange = { name = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp, start = 8.dp, end = 8.dp)
+        )
+
+        OutlinedTextField(
+            value = password,
+            label = {
+                Text(text = stringResource(id = R.string.password))
+            },
+            onValueChange = { password = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp, start = 8.dp, end = 8.dp)
@@ -67,10 +80,7 @@ fun ProvideNameScreen(
         Button(
             onClick = {
 //                if (firstTime) {
-//                    scope.launch {
-//                        dataStore.saveString("NOT_FIRST_TIME", "IS_FIRST_TIME")
-//                        dataStore.saveString(name = usersName, key = "USERS_NAME")
-//                    }
+//
 //                }
 //                else {
 //                    isDialogOpen = true
@@ -81,7 +91,7 @@ fun ProvideNameScreen(
             modifier = Modifier
                 .padding(top = 10.dp),
         ) {
-            Text(text = stringResource(id = R.string.lets_go_button))
+            Text(text = stringResource(id = R.string.login_button))
         }
 
         Button(
@@ -105,7 +115,6 @@ fun ConfirmDialog(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val dataStore = DataStore(context)
     if (dialogIsOpen) {
         AlertDialog(
             onDismissRequest = { /* Empty so clicking outside has no effect */ },
@@ -126,9 +135,6 @@ fun ConfirmDialog(
                 TextButton(
                     onClick = {
                         dialogOpen(false)
-                        scope.launch {
-                            dataStore.saveString(name = usersName, key = "USERS_NAME")
-                        }
                         navController.navigate(Screen.Journal.route)
                     }
                 ) {

@@ -8,18 +8,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_food.AddFoodScreen
+import com.google.firebase.database.FirebaseDatabase
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_goal.AddGoalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood.AddMoodScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood_or_goal.AddMoodOrGoalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_sleep.AddSleepScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_steps.AddStepsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_water.AddWaterScreen
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.provide_name.ProvideNameScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.login.ProvideNameScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.steps.StepsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.InsightsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.journal.JournalScreen
@@ -68,7 +69,6 @@ private fun BuildNavigationGraph() {
         composable(Screen.AddGoal.route) { AddGoalScreen(navController) }
         composable(Screen.AddSteps.route) { AddStepsScreen(navController) }
         composable(Screen.AddWater.route) { AddWaterScreen(navController) }
-        composable(Screen.AddFood.route) { AddFoodScreen(navController) }
     }
 }
 
