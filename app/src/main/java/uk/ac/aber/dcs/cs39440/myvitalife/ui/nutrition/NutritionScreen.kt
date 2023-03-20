@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.database.DataSnapshot
@@ -31,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.Food
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_food.AddFoodDialog
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
@@ -40,9 +43,11 @@ import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 @Composable
 fun NutritionScreen(
     navController: NavHostController,
+    firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val listOfFood = getFoodList()
+
+    val listOfFood by firebaseViewModel.foodList.observeAsState(emptyList())
 
     var isDialogOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -146,47 +151,6 @@ fun NutritionScreen(
        }
     )
 }
-@Composable
-private fun getFoodList(): List<Food> {
-    val foodList = remember { mutableStateOf(emptyList<Food>()) }
-
-    // on below line creating variable for message.
-    val firebaseDatabase = FirebaseDatabase.getInstance();
-    val databaseReference =
-        firebaseDatabase.getReference(Utils.getCurrentDate())
-            .child("ListOfFood")
-
-    databaseReference.addValueEventListener(object :
-        ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val foods = mutableListOf<Food>()
-
-            var calories = 0
-
-            // loop over the children of the "foods" node to retrieve each food
-            for (foodSnapshot in snapshot.children) {
-                // retrieve the food name and kcal value
-                val foodName = foodSnapshot.key
-                val kcal = foodSnapshot.child("kcal").value.toString().toInt()
-
-                // add the food to the list
-                foods.add(Food(name = foodName!!, kcal = kcal))
-                calories += kcal
-            }
-
-            Log.d("EPIC TEST", "Total calories: $calories")
-            // update the state with the new list of foods
-            foodList.value = foods
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            Log.e(TAG, "Failed to read value.", error.toException())
-        }
-    })
-
-    return foodList.value
-}
-
 
 @Composable
 private fun FoodCard(name: String, kcal: Int){
@@ -239,6 +203,6 @@ private fun EmptyList() {
 fun NutritionScreenPreview() {
     val navController = rememberNavController()
     MyVitaLifeTheme(dynamicColor = false) {
-        NutritionScreen(navController)
+       // NutritionScreen(navController)
     }
 }

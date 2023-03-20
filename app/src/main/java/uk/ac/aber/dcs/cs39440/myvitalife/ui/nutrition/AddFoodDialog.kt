@@ -10,10 +10,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.database.*
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.*
-import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils.Companion.getCurrentDate
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,11 +22,8 @@ import java.util.*
 fun AddFoodDialog(
     dialogIsOpen: Boolean,
     dialogOpen: (Boolean) -> Unit = {},
+    firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
-    //This line of code initializes a reference to the Firebase Realtime Database
-    // by calling the getInstance() method of the FirebaseDatabase class
-    val firebaseDatabase = FirebaseDatabase.getInstance();
-
     var name_of_food by remember {
         mutableStateOf("")
     }
@@ -40,7 +38,7 @@ fun AddFoodDialog(
             onDismissRequest = { /* Empty so clicking outside has no effect */ },
             title = {
                 Text(
-                    text = "Add your epic food",
+                    text = "Add your food",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 20.sp
@@ -89,10 +87,7 @@ fun AddFoodDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val databaseReference =
-                            firebaseDatabase.getReference(getCurrentDate()).child("ListOfFood")
-                                .child(name_of_food)
-                        databaseReference.child("kcal").setValue(number_of_calories)
+                        firebaseViewModel.addFood(name_of_food, number_of_calories)
 
                         number_of_calories = ""
                         name_of_food = ""
