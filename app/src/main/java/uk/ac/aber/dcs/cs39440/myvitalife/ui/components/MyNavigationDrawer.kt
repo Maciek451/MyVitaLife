@@ -1,21 +1,25 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Feedback
-import androidx.compose.material.icons.filled.Help
-import androidx.compose.material.icons.filled.Login
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 /**
  * Creates the navigation drawer. Uses Material 3 ModalNavigationDrawer.
@@ -38,25 +42,22 @@ fun MainPageNavigationDrawer(
 ) {
     val items = listOf(
         Pair(
-            Icons.Default.Login,
-            "aaa"
+            Icons.Default.Web,
+            "Useful links"
         ),
         Pair(
-            Icons.Default.Help,
-            "bbb"
+            Icons.Default.Logout,
+            "Login"
         ),
         Pair(
-            Icons.Default.Feedback,
-            "ccc"
+            Icons.Default.Settings,
+            "Settings"
         )
     )
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            // Not sure if rememberSaveable or remember is what we
-            // want since it stays selected when we close and
-            // reopen the drawer. However...
             val selectedItem = rememberSaveable { mutableStateOf(0) }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -64,9 +65,6 @@ fun MainPageNavigationDrawer(
                     .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize()
             ) {
-                // This probably doesn't add much, although we
-                // have quite a bit of screen space, even in landscape
-                // Anything larger and can lose the buttons in landscape
                 items.forEachIndexed { index, item ->
                     NavigationDrawerItem(
                         icon = {
@@ -76,26 +74,29 @@ fun MainPageNavigationDrawer(
                             )
                         },
                         label = { Text(item.second) },
-                        // I'm not sure that having a default selected makes sense
                         selected = index == selectedItem.value,
                         onClick = {
-                            // Here we would navigate to appropriate page
-                            // We'll just set as selected.
                             selectedItem.value = index
-
-                            // Exercise solution. Just close the drawer
-                            // and navigate
                             if (index == 0) {
-                                // If we don't do this the drawer will be hidden
-                                // when we navigate to the login screen, however,
-                                // the back button etc will take us back to the
-                                // open drawer, which is not usual behaviour
-                                closeDrawer()
 //                                navController.navigate(route = Screen.Login.route)
+//                                closeDrawer()
+                            } else if (index == 1) {
+                                navController.navigate(route = Screen.ProvideName.route)
+                            } else if (index == 2) {
+
                             }
                         }
                     )
                 }
+                Spacer(modifier = Modifier.padding(40.dp))
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    painter = painterResource(id = R.drawable.drawerimage),
+                    contentDescription = stringResource(R.string.drawer_image),
+                    contentScale = ContentScale.Crop
+                )
             }
         },
         content = content

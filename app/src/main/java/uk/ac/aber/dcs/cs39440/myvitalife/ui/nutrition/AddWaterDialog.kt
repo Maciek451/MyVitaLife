@@ -11,23 +11,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.firebase.database.*
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
-import uk.ac.aber.dcs.cs39440.myvitalife.utils.*
-import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddFoodDialog(
+fun AddWaterDialog(
     dialogIsOpen: Boolean,
     dialogOpen: (Boolean) -> Unit = {},
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
-    var nameOfFood by remember {
+    var hydrationGoal by remember {
         mutableStateOf("")
     }
-    var numberOfCalories by remember {
+    var cupSize by remember {
         mutableStateOf("")
     }
 
@@ -38,13 +35,15 @@ fun AddFoodDialog(
             onDismissRequest = { /* Empty so clicking outside has no effect */ },
             title = {
                 Text(
-                    text = "Add your food",
+                    text = "Add your hydration goal",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 20.sp
                 )
             },
-            modifier = Modifier.height(375.dp).width(600.dp),
+            modifier = Modifier
+                .height(375.dp)
+                .width(600.dp),
             text = {
                 Column(
                     modifier = Modifier
@@ -52,24 +51,15 @@ fun AddFoodDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = stringResource(id = R.string.name_of_food),
+                        text = stringResource(id = R.string.amount_of_water),
                         fontSize = 25.sp,
                     )
                     OutlinedTextField(
-                        value = nameOfFood,
-                        onValueChange = { nameOfFood = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                    Text(
-                        text = stringResource(id = R.string.number_of_calories),
-                        fontSize = 25.sp,
-                    )
-                    OutlinedTextField(
-                        value = numberOfCalories,
+                        value = hydrationGoal,
                         onValueChange = {
-                            numberOfCalories = it
-                            isError = (numberOfCalories.toIntOrNull() == null && !numberOfCalories.isEmpty())},
+                            hydrationGoal = it
+                            isError = (hydrationGoal.toIntOrNull() == null && !hydrationGoal.isEmpty())
+                        },
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -82,19 +72,41 @@ fun AddFoodDialog(
                             color = MaterialTheme.colorScheme.error,
                         )
                     }
+                    Text(
+                        text = stringResource(id = R.string.cup_size),
+                        fontSize = 25.sp,
+                    )
+                    OutlinedTextField(
+                        value = cupSize,
+                        onValueChange = {
+                            cupSize = it
+                            isError = (cupSize.toIntOrNull() == null && !cupSize.isEmpty())
+                        },
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        isError = isError,
+                    )
+                    if (isError) {
+                        Text(
+                            text = "Must be a number!",
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
                 }
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        firebaseViewModel.addFood(nameOfFood, numberOfCalories)
+                        firebaseViewModel.addWater(cupSize, hydrationGoal)
 
-                        numberOfCalories = ""
-                        nameOfFood = ""
+                        hydrationGoal = ""
+                        cupSize = ""
 
                         dialogOpen(false)
                     },
-                    enabled = !isError && numberOfCalories.isNotEmpty() && nameOfFood.isNotEmpty()
+                    enabled = !isError && cupSize.isNotEmpty() && hydrationGoal.isNotEmpty()
                 ) {
                     Text(stringResource(R.string.confirm_button))
                 }
@@ -102,8 +114,8 @@ fun AddFoodDialog(
             dismissButton = {
                 TextButton(
                     onClick = {
-                        numberOfCalories = ""
-                        nameOfFood = ""
+                        cupSize = ""
+                        hydrationGoal = ""
                         isError = false
                         dialogOpen(false)
                     }

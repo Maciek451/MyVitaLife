@@ -1,20 +1,19 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,29 +26,29 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import uk.ac.aber.dcs.cs39440.myvitalife.R
-import uk.ac.aber.dcs.cs39440.myvitalife.model.Food
+import uk.ac.aber.dcs.cs39440.myvitalife.model.Water
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_food.AddFoodDialog
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 @Composable
 fun NutritionScreen(
     navController: NavHostController,
-    firebaseViewModel: FirebaseViewModel = viewModel()
+    firebaseViewModel: FirebaseViewModel = viewModel(),
 ) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var currentFabImage by remember { mutableStateOf(Icons.Filled.Add) }
+    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
 
     val listOfFood by firebaseViewModel.foodList.observeAsState(emptyList())
+    val waterData by firebaseViewModel.waterData.observeAsState(Water(0, 0))
 
-    var isDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var foodToDelete by remember { mutableStateOf("") }
+
+    var isWaterDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var isFoodDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var isConfirmationDialogOpen by rememberSaveable { mutableStateOf(false) }
 
     //The LocalContext is a Compose function that provides access to the current context of the application,
     // which is required for many operations such as creating views or accessing resources.
@@ -60,15 +59,14 @@ fun NutritionScreen(
             FloatingActionButton(
                 onClick = {
                     if (selectedTabIndex == 0) {
-                        navController.navigate(Screen.AddWater.route)
+                        isWaterDialogOpen = true
                     } else {
-//                        navController.navigate(Screen.AddFood.route)
-                        isDialogOpen = true;
+                        isFoodDialogOpen = true
                     }
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Add,
+                    imageVector = currentFabImage,
                     contentDescription = "Add"
                 )
             }
@@ -84,7 +82,7 @@ fun NutritionScreen(
                 modifier = Modifier
                     .padding(start = 8.dp, end = 8.dp)
                     .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 TabRow(
                     selectedTabIndex = selectedTabIndex
@@ -102,22 +100,51 @@ fun NutritionScreen(
                 }
                 when (selectedTabIndex) {
                     0 -> {
-                        Text(
-                            modifier = Modifier
-                                .padding(top = 30.dp),
-                            text = stringResource(id = R.string.nutrition_text1),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.hydrationimage),
-                            contentDescription = stringResource(R.string.hydration_image),
-                            contentScale = ContentScale.Crop
-                        )
+                        if (waterData != Water(0, 0)) {
+                            currentFabImage = Icons.Filled.Settings
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+//                                IconButton(
+//                                    onClick = {
+//                                        isConfirmationDialogOpen = true
+//                                    },
+//                                ) {
+//                                    Icon(
+//                                        imageVector = Icons.Outlined.Delete,
+//                                        contentDescription = "Delete food"
+//                                    )
+//                                }
+                                Text(
+                                    modifier = Modifier
+                                        .padding(top = 30.dp),
+                                    text = stringResource(id = R.string.hydration_goal),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.padding(15.dp))
+                                Utils.CircularProgressBar(
+                                    currentValue = waterData.waterDrunk,
+                                    maxGoal = waterData.hydrationGoal
+                                )
+                                Spacer(modifier = Modifier.padding(15.dp))
+                                Button(onClick = {
+                                    firebaseViewModel.updateWaterCounter(waterData.cupSize)
+                                }) {
+                                    Text("+ ${waterData.cupSize}ml")
+                                }
+                                // ((waterData.waterDrunk.toFloat()/waterData.hydrationGoal) * 100).toInt()
+                            }
+                        } else {
+                            EmptyScreen(0)
+                        }
                     }
                     1 -> {
-                        if(listOfFood.isNotEmpty()) {
+                        currentFabImage = Icons.Filled.Add
+                        if (listOfFood.isNotEmpty()) {
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -131,69 +158,180 @@ fun NutritionScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        FoodCard(name = entry.name, kcal = entry.kcal)
+                                        Column(
+                                            horizontalAlignment = Alignment.Start
+                                        ) {
+                                            FoodCard(
+                                                name = entry.name,
+                                                kcal = entry.kcal,
+                                                openConfirmationDialog = { isOpen ->
+                                                    isConfirmationDialogOpen = isOpen
+                                                    foodToDelete = entry.name
+                                                }
+                                            )
+                                        }
                                     }
                                 }
                             }
                         } else {
-                            EmptyList()
+                            EmptyScreen(1)
                         }
                     }
                 }
             }
         }
     }
-
-   AddFoodDialog(
-       dialogIsOpen = isDialogOpen,
-       dialogOpen = { isOpen ->
-           isDialogOpen = isOpen
-       }
+    AddWaterDialog(
+        dialogIsOpen = isWaterDialogOpen,
+        dialogOpen = { isOpen ->
+            isWaterDialogOpen = isOpen
+        }
+    )
+    AddFoodDialog(
+        dialogIsOpen = isFoodDialogOpen,
+        dialogOpen = { isOpen ->
+            isFoodDialogOpen = isOpen
+        }
+    )
+    DeleteConfirmationDialog(
+        dialogIsOpen = isConfirmationDialogOpen,
+        dialogOpen = { isOpen ->
+            isConfirmationDialogOpen = isOpen
+        },
+        item = foodToDelete,
+        tabIndex = selectedTabIndex
     )
 }
 
 @Composable
-private fun FoodCard(name: String, kcal: Int){
-    Column(horizontalAlignment = Alignment.Start) {
-        Text(
-            text = name,
-            modifier = Modifier.padding(
-                start = 8.dp,
-                top = 8.dp
+private fun FoodCard(name: String, kcal: Int, openConfirmationDialog: (Boolean) -> Unit = {}) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(horizontalAlignment = Alignment.Start) {
+            Text(
+                text = name,
+                fontSize = 25.sp,
+                modifier = Modifier.padding(
+                    start = 8.dp,
+                    top = 8.dp
+                )
             )
-        )
-        Text(
-            text = kcal.toString(),
-            fontSize = 20.sp,
-            color = Color.Blue,
-            modifier = Modifier.padding(
-                start = 8.dp,
-                bottom = 24.dp
+            Text(
+                text = kcal.toString(),
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(
+                    start = 8.dp,
+                    bottom = 24.dp
+                )
             )
-        )
+        }
+
+        IconButton(
+            onClick = {
+                openConfirmationDialog(true)
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Delete,
+                contentDescription = "Delete food"
+            )
+        }
     }
 }
 
 @Composable
-private fun EmptyList() {
+private fun EmptyScreen(tabIndex: Int) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            modifier = Modifier
-                .padding(top = 30.dp),
-            text = stringResource(id = R.string.nutrition_text2),
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center
-        )
-        Image(
-            modifier = Modifier
-                .size(300.dp),
-            painter = painterResource(id = R.drawable.eatingimage),
-            contentDescription = stringResource(R.string.eating_image),
-            contentScale = ContentScale.Crop
+        if (tabIndex == 0) {
+            Text(
+                modifier = Modifier
+                    .padding(top = 30.dp),
+                text = stringResource(id = R.string.nutrition_text1),
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.padding(10.dp))
+            Image(
+                painter = painterResource(id = R.drawable.hydrationimage),
+                contentDescription = stringResource(R.string.hydration_image),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Text(
+                modifier = Modifier
+                    .padding(top = 30.dp),
+                text = stringResource(id = R.string.nutrition_text2),
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.padding(10.dp))
+            Image(
+                modifier = Modifier
+                    .size(300.dp),
+                painter = painterResource(id = R.drawable.eatingimage),
+                contentDescription = stringResource(R.string.eating_image),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+}
+
+@Composable
+fun DeleteConfirmationDialog(
+    dialogIsOpen: Boolean,
+    dialogOpen: (Boolean) -> Unit = {},
+    firebaseViewModel: FirebaseViewModel = viewModel(),
+    item: String,
+    tabIndex: Int
+) {
+    if (dialogIsOpen) {
+        AlertDialog(
+            onDismissRequest = { /* Empty so clicking outside has no effect */ },
+            title = {
+                Text(
+                    text = stringResource(id = R.string.click_to_confirm),
+                    fontSize = 20.sp
+                )
+            },
+            text = {
+
+                Text(
+                    text = stringResource(id = R.string.confirmation_text, item),
+                    fontSize = 15.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        dialogOpen(false)
+                        if (tabIndex == 0) {
+                            firebaseViewModel.deleteWater()
+                        } else {
+                            firebaseViewModel.deleteFood(item)
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm_button))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        dialogOpen(false)
+                    }
+                ) {
+                    Text(stringResource(R.string.cancel_button))
+                }
+            }
         )
     }
 }
@@ -203,6 +341,6 @@ private fun EmptyList() {
 fun NutritionScreenPreview() {
     val navController = rememberNavController()
     MyVitaLifeTheme(dynamicColor = false) {
-       // NutritionScreen(navController)
+        // NutritionScreen(navController)
     }
 }

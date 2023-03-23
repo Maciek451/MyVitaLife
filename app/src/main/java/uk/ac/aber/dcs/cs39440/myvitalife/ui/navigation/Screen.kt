@@ -14,9 +14,7 @@ sealed class Screen(
     object TimeAndDate : Screen("time_and_date")
     object AddMoodOrGoal : Screen("add_mood_or_goal")
     object AddMood : Screen("add_mood")
-    object AddGoal : Screen("add_goal")
     object AddSteps : Screen("add_steps")
-    object AddWater : Screen("add_water")
 }
 val screens = listOf(
     Screen.Steps,

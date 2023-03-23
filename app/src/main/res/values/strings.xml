@@ -21,7 +21,7 @@
     <string name="user_name">User name</string>
     <string name="cancel_button">Cancel</string>
     <string name="click_to_confirm">Click to confirm</string>
-    <string name="confirmation_text">Confirmation text</string>
+    <string name="confirmation_text">Are you sure you want to delete %s?</string>
     <string name="confirm_button">Confirm</string>
     <string name="rate_your_sleep">Rate your sleep</string>
     <string name="how_do_you_feel">How do you feel?</string>
@@ -31,8 +31,8 @@
     <string name="add_your_entry">Add your entry</string>
     <string name="add_your_mood">Add your mood</string>
     <string name="add_your_mood_description">How are you today?</string>
-    <string name="add_your_goal">Add your goal</string>
-    <string name="add_your_goal_description">What do you want to improve?</string>
+    <string name="add_your_goal">Add your custom goal</string>
+    <string name="add_your_goal_description">Provide a title for your goal</string>
     <string name="empty_journal">Add new entry to your journal</string>
     <string name="empty_journal_image">Empty journal image</string>
     <string name="add_mood_image">Add mood image</string>
@@ -53,4 +53,13 @@
     <string name="add_steps_image">Add steps image</string>
     <string name="daily_goal_steps">What is your daily steps goal?</string>
     <string name="password">Password</string>
+    <string name="name_of_food">Name of the product</string>
+    <string name="number_of_calories">Number of calories</string>
+    <string name="must_be_a_number">Must be a number!</string>
+    <string name="hydration_goal">Your hydration goal:</string>
+    <string name="drawer_image">Drawer image</string>
+    <string name="mood_chart">Mood chart</string>
+    <string name="goals_tab_image">Goals tab image</string>
+    <string name="empty_mood_tab">Add new mood to your journal</string>
+    <string name="empty_goal_tab">Add new goal to your journal</string>
 </resources>

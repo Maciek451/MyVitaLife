@@ -1,19 +1,22 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.journal
 
+import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -22,22 +25,43 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.model.Mood
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 @Composable
 fun JournalScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
+    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
+
+    val listOfGoals by firebaseViewModel.goalData.observeAsState(emptyList())
+    val listOfMoods by firebaseViewModel.moodsList.observeAsState(emptyList())
+
+    var itemToDelete by remember { mutableStateOf("") }
+
+    var isGoalDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var isConfirmationDialogOpen by rememberSaveable { mutableStateOf(false) }
+
     TopLevelScaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.AddMoodOrGoal.route)
+                    if (selectedTabIndex == 0) {
+                        navController.navigate(Screen.AddMood.route)
+                    } else {
+                        isGoalDialogOpen = true
+                    }
+
                 }
             ) {
                 Icon(
@@ -53,41 +77,342 @@ fun JournalScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            JournalScreenContent(
-                modifier = Modifier.padding(8.dp)
+            Column(
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TabRow(
+                    selectedTabIndex = selectedTabIndex
+                ) {
+                    Tab(
+                        text = { Text("Mood") },
+                        selected = selectedTabIndex == 0,
+                        onClick = { selectedTabIndex = 0 }
+                    )
+                    Tab(
+                        text = { Text("Goals") },
+                        selected = selectedTabIndex == 1,
+                        onClick = { selectedTabIndex = 1 }
+                    )
+                }
+                when (selectedTabIndex) {
+                    0 -> {
+                        if (listOfMoods.isNotEmpty()) {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(top = 12.dp),
+                                contentPadding = PaddingValues(bottom = 16.dp)
+                            )
+                            {
+                                items(listOfMoods) { entry ->
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Log.d("TEST", "creating mood card: ${entry.time}")
+                                        Column(
+                                            horizontalAlignment = Alignment.Start
+                                        ) {
+                                            MoodCard(
+                                                mood = entry,
+                                                openConfirmationDialog = { isOpen ->
+                                                    isConfirmationDialogOpen = isOpen
+                                                    itemToDelete = entry.time
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            EmptyJournal(0)
+                        }
+                    }
+                    1 -> {
+                        if (listOfGoals.isNotEmpty()) {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(top = 12.dp),
+                                contentPadding = PaddingValues(bottom = 16.dp)
+                            )
+                            {
+                                items(listOfGoals) { entry ->
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Column(
+                                            horizontalAlignment = Alignment.Start
+                                        ) {
+                                            GoalCard(
+                                                title = entry.title,
+                                                openConfirmationDialog = { isOpen ->
+                                                    isConfirmationDialogOpen = isOpen
+                                                    itemToDelete = entry.title
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            EmptyJournal(1)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    AddGoalDialog(
+        dialogIsOpen = isGoalDialogOpen,
+        dialogOpen = { isOpen ->
+            isGoalDialogOpen = isOpen
+        }
+    )
+    DeleteConfirmationDialog(
+        dialogIsOpen = isConfirmationDialogOpen,
+        dialogOpen = { isOpen ->
+            isConfirmationDialogOpen = isOpen
+        },
+        item = itemToDelete,
+        tabIndex = selectedTabIndex
+    )
+}
+
+@Composable
+private fun MoodCard(
+    mood: Mood,
+    openConfirmationDialog: (Boolean) -> Unit = {}
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(all = 10.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            when (mood.type) {
+                0 -> {
+                    Icon(
+                        modifier = Modifier
+                            .background(color = Color.Cyan, shape = CircleShape),
+                        imageVector = Icons.Filled.SentimentVerySatisfied,
+                        contentDescription = "Amazing"
+                    )
+                }
+                1 -> {
+                    Icon(
+                        modifier = Modifier
+                            .background(color = Color.Green, shape = CircleShape),
+                        imageVector = Icons.Filled.SentimentSatisfied,
+                        contentDescription = "Good"
+                    )
+                }
+                2 -> {
+                    Icon(
+                        modifier = Modifier
+                            .background(color = Color.Yellow, shape = CircleShape),
+                        imageVector = Icons.Filled.SentimentNeutral,
+                        contentDescription = "Neutral"
+                    )
+                }
+                3 -> {
+                    Icon(
+                        modifier = Modifier
+                            .background(color = Color.Red, shape = CircleShape),
+                        imageVector = Icons.Filled.SentimentDissatisfied,
+                        contentDescription = "Bad"
+                    )
+                }
+                4 -> {
+                    Icon(
+                        modifier = Modifier
+                            .background(color = Color.Magenta, shape = CircleShape),
+                        imageVector = Icons.Filled.SentimentVeryDissatisfied,
+                        contentDescription = "Awful"
+                    )
+                }
+            }
+            IconButton(
+                onClick = {
+                    openConfirmationDialog(true)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = "Delete food"
+                )
+            }
+        }
+        Text(
+            text = mood.description,
+            fontSize = 20.sp,
+        )
+        Text(
+            text = mood.time,
+            fontSize = 20.sp,
+        )
+    }
+}
+
+@Composable
+private fun GoalCard(
+    title: String,
+    firebaseViewModel: FirebaseViewModel = viewModel(),
+    openConfirmationDialog: (Boolean) -> Unit = {}
+) {
+    val isChecked = rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = title) {
+        val goalIsDone = withContext(Dispatchers.IO) {
+            firebaseViewModel.getGoalIsDone(title)
+        }
+        isChecked.value = goalIsDone
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(all = 10.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = title,
+                fontSize = 20.sp,
             )
+            Checkbox(
+                checked = isChecked.value,
+                onCheckedChange = {
+                    isChecked.value = !isChecked.value
+                    firebaseViewModel.addGoal(title, isChecked.value)
+                },
+                modifier = Modifier.padding(all = 10.dp)
+            )
+            IconButton(
+                onClick = {
+                    openConfirmationDialog(true)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = "Delete food"
+                )
+            }
         }
     }
 }
 
 @Composable
-fun JournalScreenContent(
-    modifier: Modifier = Modifier
-) {
-    EmptyJournal()
-}
-
-@Composable
-private fun EmptyJournal() {
+private fun EmptyJournal(tabIndex: Int) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            modifier = Modifier
-                .padding(top = 30.dp),
-            text = stringResource(id = R.string.empty_journal),
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center
-        )
-        Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp),
-            painter = painterResource(id = R.drawable.emptyjournal),
-            contentDescription = stringResource(R.string.empty_journal_image),
-            contentScale = ContentScale.Crop
+        if (tabIndex == 0) {
+            Text(
+                modifier = Modifier
+                    .padding(top = 30.dp),
+                text = stringResource(id = R.string.empty_mood_tab),
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.padding(10.dp))
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
+                painter = painterResource(id = R.drawable.emptyjournal),
+                contentDescription = stringResource(R.string.empty_journal_image),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Text(
+                modifier = Modifier
+                    .padding(top = 30.dp),
+                text = stringResource(id = R.string.empty_goal_tab),
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.padding(20.dp))
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
+                painter = painterResource(id = R.drawable.goalstabimage),
+                contentDescription = stringResource(R.string.goals_tab_image),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+    }
+}
+
+@Composable
+fun DeleteConfirmationDialog(
+    dialogIsOpen: Boolean,
+    dialogOpen: (Boolean) -> Unit = {},
+    firebaseViewModel: FirebaseViewModel = viewModel(),
+    item: String,
+    tabIndex: Int
+) {
+    if (dialogIsOpen) {
+        AlertDialog(
+            onDismissRequest = { /* Empty so clicking outside has no effect */ },
+            title = {
+                Text(
+                    text = stringResource(id = R.string.click_to_confirm),
+                    fontSize = 20.sp
+                )
+            },
+            text = {
+
+                Text(
+                    text = stringResource(id = R.string.confirmation_text, item),
+                    fontSize = 15.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        dialogOpen(false)
+                        if (tabIndex == 0) {
+                            firebaseViewModel.deleteMood(item)
+                        } else {
+                            firebaseViewModel.deleteGoal(item)
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm_button))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        dialogOpen(false)
+                    }
+                ) {
+                    Text(stringResource(R.string.cancel_button))
+                }
+            }
         )
     }
 }

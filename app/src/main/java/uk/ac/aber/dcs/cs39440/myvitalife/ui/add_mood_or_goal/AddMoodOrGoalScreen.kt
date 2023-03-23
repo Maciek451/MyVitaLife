@@ -137,7 +137,7 @@ fun AddMoodOrGoalScreen(
                                 .padding(4.dp)
                         ) {
                             Button(onClick = {
-                                navController.navigate(Screen.AddGoal.route)
+                                navController.navigate(Screen.Journal.route)
                             }
                             ) {
                                 Text(text = stringResource(id = R.string.add_button))

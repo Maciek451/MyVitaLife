@@ -184,6 +184,19 @@ fun InsightsScreenContent(
                 }
             }
         }
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(all = 10.dp)
+                .height(300.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.mood_chart),
+                modifier = Modifier.padding(start = 10.dp, top = 6.dp),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
