@@ -1,14 +1,17 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -36,6 +39,8 @@ class FirebaseViewModel : ViewModel() {
     val sleepHours: LiveData<Int> = _sleepHours
 
     private val database = FirebaseDatabase.getInstance()
+
+    private val isLoggedIn = mutableStateOf(false)
 
     init {
         // Fetch App data
@@ -256,4 +261,15 @@ class FirebaseViewModel : ViewModel() {
             databaseReference.child("waterDrunk").setValue(_waterData.value!!.waterDrunk + incVal)
         }
     }
+
+    fun signInWithEmail(email: String, password: String) {
+        Firebase.auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                isLoggedIn.value = true
+            }
+            .addOnFailureListener { exception ->
+                // Handle the error
+            }
+    }
+
 }

@@ -229,7 +229,6 @@ private fun FoodCard(name: String, kcal: Int, openConfirmationDialog: (Boolean) 
                 )
             )
         }
-
         IconButton(
             onClick = {
                 openConfirmationDialog(true)
@@ -341,6 +340,6 @@ fun DeleteConfirmationDialog(
 fun NutritionScreenPreview() {
     val navController = rememberNavController()
     MyVitaLifeTheme(dynamicColor = false) {
-        // NutritionScreen(navController)
+        NutritionScreen(navController)
     }
 }

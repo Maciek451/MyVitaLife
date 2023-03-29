@@ -10,7 +10,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(
+fun HomeScreenTopBar(
     onClick: () -> Unit = {}
 ){
     CenterAlignedTopAppBar(
@@ -31,6 +31,6 @@ fun TopAppBar(
 
 @Preview
 @Composable
-fun TopAppBarPreview() {
-    TopAppBar()
+fun HomeScreenTopBarPreview() {
+    HomeScreenTopBar()
 }

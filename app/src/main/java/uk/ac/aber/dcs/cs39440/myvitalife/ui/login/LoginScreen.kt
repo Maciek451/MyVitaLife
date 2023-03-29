@@ -7,38 +7,34 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.database.FirebaseDatabase
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
-private lateinit var analytics: FirebaseAnalytics
-private lateinit var db: FirebaseDatabase
+
+//private var user: FirebaseUser? = null
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProvideNameScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
 
-    var name by remember {
+    var email by remember {
         mutableStateOf("")
     }
     var password by remember {
         mutableStateOf("")
     }
-
-    val context = LocalContext.current
-    analytics = FirebaseAnalytics.getInstance(context)
 
     Column(
         modifier = Modifier
@@ -56,11 +52,11 @@ fun ProvideNameScreen(
         )
 
         OutlinedTextField(
-            value = name,
+            value = email,
             label = {
                 Text(text = stringResource(id = R.string.user_name))
             },
-            onValueChange = { name = it },
+            onValueChange = { email = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp, start = 8.dp, end = 8.dp)
@@ -79,13 +75,7 @@ fun ProvideNameScreen(
 
         Button(
             onClick = {
-//                if (firstTime) {
-//
-//                }
-//                else {
-//                    isDialogOpen = true
-//                }
-                analytics.logEvent("click", null)
+                firebaseViewModel.signInWithEmail(email, password)
                 navController.navigate(Screen.Journal.route)
             },
             modifier = Modifier
@@ -106,53 +96,12 @@ fun ProvideNameScreen(
     }
 }
 
-@Composable
-fun ConfirmDialog(
-    dialogIsOpen: Boolean,
-    dialogOpen: (Boolean) -> Unit = {},
-    navController: NavHostController,
-    usersName: String,
-) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    if (dialogIsOpen) {
-        AlertDialog(
-            onDismissRequest = { /* Empty so clicking outside has no effect */ },
-            title = {
-                Text(
-                    text = stringResource(id = R.string.click_to_confirm),
-                    fontSize = 20.sp
-                )
-            },
-            text = {
+//if (viewModel.isLoggedIn.value) {
+//    // Display content for logged in user
+//} else {
+//    // Display content for not logged in user
+//}
 
-                Text(
-                    text = stringResource(id = R.string.confirmation_text),
-                    fontSize = 15.sp
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        dialogOpen(false)
-                        navController.navigate(Screen.Journal.route)
-                    }
-                ) {
-                    Text(stringResource(R.string.confirm_button))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        dialogOpen(false)
-                    }
-                ) {
-                    Text(stringResource(R.string.cancel_button))
-                }
-            }
-        )
-    }
-}
 
 @Composable
 @Preview
@@ -162,3 +111,29 @@ private fun ProvideNamePreview() {
         ProvideNameScreen(navController)
     }
 }
+
+
+//private fun signIn() {
+//    val providers = arrayListOf(
+//        AuthUI.IdpConfig.EmailBuilder().build()
+//    )
+//    val signInIntent = AuthUI.getInstance()
+//        .createSignInIntentBuilder()
+//        .setAvailableProviders(providers)
+//        .build()
+//}
+//
+//private val signInLauncher = registerForActivityResult(
+//    FirebaseAuthUIActivityResultContract()
+//) {
+//    res -> this.signInResult(res)
+//}
+//
+//private fun signInResult(result: FirebaseAuthUIAuthenticationResult) {
+//    val response = result.idpResponse
+//    if (result.resultCode == RESULT_OK) {
+//        user = FirebaseAuth.getInstance().currentUser
+//    } else {
+//        Log.e("LoginScreen.kt", "Error" + response?.error?.errorCode)
+//    }
+//}

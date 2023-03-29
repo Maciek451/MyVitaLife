@@ -32,7 +32,7 @@ fun TopLevelScaffold(
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(onClick = {
+                HomeScreenTopBar(onClick = {
                     coroutineScope.launch {
                         if (drawerState.isOpen) {
                             drawerState.close()

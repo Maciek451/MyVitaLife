@@ -49,6 +49,7 @@ fun InsightsScreen(
             date = _date.toString();
         }
     )
+
     TopLevelScaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -76,7 +77,6 @@ fun InsightsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InsightsScreenContent(
     modifier: Modifier = Modifier

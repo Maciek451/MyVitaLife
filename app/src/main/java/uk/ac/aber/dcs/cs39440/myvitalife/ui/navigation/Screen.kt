@@ -15,6 +15,7 @@ sealed class Screen(
     object AddMoodOrGoal : Screen("add_mood_or_goal")
     object AddMood : Screen("add_mood")
     object AddSteps : Screen("add_steps")
+    object Summary : Screen("summary")
 }
 val screens = listOf(
     Screen.Steps,
