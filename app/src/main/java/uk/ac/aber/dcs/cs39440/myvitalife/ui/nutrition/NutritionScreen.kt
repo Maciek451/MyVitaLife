@@ -204,7 +204,7 @@ fun NutritionScreen(
 }
 
 @Composable
-private fun FoodCard(name: String, kcal: Int, openConfirmationDialog: (Boolean) -> Unit = {}) {
+fun FoodCard(name: String, kcal: Int, openConfirmationDialog: (Boolean) -> Unit = {}) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

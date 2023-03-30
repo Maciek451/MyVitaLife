@@ -8,18 +8,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.journal.AddGoalDialog
+import com.google.firebase.FirebaseApp
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood.AddMoodScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood_or_goal.AddMoodOrGoalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_sleep.AddSleepScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_steps.AddStepsScreen
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.login.ProvideNameScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.login.LoginScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.steps.StepsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.InsightsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.journal.JournalScreen
@@ -41,6 +40,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    FirebaseApp.initializeApp(LocalContext.current)
                     BuildNavigationGraph()
                 }
             }
@@ -51,7 +51,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun BuildNavigationGraph() {
     val navController = rememberNavController()
-    val firebaseViewModel: FirebaseViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = Screen.Journal.route
@@ -62,7 +61,7 @@ private fun BuildNavigationGraph() {
         composable(Screen.Insights.route) { InsightsScreen(navController)}
         composable(Screen.Nutrition.route) { NutritionScreen(navController)}
         composable(Screen.Journal.route) { JournalScreen(navController)}
-        composable(Screen.ProvideName.route) { ProvideNameScreen(navController)}
+        composable(Screen.ProvideName.route) { LoginScreen(navController)}
         composable(Screen.AddSleep.route) { AddSleepScreen(navController)}
         composable(Screen.TimeAndDate.route) { TimeAndDateScreen(navController) }
         composable(Screen.AddMoodOrGoal.route) { AddMoodOrGoalScreen(navController) }

@@ -15,6 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
@@ -24,7 +25,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProvideNameScreen(
+fun LoginScreen(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
@@ -50,7 +51,7 @@ fun ProvideNameScreen(
             contentDescription = stringResource(R.string.provide_name_image),
             contentScale = ContentScale.Crop
         )
-
+        Text(text = Authentication.userId)
         OutlinedTextField(
             value = email,
             label = {
@@ -75,8 +76,10 @@ fun ProvideNameScreen(
 
         Button(
             onClick = {
-                firebaseViewModel.signInWithEmail(email, password)
-                navController.navigate(Screen.Journal.route)
+                val returnVal = firebaseViewModel.signInWithEmailAndPassword(email, password) { returnVal ->
+                    Authentication.userId = returnVal.toString()
+                }
+//                navController.navigate(Screen.Journal.route)
             },
             modifier = Modifier
                 .padding(top = 10.dp),
@@ -108,7 +111,7 @@ fun ProvideNameScreen(
 private fun ProvideNamePreview() {
     val navController = rememberNavController()
     MyVitaLifeTheme(dynamicColor = false) {
-        ProvideNameScreen(navController)
+        LoginScreen(navController)
     }
 }
 

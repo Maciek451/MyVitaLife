@@ -30,8 +30,10 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.Insight
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
+import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,13 +42,17 @@ fun InsightsScreen(
 ) {
     val calendarState = com.maxkeppeker.sheets.core.models.base.rememberSheetState()
     var date by rememberSaveable { mutableStateOf("") }
-
     calendarState.hide()
+
     CalendarDialog(
         state = calendarState,
         selection = CalendarSelection.Date { _date ->
             Log.d("SelectedDate", "$_date")
             date = _date.toString();
+            if (date.isNotEmpty()) {
+                Insight.date = date
+                navController.navigate(Screen.Summary.route)
+            }
         }
     )
 

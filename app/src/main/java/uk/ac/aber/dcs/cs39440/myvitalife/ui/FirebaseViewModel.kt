@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -20,6 +21,22 @@ import uk.ac.aber.dcs.cs39440.myvitalife.model.Goal
 import uk.ac.aber.dcs.cs39440.myvitalife.model.Mood
 import uk.ac.aber.dcs.cs39440.myvitalife.model.Water
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
+
+object Authentication {
+    var userId = ""
+
+    // Log in error codes
+    val LOGGED_IN_SUCCESSFULLY = 0
+    val PASSWORD_WRONG = 1
+    val ACCOUNT_DOES_NOT_EXIST = 3
+    val OTHER = 4
+
+    // Sign in error codes
+    val SIGNED_IN_SUCCESSFULLY = 0
+    val USER_ALREADY_EXISTS = 1
+    val EMAIL_WRONG_FORMAT = 2
+    val PASSWORD_WRONG_FORMAT = 3
+}
 
 class FirebaseViewModel : ViewModel() {
 
@@ -42,12 +59,22 @@ class FirebaseViewModel : ViewModel() {
 
     private val isLoggedIn = mutableStateOf(false)
 
+    val currentDate = Utils.getCurrentDate()
+
     init {
         // Fetch App data
-        fetchFoodData()
-        fetchWaterData()
-        fetchGoalData()
-        fetchMoodData()
+        fetchFoodData(currentDate) { foods ->
+            _foodList.value = foods
+        }
+        fetchWaterData(currentDate) { water ->
+            _waterData.value = water
+        }
+        fetchGoalData(currentDate) { goals ->
+            _goalList.value = goals
+        }
+        fetchMoodData(currentDate) { moods ->
+            _moodsList.value = moods
+        }
 
 //        // Fetch Sleep data
 //        val sleepRef = database.getReference("Sleep")
@@ -62,13 +89,16 @@ class FirebaseViewModel : ViewModel() {
 //        })
     }
 
-    private fun fetchFoodData() {
-        val foodRef = database.getReference(Utils.getCurrentDate())
+    public fun fetchFoodData(date: String, callback: (List<Food>) -> Unit) {
+        val foodRef = database.getReference("Users")
+            .child(Authentication.userId)
+            .child(date)
             .child("ListOfFood")
+
+        val foods = mutableListOf<Food>()
 
         foodRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val foods = mutableListOf<Food>()
                 var calories = 0
                 for (foodSnapshot in snapshot.children) {
                     val foodName = foodSnapshot.key
@@ -82,7 +112,7 @@ class FirebaseViewModel : ViewModel() {
                     calories += kcal
                 }
                 Log.d("FirebaseViewModel", "Total calories: $calories")
-                _foodList.value = foods
+                callback(foods)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -91,13 +121,16 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    private fun fetchMoodData() {
-        val foodRef = database.getReference(Utils.getCurrentDate())
+    public fun fetchMoodData(date: String, callback: (List<Mood>) -> Unit) {
+        val moodRef = database.getReference("Users")
+            .child(Authentication.userId)
+            .child(date)
             .child("ListOfMoods")
 
-        foodRef.addValueEventListener(object : ValueEventListener {
+        val moods = mutableListOf<Mood>()
+
+        moodRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val moods = mutableListOf<Mood>()
                 for (moodSnapshot in snapshot.children) {
                     val moodType = moodSnapshot.child("emojiIndex").value.toString()
                     val optionalDescription =
@@ -112,7 +145,7 @@ class FirebaseViewModel : ViewModel() {
                     )
                     Log.d("FirebaseViewModel", "Description: $optionalDescription")
                 }
-                _moodsList.value = moods
+                callback(moods)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -121,13 +154,15 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    private fun fetchGoalData() {
-        val goalRef = database.getReference(Utils.getCurrentDate())
+    private fun fetchGoalData(date: String, callback: (List<Goal>) -> Unit) {
+        val goalRef = database.getReference("Users")
+            .child(Authentication.userId)
+            .child(date)
             .child("CustomGoals")
+        val goals = mutableListOf<Goal>()
 
         goalRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val goals = mutableListOf<Goal>()
                 for (goalSnapshot in snapshot.children) {
                     val goalTitle = goalSnapshot.key
                     val isDone = goalSnapshot.child("isDone").value.toString().toBoolean()
@@ -135,7 +170,7 @@ class FirebaseViewModel : ViewModel() {
                     goals.add(goal)
                 }
                 Log.d("FirebaseViewModel", "Goal is: $goals")
-                _goalList.value = goals
+                callback(goals)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -144,8 +179,8 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    private fun fetchWaterData() {
-        val waterRef = database.getReference(Utils.getCurrentDate())
+    public fun fetchWaterData(date: String, callback: (Water) -> Unit) {
+        val waterRef = database.getReference(date)
             .child("WaterData")
 
         waterRef.addValueEventListener(object : ValueEventListener {
@@ -160,7 +195,7 @@ class FirebaseViewModel : ViewModel() {
                             hydrationGoal.toString().toInt(),
                             waterDrunk.toString().toInt()
                         )
-                        _waterData.value = water
+                        callback(water)
                     }
                 }
             }
@@ -171,27 +206,33 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    fun addFood(name: String, kcal: String) {
+    fun addFood(name: String, kcal: String, date: String = currentDate) {
         viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference(Utils.getCurrentDate())
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
                 .child("ListOfFood")
                 .child(name)
             databaseReference.child("kcal").setValue(kcal)
         }
     }
 
-    fun deleteFood(name: String) {
+    fun deleteFood(name: String, date: String = currentDate) {
         viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference(Utils.getCurrentDate())
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
                 .child("ListOfFood")
                 .child(name)
             databaseReference.removeValue()
         }
     }
 
-    fun addMood(type: Int, description: String) {
+    fun addMood(type: Int, description: String, date: String = currentDate) {
         viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference(Utils.getCurrentDate())
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
                 .child("ListOfMoods")
                 .child(Utils.getCurrentTime())
             databaseReference.child("emojiIndex").setValue(type.toString())
@@ -199,9 +240,11 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
-    fun deleteMood(time: String) {
+    fun deleteMood(time: String, date: String = currentDate) {
         viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference(Utils.getCurrentDate())
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
                 .child("ListOfMoods")
                 .child(time)
             Log.d("TEST", time)
@@ -209,26 +252,32 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
-    fun addGoal(title: String, isDone: Boolean) {
+    fun addGoal(title: String, isDone: Boolean, date: String = currentDate) {
         viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference(Utils.getCurrentDate())
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
                 .child("CustomGoals")
                 .child(title)
             databaseReference.child("isDone").setValue(isDone)
         }
     }
 
-    fun deleteGoal(title: String) {
+    fun deleteGoal(title: String, date: String = currentDate) {
         viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference(Utils.getCurrentDate())
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
                 .child("CustomGoals")
                 .child(title)
             databaseReference.removeValue()
         }
     }
 
-    suspend fun getGoalIsDone(title: String): Boolean {
-        val databaseReference = database.getReference(Utils.getCurrentDate())
+    suspend fun getGoalIsDone(title: String, date: String = currentDate): Boolean {
+        val databaseReference = database.getReference("Users")
+            .child(Authentication.userId)
+            .child(date)
             .child("CustomGoals")
             .child(title)
             .child("isDone")
@@ -236,9 +285,11 @@ class FirebaseViewModel : ViewModel() {
         return dataSnapshot.getValue(Boolean::class.java) ?: false
     }
 
-    fun addWater(cupSize: String, hydrationGoal: String) {
+    fun addWater(cupSize: String, hydrationGoal: String, date: String = currentDate) {
         viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference(Utils.getCurrentDate())
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
                 .child("WaterData")
             databaseReference.child("hydrationGoal").setValue(hydrationGoal)
             databaseReference.child("cupSize").setValue(cupSize)
@@ -246,30 +297,91 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
-    fun deleteWater() {
+    fun deleteWater(date: String = currentDate) {
         viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference(Utils.getCurrentDate())
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
                 .child("WaterData")
             databaseReference.removeValue()
         }
     }
 
-    fun updateWaterCounter(incVal: Int) {
+    fun updateWaterCounter(incVal: Int, date: String = currentDate) {
         viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference(Utils.getCurrentDate())
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
                 .child("WaterData")
             databaseReference.child("waterDrunk").setValue(_waterData.value!!.waterDrunk + incVal)
         }
     }
 
-    fun signInWithEmail(email: String, password: String) {
+
+//
+//
+//
+
+    fun logInWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {
         Firebase.auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
+                // User signed in successfully
                 isLoggedIn.value = true
+                val user = Firebase.auth.currentUser
+                if (user != null) {
+                    Authentication.userId = user.uid
+                }
+                callback(Authentication.LOGGED_IN_SUCCESSFULLY)
             }
             .addOnFailureListener { exception ->
-                // Handle the error
+                // User log in failed
+                when {
+                    exception.message?.contains("The password is invalid") == true -> {
+                        callback(Authentication.PASSWORD_WRONG)
+                    }
+                    exception.message?.contains("The email address is badly formatted") == true -> {
+                        callback(Authentication.EMAIL_WRONG_FORMAT)
+                    }
+                    exception.message?.contains("There is no user record") == true -> {
+                        callback(Authentication.ACCOUNT_DOES_NOT_EXIST)
+                    }
+                    else -> {
+                        callback(Authentication.OTHER)
+                    }
+                }
             }
     }
 
+    fun signInWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {
+        Firebase.auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // User signed up successfully
+                    val user = Firebase.auth.currentUser
+                    if (user != null) {
+                        Authentication.userId = user.uid
+                    }
+                    callback(Authentication.SIGNED_IN_SUCCESSFULLY)
+                } else {
+                    // User sign up failed
+                    val exception = task.exception
+                    if (exception != null) {
+                        when (exception) {
+                            is FirebaseAuthUserCollisionException -> callback(Authentication.USER_ALREADY_EXISTS)
+                            else -> {
+                                when {
+                                    exception.message?.contains("The email address is badly formatted") == true -> callback(
+                                        Authentication.EMAIL_WRONG_FORMAT
+                                    )
+                                    exception.message?.contains("The given password is invalid") == true -> callback(
+                                        Authentication.PASSWORD_WRONG_FORMAT
+                                    )
+                                    else -> callback(Authentication.OTHER)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+    }
 }
