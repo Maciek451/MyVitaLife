@@ -46,7 +46,7 @@ fun AddGoalDialog(
                 )
             },
             modifier = Modifier
-                .height(375.dp)
+                .height(260.dp)
                 .width(600.dp),
             text = {
                 Column(

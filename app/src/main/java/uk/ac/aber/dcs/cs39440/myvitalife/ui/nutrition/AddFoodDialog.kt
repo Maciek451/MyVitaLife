@@ -48,12 +48,12 @@ fun AddFoodDialog(
             text = {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = stringResource(id = R.string.name_of_food),
-                        fontSize = 25.sp,
+                        fontSize = 15.sp,
                     )
                     OutlinedTextField(
                         value = nameOfFood,
@@ -63,7 +63,7 @@ fun AddFoodDialog(
                     )
                     Text(
                         text = stringResource(id = R.string.number_of_calories),
-                        fontSize = 25.sp,
+                        fontSize = 15.sp,
                     )
                     OutlinedTextField(
                         value = numberOfCalories,
@@ -78,7 +78,7 @@ fun AddFoodDialog(
                     if (isError) {
                         Text(
                             text = stringResource(id = R.string.must_be_a_number),
-                            fontSize = 15.sp,
+                            fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.error,
                         )
                     }

@@ -28,7 +28,8 @@ fun AddWaterDialog(
         mutableStateOf("")
     }
 
-    var isError by rememberSaveable { mutableStateOf(false) }
+    var waterGoalError by rememberSaveable { mutableStateOf(false) }
+    var cupSizeError by rememberSaveable { mutableStateOf(false) }
 
     if (dialogIsOpen) {
         AlertDialog(
@@ -42,55 +43,55 @@ fun AddWaterDialog(
                 )
             },
             modifier = Modifier
-                .height(375.dp)
+                .height(385.dp)
                 .width(600.dp),
             text = {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = stringResource(id = R.string.amount_of_water),
-                        fontSize = 25.sp,
+                        fontSize = 15.sp,
                     )
                     OutlinedTextField(
                         value = hydrationGoal,
                         onValueChange = {
                             hydrationGoal = it
-                            isError = (hydrationGoal.toIntOrNull() == null && !hydrationGoal.isEmpty())
+                            waterGoalError = (hydrationGoal.toIntOrNull() == null && !hydrationGoal.isEmpty())
                         },
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth(),
-                        isError = isError,
+                        isError = waterGoalError,
                     )
-                    if (isError) {
+                    if (waterGoalError) {
                         Text(
                             text = stringResource(id = R.string.must_be_a_number),
-                            fontSize = 15.sp,
+                            fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.error,
                         )
                     }
                     Text(
                         text = stringResource(id = R.string.cup_size),
-                        fontSize = 25.sp,
+                        fontSize = 15.sp,
                     )
                     OutlinedTextField(
                         value = cupSize,
                         onValueChange = {
                             cupSize = it
-                            isError = (cupSize.toIntOrNull() == null && !cupSize.isEmpty())
+                            cupSizeError = (cupSize.toIntOrNull() == null && !cupSize.isEmpty())
                         },
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth(),
-                        isError = isError,
+                        isError = cupSizeError,
                     )
-                    if (isError) {
+                    if (cupSizeError) {
                         Text(
-                            text = "Must be a number!",
-                            fontSize = 15.sp,
+                            text = stringResource(id = R.string.must_be_a_number),
+                            fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.error,
                         )
                     }
@@ -106,7 +107,7 @@ fun AddWaterDialog(
 
                         dialogOpen(false)
                     },
-                    enabled = !isError && cupSize.isNotEmpty() && hydrationGoal.isNotEmpty()
+                    enabled = !waterGoalError && !cupSizeError && cupSize.isNotEmpty() && hydrationGoal.isNotEmpty()
                 ) {
                     Text(stringResource(R.string.confirm_button))
                 }
@@ -116,7 +117,8 @@ fun AddWaterDialog(
                     onClick = {
                         cupSize = ""
                         hydrationGoal = ""
-                        isError = false
+                        waterGoalError = false
+                        cupSizeError = false
                         dialogOpen(false)
                     }
                 ) {

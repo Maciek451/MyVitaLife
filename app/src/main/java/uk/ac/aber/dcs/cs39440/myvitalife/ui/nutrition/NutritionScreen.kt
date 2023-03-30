@@ -36,7 +36,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 @Composable
 fun NutritionScreen(
     navController: NavHostController,
-    firebaseViewModel: FirebaseViewModel = viewModel(),
+    firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
     var currentFabImage by remember { mutableStateOf(Icons.Filled.Add) }
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }

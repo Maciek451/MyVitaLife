@@ -40,7 +40,9 @@ fun TopLevelScaffold(
                             drawerState.open()
                         }
                     }
-                })
+                },
+                    navController = navController
+                )
             },
             bottomBar = {
                 NavigationBar(navController)

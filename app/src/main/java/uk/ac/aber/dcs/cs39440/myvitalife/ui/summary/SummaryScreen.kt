@@ -9,14 +9,16 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.Food
 import uk.ac.aber.dcs.cs39440.myvitalife.model.Water
 import uk.ac.aber.dcs.cs39440.myvitalife.model.foodListSaver
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.SummaryScreenTopBar
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.Insight
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition.FoodCard
 
@@ -36,12 +38,13 @@ fun SummaryScreen(
     firebaseViewModel.fetchWaterData(Insight.date) { water ->
         waterDrunk = water.waterDrunk
     }
+    val title = R.string.summary
 
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        SummaryScreenTopBar(navController)
+        TopAppBarWithArrow(navController, title)
         Text(text = Insight.date)
         Text(text = waterDrunk.toString())
         if (listOfFood.isNotEmpty()) {

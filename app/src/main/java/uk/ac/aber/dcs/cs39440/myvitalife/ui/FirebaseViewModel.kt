@@ -16,26 +16,23 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import uk.ac.aber.dcs.cs39440.myvitalife.model.Food
-import uk.ac.aber.dcs.cs39440.myvitalife.model.Goal
-import uk.ac.aber.dcs.cs39440.myvitalife.model.Mood
-import uk.ac.aber.dcs.cs39440.myvitalife.model.Water
+import uk.ac.aber.dcs.cs39440.myvitalife.model.*
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 object Authentication {
     var userId = ""
 
     // Log in error codes
-    val LOGGED_IN_SUCCESSFULLY = 0
-    val PASSWORD_WRONG = 1
-    val ACCOUNT_DOES_NOT_EXIST = 3
-    val OTHER = 4
+    const val LOGGED_IN_SUCCESSFULLY = 0
+    const val PASSWORD_WRONG = 1
+    const val ACCOUNT_DOES_NOT_EXIST = 2
+    const val OTHER = 3
 
     // Sign in error codes
-    val SIGNED_IN_SUCCESSFULLY = 0
-    val USER_ALREADY_EXISTS = 1
-    val EMAIL_WRONG_FORMAT = 2
-    val PASSWORD_WRONG_FORMAT = 3
+    const val SIGNED_IN_SUCCESSFULLY = 0
+    const val USER_ALREADY_EXISTS = 4
+    const val EMAIL_WRONG_FORMAT = 5
+    const val PASSWORD_WRONG_FORMAT = 6
 }
 
 class FirebaseViewModel : ViewModel() {
@@ -89,7 +86,7 @@ class FirebaseViewModel : ViewModel() {
 //        })
     }
 
-    public fun fetchFoodData(date: String, callback: (List<Food>) -> Unit) {
+    fun fetchFoodData(date: String, callback: (List<Food>) -> Unit) {
         val foodRef = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -121,7 +118,7 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    public fun fetchMoodData(date: String, callback: (List<Mood>) -> Unit) {
+    fun fetchMoodData(date: String, callback: (List<Mood>) -> Unit) {
         val moodRef = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -154,7 +151,7 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    private fun fetchGoalData(date: String, callback: (List<Goal>) -> Unit) {
+    fun fetchGoalData(date: String, callback: (List<Goal>) -> Unit) {
         val goalRef = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -179,7 +176,7 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    public fun fetchWaterData(date: String, callback: (Water) -> Unit) {
+    fun fetchWaterData(date: String, callback: (Water) -> Unit) {
         val waterRef = database.getReference(date)
             .child("WaterData")
 
@@ -383,5 +380,12 @@ class FirebaseViewModel : ViewModel() {
                     }
                 }
             }
+    }
+
+    fun signOut(callback: (Boolean) -> Unit) {
+        Firebase.auth.signOut()
+        isLoggedIn.value = false
+        Authentication.userId = ""
+        callback(true)
     }
 }

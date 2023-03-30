@@ -46,10 +46,6 @@ fun MainPageNavigationDrawer(
             "Useful links"
         ),
         Pair(
-            Icons.Default.Logout,
-            "Login"
-        ),
-        Pair(
             Icons.Default.Settings,
             "Settings"
         )
@@ -80,9 +76,7 @@ fun MainPageNavigationDrawer(
                             if (index == 0) {
 //                                navController.navigate(route = Screen.Login.route)
 //                                closeDrawer()
-                            } else if (index == 1) {
-                                navController.navigate(route = Screen.ProvideName.route)
-                            } else if (index == 2) {
+                            } else {
 
                             }
                         }

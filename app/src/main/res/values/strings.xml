@@ -65,4 +65,8 @@
     <string name="summary">Summary of the day</string>
     <string name="go_back">Go back arrow</string>
     <string name="water_data">Water data</string>
+    <string name="account_icon">Account icon</string>
+    <string name="account">Your account</string>
+    <string name="signIn_button">Sign in</string>
+    <string name="signOut">Sign out</string>
 </resources>

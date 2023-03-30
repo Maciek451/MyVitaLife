@@ -16,6 +16,8 @@ sealed class Screen(
     object AddMood : Screen("add_mood")
     object AddSteps : Screen("add_steps")
     object Summary : Screen("summary")
+    object Account : Screen("account")
+    object LoginSignIn : Screen("login_sign_in")
 }
 val screens = listOf(
     Screen.Steps,

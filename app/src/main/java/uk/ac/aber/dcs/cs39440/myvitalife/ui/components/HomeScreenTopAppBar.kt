@@ -1,18 +1,28 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenTopBar(
+    navController: NavHostController,
     onClick: () -> Unit = {}
-){
+) {
     CenterAlignedTopAppBar(
         title = {
             Text(stringResource(id = R.string.app_name))
@@ -25,6 +35,24 @@ fun HomeScreenTopBar(
                     stringResource(R.string.nav_drawer_menu)
                 )
             }
+        },
+        actions = {
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                IconButton(
+                    onClick = {
+                        navController.navigate(Screen.Account.route)
+                    },
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = stringResource(R.string.account_icon)
+                    )
+                }
+            }
         }
     )
 }
@@ -32,5 +60,6 @@ fun HomeScreenTopBar(
 @Preview
 @Composable
 fun HomeScreenTopBarPreview() {
-    HomeScreenTopBar()
+    val navController = rememberNavController()
+    HomeScreenTopBar(navController)
 }
