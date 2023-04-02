@@ -28,7 +28,7 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.DesiredDate
+import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 

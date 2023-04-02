@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.DesiredDate
+import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)

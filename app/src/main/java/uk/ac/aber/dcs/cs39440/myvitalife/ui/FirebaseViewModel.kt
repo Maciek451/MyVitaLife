@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import uk.ac.aber.dcs.cs39440.myvitalife.model.*
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.DesiredDate
+import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 object Authentication {

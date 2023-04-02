@@ -14,6 +14,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.AccountScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood.AddMoodScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood_or_goal.AddMoodOrGoalScreen
@@ -22,7 +26,6 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_steps.AddStepsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.login_sign_up.LoginSignUpScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.steps.StepsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.InsightsScreen
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.journal.JournalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition.NutritionScreen
@@ -31,7 +34,6 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.starting_screen.StartingScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.summary.SummaryScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.time_and_date.TimeAndDateScreen
-import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +45,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    FirebaseApp.initializeApp(LocalContext.current)
                     BuildNavigationGraph()
                 }
             }
@@ -52,13 +53,22 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun BuildNavigationGraph() {
+private fun BuildNavigationGraph(
+) {
     val navController = rememberNavController()
-    DesiredDate.date = Utils.getCurrentDate()
+    FirebaseApp.initializeApp(LocalContext.current)
+    Firebase.database.setPersistenceEnabled(true)
+    val user = Firebase.auth.currentUser
+
+    var startScreenRoute = Screen.LoginSignIn.route
+    if (user != null) {
+        Authentication.userId = user.uid
+        startScreenRoute = Screen.Journal.route
+    }
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Journal.route
+        startDestination = startScreenRoute
     ) {
         composable(Screen.Steps.route) { StepsScreen(navController)}
         composable(Screen.StartScreen.route) { StartingScreen(navController)}
