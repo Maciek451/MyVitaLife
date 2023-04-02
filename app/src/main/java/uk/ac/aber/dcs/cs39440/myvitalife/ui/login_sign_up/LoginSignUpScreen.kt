@@ -1,4 +1,4 @@
-package uk.ac.aber.dcs.cs39440.myvitalife.ui.login_sign_in
+package uk.ac.aber.dcs.cs39440.myvitalife.ui.login_sign_up
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -28,7 +28,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginSignInScreen(
+fun LoginSignUpScreen(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
@@ -117,7 +117,7 @@ fun LoginSignInScreen(
 
         Button(
             onClick = {
-                firebaseViewModel.signInWithEmailAndPassword(email, password) { returnVal ->
+                firebaseViewModel.signUpWithEmailAndPassword(email, password) { returnVal ->
                     errorMessage = processLoginUi(returnVal)
                     if (returnVal == 0) {
                         navController.navigate(Screen.Journal.route)
@@ -129,7 +129,7 @@ fun LoginSignInScreen(
                 .padding(top = 10.dp),
             enabled = email.isNotEmpty() && password.isNotEmpty()
         ) {
-            Text(text = stringResource(id = R.string.signIn_button))
+            Text(text = stringResource(id = R.string.signUp_button))
         }
     }
 }
@@ -162,6 +162,6 @@ private fun processLoginUi(errorCode: Int): String {
 private fun ProvideNamePreview() {
     val navController = rememberNavController()
     MyVitaLifeTheme(dynamicColor = false) {
-        LoginSignInScreen(navController)
+        LoginSignUpScreen(navController)
     }
 }

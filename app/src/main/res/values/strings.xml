@@ -67,6 +67,6 @@
     <string name="water_data">Water data</string>
     <string name="account_icon">Account icon</string>
     <string name="account">Your account</string>
-    <string name="signIn_button">Sign in</string>
+    <string name="signUp_button">Sign up</string>
     <string name="signOut">Sign out</string>
 </resources>

@@ -43,6 +43,30 @@ class Utils {
             return formatter.format(time)
         }
 
+        fun getDateDayBefore(date: String): String {
+            return calculateDate(date, -1) ?: ""
+        }
+
+        fun getDateDayAfter(date: String): String {
+            return calculateDate(date, 1) ?: ""
+        }
+
+        private fun calculateDate(date: String, numOfDays: Int): String? {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+            return try {
+                val date = dateFormat.parse(date)
+                val calendar = Calendar.getInstance()
+                if (date != null) {
+                    calendar.time = date
+                }
+                calendar.add(Calendar.DAY_OF_YEAR, numOfDays)
+                dateFormat.format(calendar.time)
+            } catch (e: Exception) {
+                // Handle parsing errors
+                null
+            }
+        }
+
         @Composable
         fun CircularProgressBar(
             currentValue: Int,

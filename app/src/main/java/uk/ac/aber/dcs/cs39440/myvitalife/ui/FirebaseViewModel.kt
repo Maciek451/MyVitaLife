@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import uk.ac.aber.dcs.cs39440.myvitalife.model.*
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 object Authentication {
@@ -56,34 +57,33 @@ class FirebaseViewModel : ViewModel() {
 
     private val isLoggedIn = mutableStateOf(false)
 
-    val currentDate = Utils.getCurrentDate()
+    val currentDate = DesiredDate.date
 
-    init {
-        // Fetch App data
-        fetchFoodData(currentDate) { foods ->
+    // Subscribing to "DesiredDate" object date change event
+    private fun registerDateChangeListener() {
+        DesiredDate.dateChangeListeners.add(::fetchAllData)
+    }
+
+    private fun fetchAllData() {
+        val newDate = DesiredDate.date
+        fetchFoodData(newDate) { foods ->
             _foodList.value = foods
         }
-        fetchWaterData(currentDate) { water ->
+        fetchWaterData(newDate) { water ->
             _waterData.value = water
         }
-        fetchGoalData(currentDate) { goals ->
+        fetchGoalData(newDate) { goals ->
             _goalList.value = goals
         }
-        fetchMoodData(currentDate) { moods ->
+        fetchMoodData(newDate) { moods ->
             _moodsList.value = moods
         }
+    }
 
-//        // Fetch Sleep data
-//        val sleepRef = database.getReference("Sleep")
-//        sleepRef.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val sleepHours = snapshot.value.toString().toInt()
-//                _sleepHours.value = sleepHours
-//            }
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
-//            }
-//        })
+    init {
+        registerDateChangeListener()
+        // Fetch App data
+        fetchAllData()
     }
 
     fun fetchFoodData(date: String, callback: (List<Food>) -> Unit) {
@@ -177,7 +177,9 @@ class FirebaseViewModel : ViewModel() {
     }
 
     fun fetchWaterData(date: String, callback: (Water) -> Unit) {
-        val waterRef = database.getReference(date)
+        val waterRef = database.getReference("Users")
+            .child(Authentication.userId)
+            .child(date)
             .child("WaterData")
 
         waterRef.addValueEventListener(object : ValueEventListener {
@@ -349,7 +351,7 @@ class FirebaseViewModel : ViewModel() {
             }
     }
 
-    fun signInWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {
+    fun signUpWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {
         Firebase.auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

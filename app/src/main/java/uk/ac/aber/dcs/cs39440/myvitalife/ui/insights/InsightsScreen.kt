@@ -18,9 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,10 +28,9 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.Insight
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
-import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +47,7 @@ fun InsightsScreen(
             Log.d("SelectedDate", "$_date")
             date = _date.toString();
             if (date.isNotEmpty()) {
-                Insight.date = date
+                DesiredDate.date = date
                 navController.navigate(Screen.Summary.route)
             }
         }

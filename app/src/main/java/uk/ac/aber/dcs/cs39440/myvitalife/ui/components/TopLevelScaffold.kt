@@ -1,14 +1,19 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.DesiredDate
+import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,6 +24,7 @@ fun TopLevelScaffold(
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
+    var chosenDate by rememberSaveable { mutableStateOf(DesiredDate.date) }
 
     MainPageNavigationDrawer(
         navController,
@@ -32,17 +38,58 @@ fun TopLevelScaffold(
     ) {
         Scaffold(
             topBar = {
-                HomeScreenTopBar(onClick = {
-                    coroutineScope.launch {
-                        if (drawerState.isOpen) {
-                            drawerState.close()
-                        } else {
-                            drawerState.open()
+                Column() {
+                    HomeScreenTopBar(
+                        onClick = {
+                            coroutineScope.launch {
+                                if (drawerState.isOpen) {
+                                    drawerState.close()
+                                } else {
+                                    drawerState.open()
+                                }
+                            }
+                        },
+                        navController = navController
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        IconButton(
+                            onClick = {
+                                val date = Utils.getDateDayBefore(DesiredDate.date)
+                                DesiredDate.date = date
+                                chosenDate = date
+                                DesiredDate.notifyDateChangeListeners()
+                            },
+                            modifier = Modifier.padding(start = 5.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Left Arrow"
+                            )
+                        }
+                        Text(
+                            text = chosenDate
+                        )
+                        IconButton(
+                            onClick = {
+                                val date = Utils.getDateDayAfter(DesiredDate.date)
+                                DesiredDate.date = date
+                                chosenDate = date
+                                DesiredDate.notifyDateChangeListeners()
+                            },
+                            modifier = Modifier.padding(end = 5.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowForward,
+                                contentDescription = "Right Arrow"
+                            )
                         }
                     }
-                },
-                    navController = navController
-                )
+                }
             },
             bottomBar = {
                 NavigationBar(navController)

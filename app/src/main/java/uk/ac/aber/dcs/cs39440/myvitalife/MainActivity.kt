@@ -19,9 +19,10 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood.AddMoodScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood_or_goal.AddMoodOrGoalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_sleep.AddSleepScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_steps.AddStepsScreen
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.login_sign_in.LoginSignInScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.login_sign_up.LoginSignUpScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.steps.StepsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.InsightsScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.journal.JournalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition.NutritionScreen
@@ -30,6 +31,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.starting_screen.StartingScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.summary.SummaryScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.time_and_date.TimeAndDateScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +54,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun BuildNavigationGraph() {
     val navController = rememberNavController()
+    DesiredDate.date = Utils.getCurrentDate()
+
     NavHost(
         navController = navController,
         startDestination = Screen.Journal.route
@@ -62,7 +66,7 @@ private fun BuildNavigationGraph() {
         composable(Screen.Insights.route) { InsightsScreen(navController)}
         composable(Screen.Nutrition.route) { NutritionScreen(navController)}
         composable(Screen.Journal.route) { JournalScreen(navController)}
-        composable(Screen.ProvideName.route) { LoginSignInScreen(navController)}
+        composable(Screen.ProvideName.route) { LoginSignUpScreen(navController)}
         composable(Screen.AddSleep.route) { AddSleepScreen(navController)}
         composable(Screen.TimeAndDate.route) { TimeAndDateScreen(navController) }
         composable(Screen.AddMoodOrGoal.route) { AddMoodOrGoalScreen(navController) }
@@ -70,7 +74,7 @@ private fun BuildNavigationGraph() {
         composable(Screen.AddSteps.route) { AddStepsScreen(navController) }
         composable(Screen.Summary.route) { SummaryScreen(navController) }
         composable(Screen.Account.route) { AccountScreen(navController) }
-        composable(Screen.LoginSignIn.route) { LoginSignInScreen(navController) }
+        composable(Screen.LoginSignIn.route) { LoginSignUpScreen(navController) }
     }
 }
 
