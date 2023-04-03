@@ -5,13 +5,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 
-@Composable
-fun SummaryScreen(
-    navController: NavHostController,
-    firebaseViewModel: FirebaseViewModel = viewModel(),
-) {
+//@Composable
+//fun SummaryScreen(
+//    navController: NavHostController,
+//    firebaseViewModel: FirebaseViewModel = viewModel(),
+//) {
 //    var listOfFood by rememberSaveable(stateSaver = foodListSaver) { mutableStateOf(emptyList<Food>()) }
-
+//
 //    var waterDrunk by rememberSaveable { mutableStateOf(0) }
 //    firebaseViewModel.fetchWaterData(Insight.date) { water ->
 //        waterDrunk = water.waterDrunk
@@ -56,4 +56,4 @@ fun SummaryScreen(
 //            }
 //        }
 //    }
-}
+//}

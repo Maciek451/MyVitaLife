@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
@@ -43,7 +44,8 @@ fun SleepScreen(
                 )
             }
         },
-        navController = navController
+        navController = navController,
+        givenDate = DesiredDate.date
     ) { innerPadding ->
         Surface(
             modifier = Modifier

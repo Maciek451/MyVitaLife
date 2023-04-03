@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.model.Mood
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
@@ -70,7 +71,8 @@ fun JournalScreen(
                 )
             }
         },
-        navController = navController
+        navController = navController,
+        givenDate = DesiredDate.date
     ) { innerPadding ->
         Surface(
             modifier = Modifier

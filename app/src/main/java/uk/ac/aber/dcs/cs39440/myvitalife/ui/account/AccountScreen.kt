@@ -12,7 +12,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
@@ -30,9 +33,7 @@ fun AccountScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBarWithArrow(navController, title)
-//        Text(
-//            text =
-//        )
+//        Text(text = )
         Button(
             onClick = {
                 firebaseViewModel.signOut {  }

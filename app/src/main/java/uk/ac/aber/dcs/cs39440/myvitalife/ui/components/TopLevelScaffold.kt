@@ -1,5 +1,6 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -11,6 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.maxkeppeler.sheets.calendar.CalendarDialog
+import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import kotlinx.coroutines.launch
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
@@ -19,12 +22,27 @@ import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 @Composable
 fun TopLevelScaffold(
     navController: NavHostController,
+    givenDate: String,
     floatingActionButton: @Composable () -> Unit = { },
     pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {}
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
-    var chosenDate by rememberSaveable { mutableStateOf(DesiredDate.date) }
+    val calendarState = com.maxkeppeker.sheets.core.models.base.rememberSheetState()
+    calendarState.hide()
+
+    CalendarDialog(
+        state = calendarState,
+        selection = CalendarSelection.Date { _date ->
+            Log.d("SelectedDate", "$_date")
+            val chosenDate = _date.toString();
+            if (chosenDate.isNotEmpty()) {
+                DesiredDate.date = chosenDate
+                DesiredDate.notifyDateChangeListeners()
+                calendarState.hide()
+            }
+        }
+    )
 
     MainPageNavigationDrawer(
         navController,
@@ -61,7 +79,6 @@ fun TopLevelScaffold(
                             onClick = {
                                 val date = Utils.getDateDayBefore(DesiredDate.date)
                                 DesiredDate.date = date
-                                chosenDate = date
                                 DesiredDate.notifyDateChangeListeners()
                             },
                             modifier = Modifier.padding(start = 5.dp)
@@ -71,14 +88,13 @@ fun TopLevelScaffold(
                                 contentDescription = "Left Arrow"
                             )
                         }
-                        Text(
-                            text = chosenDate
-                        )
+                        TextButton(onClick = { calendarState.show() }) {
+                            Text(DesiredDate.date)
+                        }
                         IconButton(
                             onClick = {
                                 val date = Utils.getDateDayAfter(DesiredDate.date)
                                 DesiredDate.date = date
-                                chosenDate = date
                                 DesiredDate.notifyDateChangeListeners()
                             },
                             modifier = Modifier.padding(end = 5.dp)

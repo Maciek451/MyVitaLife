@@ -22,6 +22,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 object Authentication {
     var userId = ""
+    var userEmail = ""
 
     // Log in error codes
     const val LOGGED_IN_SUCCESSFULLY = 0
@@ -50,34 +51,58 @@ class FirebaseViewModel : ViewModel() {
     private val _goalList = MutableLiveData<List<Goal>>()
     val goalData: LiveData<List<Goal>> = _goalList
 
-    private val _sleepHours = MutableLiveData<Int>()
-    val sleepHours: LiveData<Int> = _sleepHours
+    private val _sleepHours = MutableLiveData<Sleep>()
+    val sleepHours: LiveData<Sleep> = _sleepHours
 
     private val database = FirebaseDatabase.getInstance()
 
     private val isLoggedIn = mutableStateOf(false)
 
-    val currentDate = DesiredDate.date
+    private var chosenDate = DesiredDate.date
 
     // Subscribing to "DesiredDate" object date change event
     private fun registerDateChangeListener() {
         DesiredDate.dateChangeListeners.add(::fetchAllData)
     }
 
-    private fun fetchAllData() {
-        val newDate = DesiredDate.date
-        fetchFoodData(newDate) { foods ->
+    private fun updateFoodData() {
+        fetchFoodData(chosenDate) { foods ->
             _foodList.value = foods
         }
-        fetchWaterData(newDate) { water ->
-            _waterData.value = water
-        }
-        fetchGoalData(newDate) { goals ->
-            _goalList.value = goals
-        }
-        fetchMoodData(newDate) { moods ->
+    }
+
+    private fun updateMoodData() {
+        fetchMoodData(chosenDate) { moods ->
             _moodsList.value = moods
         }
+    }
+
+    private fun updateGoalData() {
+        fetchGoalData(chosenDate) { goals ->
+            _goalList.value = goals
+        }
+    }
+
+    private fun updateWaterData() {
+        fetchWaterData(chosenDate) { water ->
+            _waterData.value = water
+            Log.d("Water", water.waterDrunk.toString())
+        }
+    }
+
+    private fun updateSleepData() {
+        fetchSleepData(chosenDate) { sleeps ->
+            _sleepHours.value = sleeps
+        }
+    }
+
+    private fun fetchAllData() {
+        chosenDate = DesiredDate.date
+        updateFoodData()
+        updateWaterData()
+        updateGoalData()
+        updateMoodData()
+        updateSleepData()
     }
 
     init {
@@ -196,6 +221,8 @@ class FirebaseViewModel : ViewModel() {
                         )
                         callback(water)
                     }
+                } else {
+                    callback(Water(0, 0))
                 }
             }
 
@@ -205,29 +232,66 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    fun addFood(name: String, kcal: String, date: String = currentDate) {
+    fun fetchSleepData(date: String, callback: (Sleep) -> Unit) {
+        val sleepRef = database.getReference("Users")
+            .child(Authentication.userId)
+            .child(date)
+            .child("SleepData")
+
+        sleepRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val sleepScore = snapshot.child("sleepScore").value
+                    val sleepStart = snapshot.child("sleepStart").value
+                    val sleepEnd = snapshot.child("sleepEnd").value
+                    val optionalDescription = snapshot.child("optionalDescription").value.toString()
+                    if (sleepScore != null && sleepStart != null && sleepEnd != null) {
+                        val sleep = Sleep(
+                            sleepScore.toString().toInt(),
+                            sleepStart.toString(),
+                            sleepEnd.toString(),
+                            optionalDescription
+                        )
+                        callback(sleep)
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+    fun addFood(name: String, kcal: String, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
                 .child(date)
                 .child("ListOfFood")
                 .child(name)
-            databaseReference.child("kcal").setValue(kcal)
+            databaseReference.child("kcal").setValue(kcal).addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateFoodData()
+            }
         }
     }
 
-    fun deleteFood(name: String, date: String = currentDate) {
+    fun deleteFood(name: String, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
                 .child(date)
                 .child("ListOfFood")
                 .child(name)
-            databaseReference.removeValue()
+            databaseReference.removeValue().addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateFoodData()
+            }
         }
     }
 
-    fun addMood(type: Int, description: String, date: String = currentDate) {
+    fun addMood(type: Int, description: String, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
@@ -236,44 +300,57 @@ class FirebaseViewModel : ViewModel() {
                 .child(Utils.getCurrentTime())
             databaseReference.child("emojiIndex").setValue(type.toString())
             databaseReference.child("optionalDescription").setValue(description)
+                .addOnSuccessListener {
+                    // Update foodList after food is deleted
+                    updateMoodData()
+                }
         }
     }
 
-    fun deleteMood(time: String, date: String = currentDate) {
+
+    fun deleteMood(time: String, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
                 .child(date)
                 .child("ListOfMoods")
                 .child(time)
-            Log.d("TEST", time)
-            databaseReference.removeValue()
+            databaseReference.removeValue().addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateMoodData()
+            }
         }
     }
 
-    fun addGoal(title: String, isDone: Boolean, date: String = currentDate) {
+    fun addGoal(title: String, isDone: Boolean, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
                 .child(date)
                 .child("CustomGoals")
                 .child(title)
-            databaseReference.child("isDone").setValue(isDone)
+            databaseReference.child("isDone").setValue(isDone).addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateGoalData()
+            }
         }
     }
 
-    fun deleteGoal(title: String, date: String = currentDate) {
+    fun deleteGoal(title: String, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
                 .child(date)
                 .child("CustomGoals")
                 .child(title)
-            databaseReference.removeValue()
+            databaseReference.removeValue().addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateGoalData()
+            }
         }
     }
 
-    suspend fun getGoalIsDone(title: String, date: String = currentDate): Boolean {
+    suspend fun getGoalIsDone(title: String, date: String = chosenDate): Boolean {
         val databaseReference = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -284,7 +361,7 @@ class FirebaseViewModel : ViewModel() {
         return dataSnapshot.getValue(Boolean::class.java) ?: false
     }
 
-    fun addWater(cupSize: String, hydrationGoal: String, date: String = currentDate) {
+    fun addWater(cupSize: String, hydrationGoal: String, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
@@ -292,34 +369,71 @@ class FirebaseViewModel : ViewModel() {
                 .child("WaterData")
             databaseReference.child("hydrationGoal").setValue(hydrationGoal)
             databaseReference.child("cupSize").setValue(cupSize)
-            databaseReference.child("waterDrunk").setValue(0)
+            databaseReference.child("waterDrunk").setValue(0).addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateWaterData()
+            }
         }
     }
 
-    fun deleteWater(date: String = currentDate) {
+    fun deleteWater(date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
                 .child(date)
                 .child("WaterData")
-            databaseReference.removeValue()
+            databaseReference.removeValue().addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateWaterData()
+            }
         }
     }
 
-    fun updateWaterCounter(incVal: Int, date: String = currentDate) {
+    fun addSleep(
+        score: String,
+        start: String,
+        end: String,
+        description: String,
+        date: String = chosenDate
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
+                .child("SleepData")
+            databaseReference.child("sleepScore").setValue(score)
+            databaseReference.child("sleepStart").setValue(start)
+            databaseReference.child("sleepEnd").setValue(end)
+            databaseReference.child("optionalDescription").setValue(description)
+        }
+    }
+
+    fun deleteSleep(date: String = chosenDate) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
+                .child("SleepData")
+            databaseReference.removeValue().addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateSleepData()
+            }
+        }
+    }
+
+    fun updateWaterCounter(incVal: Int, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
                 .child(date)
                 .child("WaterData")
-            databaseReference.child("waterDrunk").setValue(_waterData.value!!.waterDrunk + incVal)
+            databaseReference.child("waterDrunk").setValue(_waterData.value!!.waterDrunk + incVal).addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateWaterData()
+            }
         }
     }
 
-
-//
-//
-//
 
     fun logInWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {
         Firebase.auth.signInWithEmailAndPassword(email, password)

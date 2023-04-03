@@ -66,7 +66,8 @@ fun InsightsScreen(
                 )
             }
         },
-        navController = navController
+        navController = navController,
+        givenDate = DesiredDate.date
     ) { innerPadding ->
         Surface(
             modifier = Modifier
