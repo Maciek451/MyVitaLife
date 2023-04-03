@@ -443,6 +443,7 @@ class FirebaseViewModel : ViewModel() {
                 val user = Firebase.auth.currentUser
                 if (user != null) {
                     Authentication.userId = user.uid
+                    Authentication.userEmail = user.email.toString()
                 }
                 callback(Authentication.LOGGED_IN_SUCCESSFULLY)
             }
@@ -473,6 +474,7 @@ class FirebaseViewModel : ViewModel() {
                     val user = Firebase.auth.currentUser
                     if (user != null) {
                         Authentication.userId = user.uid
+                        Authentication.userEmail = user.email.toString()
                     }
                     callback(Authentication.SIGNED_IN_SUCCESSFULLY)
                 } else {

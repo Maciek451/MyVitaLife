@@ -33,7 +33,7 @@ fun AccountScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBarWithArrow(navController, title)
-//        Text(text = )
+        Text(text = Authentication.userEmail)
         Button(
             onClick = {
                 firebaseViewModel.signOut {  }

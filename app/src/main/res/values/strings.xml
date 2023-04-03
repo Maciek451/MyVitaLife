@@ -69,4 +69,7 @@
     <string name="account">Your account</string>
     <string name="signUp_button">Sign up</string>
     <string name="signOut">Sign out</string>
+    <string name="start_of_the_sleep">Start of your sleep</string>
+    <string name="sleep_start_button">Start of the sleep</string>
+    <string name="sleep_end_button">End of the sleep</string>
 </resources>

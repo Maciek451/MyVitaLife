@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import kotlinx.coroutines.launch
@@ -28,14 +29,14 @@ fun TopLevelScaffold(
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
-    val calendarState = com.maxkeppeker.sheets.core.models.base.rememberSheetState()
+    val calendarState = rememberSheetState()
     calendarState.hide()
 
     CalendarDialog(
         state = calendarState,
         selection = CalendarSelection.Date { _date ->
             Log.d("SelectedDate", "$_date")
-            val chosenDate = _date.toString();
+            val chosenDate = _date.toString()
             if (chosenDate.isNotEmpty()) {
                 DesiredDate.date = chosenDate
                 DesiredDate.notifyDateChangeListeners()

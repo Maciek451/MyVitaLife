@@ -33,7 +33,6 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.sleep.SleepScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.starting_screen.StartingScreen
 //import uk.ac.aber.dcs.cs39440.myvitalife.ui.summary.SummaryScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.time_and_date.TimeAndDateScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +77,6 @@ private fun BuildNavigationGraph(
         composable(Screen.Journal.route) { JournalScreen(navController)}
         composable(Screen.ProvideName.route) { LoginSignUpScreen(navController)}
         composable(Screen.AddSleep.route) { AddSleepScreen(navController)}
-        composable(Screen.TimeAndDate.route) { TimeAndDateScreen(navController) }
         composable(Screen.AddMoodOrGoal.route) { AddMoodOrGoalScreen(navController) }
         composable(Screen.AddMood.route) { AddMoodScreen(navController) }
         composable(Screen.AddSteps.route) { AddStepsScreen(navController) }

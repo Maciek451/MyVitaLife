@@ -86,7 +86,7 @@ fun NutritionScreen(
                 modifier = Modifier
                     .padding(start = 8.dp, end = 8.dp)
                     .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TabRow(
                     selectedTabIndex = selectedTabIndex
