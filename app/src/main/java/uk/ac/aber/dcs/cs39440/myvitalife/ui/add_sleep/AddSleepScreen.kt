@@ -189,7 +189,7 @@ fun AddSleepScreen(
             }
             Button(
                 onClick = {
-//                    firebaseViewModel.addSleep()
+//                    firebaseViewModel.addSleep(sliderPosition, )
                     navController.navigate(Screen.Sleep.route)
                 },
                 modifier = Modifier

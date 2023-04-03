@@ -48,8 +48,8 @@
     <string name="mood_counter">Mood counter</string>
     <string name="total">Total:</string>
     <string name="pick_a_date">Pick a date to inspect your records</string>
-    <string name="amount_of_water">How much water do you want to drink daily?</string>
-    <string name="cup_size">How much milliliters does your cup have</string>
+    <string name="amount_of_water">Water intake goal (in ml)</string>
+    <string name="cup_size">Cup size (in ml)</string>
     <string name="add_steps_image">Add steps image</string>
     <string name="daily_goal_steps">What is your daily steps goal?</string>
     <string name="password">Password</string>
@@ -72,4 +72,6 @@
     <string name="start_of_the_sleep">Start of your sleep</string>
     <string name="sleep_start_button">Start of the sleep</string>
     <string name="sleep_end_button">End of the sleep</string>
+    <string name="add_your_food">Add your food</string>
+    <string name="your_water_goal">Your water goal</string>
 </resources>

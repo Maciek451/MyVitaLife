@@ -194,77 +194,104 @@ private fun MoodCard(
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(all = 10.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .padding(4.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxHeight()
+                .padding(start = 5.dp, end = 5.dp)
         ) {
-            when (mood.type) {
-                0 -> {
-                    Icon(
-                        modifier = Modifier
-                            .background(color = Color.Cyan, shape = CircleShape),
-                        imageVector = Icons.Filled.SentimentVerySatisfied,
-                        contentDescription = "Amazing"
-                    )
-                }
-                1 -> {
-                    Icon(
-                        modifier = Modifier
-                            .background(color = Color.Green, shape = CircleShape),
-                        imageVector = Icons.Filled.SentimentSatisfied,
-                        contentDescription = "Good"
-                    )
-                }
-                2 -> {
-                    Icon(
-                        modifier = Modifier
-                            .background(color = Color.Yellow, shape = CircleShape),
-                        imageVector = Icons.Filled.SentimentNeutral,
-                        contentDescription = "Neutral"
-                    )
-                }
-                3 -> {
-                    Icon(
-                        modifier = Modifier
-                            .background(color = Color.Red, shape = CircleShape),
-                        imageVector = Icons.Filled.SentimentDissatisfied,
-                        contentDescription = "Bad"
-                    )
-                }
-                4 -> {
-                    Icon(
-                        modifier = Modifier
-                            .background(color = Color.Magenta, shape = CircleShape),
-                        imageVector = Icons.Filled.SentimentVeryDissatisfied,
-                        contentDescription = "Awful"
-                    )
-                }
-            }
-            IconButton(
-                onClick = {
-                    openConfirmationDialog(true)
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Delete food"
-                )
+                when (mood.type) {
+                    0 -> {
+                        Icon(
+                            modifier = Modifier
+                                .background(color = Color.Cyan, shape = CircleShape)
+                                .size(30.dp),
+                            imageVector = Icons.Filled.SentimentVerySatisfied,
+                            contentDescription = "Amazing"
+                        )
+                        Text(
+                            text = mood.time,
+                            fontSize = 20.sp,
+                        )
+                    }
+                    1 -> {
+                        Icon(
+                            modifier = Modifier
+                                .background(color = Color.Green, shape = CircleShape)
+                                .size(30.dp),
+                            imageVector = Icons.Filled.SentimentSatisfied,
+                            contentDescription = "Good"
+                        )
+                        Text(
+                            text = mood.time,
+                            fontSize = 20.sp,
+                        )
+                    }
+                    2 -> {
+                        Icon(
+                            modifier = Modifier
+                                .background(color = Color.Yellow, shape = CircleShape)
+                                .size(30.dp),
+                            imageVector = Icons.Filled.SentimentNeutral,
+                            contentDescription = "Neutral"
+                        )
+                        Text(
+                            text = mood.time,
+                            fontSize = 20.sp,
+                        )
+                    }
+                    3 -> {
+                        Icon(
+                            modifier = Modifier
+                                .background(color = Color.Red, shape = CircleShape)
+                                .size(30.dp),
+                            imageVector = Icons.Filled.SentimentDissatisfied,
+                            contentDescription = "Bad"
+                        )
+                        Text(
+                            text = mood.time,
+                            fontSize = 20.sp,
+                        )
+                    }
+                    4 -> {
+                        Icon(
+                            modifier = Modifier
+                                .background(color = Color.Magenta, shape = CircleShape)
+                                .size(30.dp),
+                            imageVector = Icons.Filled.SentimentVeryDissatisfied,
+                            contentDescription = "Awful"
+                        )
+                        Text(
+                            text = mood.time,
+                            fontSize = 20.sp,
+                        )
+                    }
+                }
+                IconButton(
+                    onClick = {
+                        openConfirmationDialog(true)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = "Delete food"
+                    )
+                }
             }
+            Text(
+                text = mood.description,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(bottom = 5.dp)
+            )
         }
-        Text(
-            text = mood.description,
-            fontSize = 20.sp,
-        )
-        Text(
-            text = mood.time,
-            fontSize = 20.sp,
-        )
     }
 }
 
@@ -285,38 +312,40 @@ private fun GoalCard(
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(all = 10.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .padding(4.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        Column() {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Checkbox(
+                    checked = isChecked.value,
+                    onCheckedChange = {
+                        isChecked.value = !isChecked.value
+                        firebaseViewModel.addGoal(title, isChecked.value)
+                    },
+                )
+                IconButton(
+                    onClick = {
+                        openConfirmationDialog(true)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = "Delete food"
+                    )
+                }
+            }
             Text(
                 text = title,
                 fontSize = 20.sp,
+                modifier = Modifier
+                    .padding(bottom = 5.dp)
             )
-            Checkbox(
-                checked = isChecked.value,
-                onCheckedChange = {
-                    isChecked.value = !isChecked.value
-                    firebaseViewModel.addGoal(title, isChecked.value)
-                },
-                modifier = Modifier.padding(all = 10.dp)
-            )
-            IconButton(
-                onClick = {
-                    openConfirmationDialog(true)
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Delete food"
-                )
-            }
         }
     }
 }

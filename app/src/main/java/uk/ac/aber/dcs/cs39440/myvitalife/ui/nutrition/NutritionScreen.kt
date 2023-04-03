@@ -66,7 +66,7 @@ fun NutritionScreen(
                     } else {
                         isFoodDialogOpen = true
                     }
-                }
+                },
             ) {
                 Icon(
                     imageVector = currentFabImage,
