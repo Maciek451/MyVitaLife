@@ -111,16 +111,6 @@ fun NutritionScreen(
                                     .fillMaxSize(),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
-//                                IconButton(
-//                                    onClick = {
-//                                        isConfirmationDialogOpen = true
-//                                    },
-//                                ) {
-//                                    Icon(
-//                                        imageVector = Icons.Outlined.Delete,
-//                                        contentDescription = "Delete food"
-//                                    )
-//                                }
                                 Text(
                                     modifier = Modifier
                                         .padding(top = 30.dp),
@@ -140,7 +130,6 @@ fun NutritionScreen(
                                 }) {
                                     Text("+ ${waterData.cupSize}ml")
                                 }
-                                // ((waterData.waterDrunk.toFloat()/waterData.hydrationGoal) * 100).toInt()
                             }
                         } else {
                             EmptyScreen(0)

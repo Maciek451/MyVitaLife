@@ -86,7 +86,6 @@ class FirebaseViewModel : ViewModel() {
     private fun updateWaterData() {
         fetchWaterData(chosenDate) { water ->
             _waterData.value = water
-            Log.d("Water", water.waterDrunk.toString())
         }
     }
 
@@ -244,16 +243,20 @@ class FirebaseViewModel : ViewModel() {
                     val sleepScore = snapshot.child("sleepScore").value
                     val sleepStart = snapshot.child("sleepStart").value
                     val sleepEnd = snapshot.child("sleepEnd").value
+                    val sleepDuration = snapshot.child("sleepDuration").value
                     val optionalDescription = snapshot.child("optionalDescription").value.toString()
                     if (sleepScore != null && sleepStart != null && sleepEnd != null) {
                         val sleep = Sleep(
-                            sleepScore.toString().toInt(),
+                            sleepScore.toString().toFloat(),
                             sleepStart.toString(),
                             sleepEnd.toString(),
+                            sleepDuration.toString(),
                             optionalDescription
                         )
                         callback(sleep)
                     }
+                } else {
+                    callback(Sleep(0f, "", "", "", ""))
                 }
             }
 
@@ -390,9 +393,10 @@ class FirebaseViewModel : ViewModel() {
     }
 
     fun addSleep(
-        score: String,
+        score: Int,
         start: String,
         end: String,
+        duration: String,
         description: String,
         date: String = chosenDate
     ) {
@@ -404,7 +408,11 @@ class FirebaseViewModel : ViewModel() {
             databaseReference.child("sleepScore").setValue(score)
             databaseReference.child("sleepStart").setValue(start)
             databaseReference.child("sleepEnd").setValue(end)
-            databaseReference.child("optionalDescription").setValue(description)
+            databaseReference.child("sleepDuration").setValue(duration)
+            databaseReference.child("optionalDescription").setValue(description).addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateSleepData()
+            }
         }
     }
 
