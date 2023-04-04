@@ -4,6 +4,9 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -15,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -76,6 +80,8 @@ fun LoginSignUpScreen(
             text = "",
             color = MaterialTheme.colorScheme.error
         )
+
+        var passwordVisible by rememberSaveable { mutableStateOf(false) }
         OutlinedTextField(
             value = password,
             label = {
@@ -89,8 +95,20 @@ fun LoginSignUpScreen(
                 .fillMaxWidth()
                 .padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
             isError = errorMessage.isNotEmpty(),
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+            trailingIcon = {
+                val image = if (passwordVisible)
+                    Icons.Filled.Visibility
+                else Icons.Filled.VisibilityOff
+
+                // Please provide localized description for accessibility services
+                val description = if (passwordVisible) "Hide password" else "Show password"
+
+                IconButton(onClick = {passwordVisible = !passwordVisible}){
+                    Icon(imageVector  = image, description)
+                }
+            }
         )
         Text(
             text = "",

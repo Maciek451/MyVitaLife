@@ -315,7 +315,11 @@ private fun GoalCard(
             .fillMaxSize()
             .padding(all = 10.dp)
     ) {
-        Column() {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(start = 5.dp, end = 5.dp)
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),

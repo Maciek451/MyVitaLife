@@ -60,10 +60,15 @@ fun AddFoodDialog(
                             },
                         fontSize = 20.sp
                     )
+                    val maxChar = 24
 
                     OutlinedTextField(
                         value = nameOfFood,
-                        onValueChange = { nameOfFood = it },
+                        onValueChange = {
+                            if (it.length <= maxChar) {
+                                nameOfFood = it
+                            }
+                        },
                         label = { Text(text = stringResource(id = R.string.name_of_food)) },
                         modifier = Modifier
                             .fillMaxWidth()

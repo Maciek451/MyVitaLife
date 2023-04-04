@@ -7,7 +7,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -164,6 +166,7 @@ fun NutritionScreen(
                                             )
                                         }
                                     }
+                                    Divider(thickness = 1.dp)
                                 }
                             }
                         } else {
@@ -197,40 +200,77 @@ fun NutritionScreen(
 }
 
 @Composable
-fun FoodCard(name: String, kcal: Int, openConfirmationDialog: (Boolean) -> Unit = {}) {
+fun FoodCard(
+    name: String,
+    kcal: Int,
+    openConfirmationDialog: (Boolean) -> Unit = {},
+    firebaseViewModel: FirebaseViewModel = viewModel(),
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(horizontalAlignment = Alignment.Start) {
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier.padding(
+                start = 8.dp
+            )
+        ) {
             Text(
                 text = name,
                 fontSize = 25.sp,
-                modifier = Modifier.padding(
-                    start = 8.dp,
-                    top = 8.dp
-                )
             )
-            Text(
-                text = kcal.toString(),
-                fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(
-                    start = 8.dp,
-                    bottom = 24.dp
+            Row() {
+                Text(
+                    text = stringResource(id = R.string.kcal),
+                    fontSize = 20.sp
                 )
-            )
-        }
-        IconButton(
-            onClick = {
-                openConfirmationDialog(true)
+                Text(
+                    text = kcal.toString(),
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(
+                        start = 8.dp,
+                    )
+                )
             }
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Delete,
-                contentDescription = "Delete food"
-            )
+            Column() {
+                IconButton(
+                    onClick = {
+//                        firebaseViewModel.countUp(name, kcal)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        contentDescription = "Add"
+                    )
+                }
+                IconButton(
+                    onClick = {
+//                        firebaseViewModel.countDown()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Remove,
+                        contentDescription = "Remove"
+                    )
+                }
+            }
+            IconButton(
+                onClick = {
+                    openConfirmationDialog(true)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = "Delete food"
+                )
+            }
         }
     }
 }

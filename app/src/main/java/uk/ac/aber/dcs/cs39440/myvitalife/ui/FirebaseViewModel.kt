@@ -442,6 +442,56 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
+//    fun countUp(foodName: String, firstValue: Int, date: String = chosenDate) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val databaseReference = database.getReference("Users")
+//                .child(Authentication.userId)
+//                .child(date)
+//                .child("ListOfFood")
+//                .child(foodName)
+//            databaseReference.child("kcal").setValue(firstValue * 2)
+//                .addOnSuccessListener {
+//                // Update foodList after food is deleted
+//                updateFoodData()
+//            }
+//        }
+//    }
+
+    fun countUp(foodName: String, kcalOfTheProduct: Int, date: String = chosenDate) {
+        val firstValueRef = database.getReference("Users")
+            .child(Authentication.userId)
+            .child(date)
+            .child("ListOfFood")
+            .child(foodName)
+            .child("firstValue")
+
+        viewModelScope.launch(Dispatchers.IO) {
+            // Get the original first value from the database
+            val originalFirstValue = firstValueRef.get().await().getValue(Int::class.java) ?: 0
+
+            // Calculate the new first value by adding the original first value and kcalOfTheProduct
+            val newFirstValue = originalFirstValue + kcalOfTheProduct
+
+            // Update the first value in the database
+            firstValueRef.setValue(newFirstValue).await()
+
+            // Get the current kcal value from the database
+            val kcalRef = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
+                .child("ListOfFood")
+                .child(foodName)
+                .child("kcal")
+            val currentKcal = kcalRef.get().await().getValue(Int::class.java) ?: 0
+
+            // Update the kcal value in the database by adding kcalOfTheProduct to the current value
+            kcalRef.setValue(currentKcal + kcalOfTheProduct).await()
+
+            // Update foodList after food is added
+            updateFoodData()
+        }
+    }
+
 
     fun logInWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {
         Firebase.auth.signInWithEmailAndPassword(email, password)
