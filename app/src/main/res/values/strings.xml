@@ -18,7 +18,6 @@
     <string name="nutrition_text1">Add your daily hydration goal!</string>
     <string name="nutrition_text2">Add your food</string>
     <string name="sleep_text">Add your sleep record</string>
-    <string name="user_name">User name</string>
     <string name="cancel_button">Cancel</string>
     <string name="click_to_confirm">Click to confirm</string>
     <string name="confirmation_text">Are you sure you want to delete %s?</string>
@@ -45,7 +44,7 @@
     <string name="add_a_note">Add a note</string>
     <string name="add_mood_image2">Add mood image 2</string>
     <string name="add_goal_image2">Add goal image2</string>
-    <string name="mood_counter">Mood counter</string>
+    <string name="mood_counter">Mood counter of the day:</string>
     <string name="total">Total:</string>
     <string name="pick_a_date">Pick a date to inspect your records</string>
     <string name="amount_of_water">Water intake goal (in ml)</string>
@@ -78,4 +77,10 @@
     <string name="end_of_the_sleep">End of the sleep:</string>
     <string name="rating">Rating</string>
     <string name="kcal">kcal: </string>
+    <string name="amount">amount: </string>
+    <string name="total_calories">"Total calories"</string>
+    <string name="water_intake">Water intake</string>
+    <string name="hours_of_sleep">Sleep duration</string>
+    <string name="set_user_name">Set username</string>
+    <string name="user_name">Username</string>
 </resources>

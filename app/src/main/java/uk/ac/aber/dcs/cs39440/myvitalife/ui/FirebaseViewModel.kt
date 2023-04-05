@@ -8,10 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -120,19 +117,28 @@ class FirebaseViewModel : ViewModel() {
 
         foodRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                var calories = 0
                 for (foodSnapshot in snapshot.children) {
                     val foodName = foodSnapshot.key
-                    val kcal = foodSnapshot.child("kcal").value.toString().toInt()
+                    var amount = foodSnapshot.child("amount").value
+                    var kcal = foodSnapshot.child("kcal").value
+                    if (amount != null) {
+                        amount = amount.toString().toInt()
+                    } else {
+                        amount = 0
+                    }
+                    if (kcal != null) {
+                        kcal = kcal.toString().toInt()
+                    } else {
+                        kcal = 0
+                    }
                     foods.add(
                         Food(
                             name = foodName!!,
-                            kcal = kcal
+                            kcal = kcal,
+                            amount = amount
                         )
                     )
-                    calories += kcal
                 }
-                Log.d("FirebaseViewModel", "Total calories: $calories")
                 callback(foods)
             }
 
@@ -273,7 +279,10 @@ class FirebaseViewModel : ViewModel() {
                 .child(date)
                 .child("ListOfFood")
                 .child(name)
-            databaseReference.child("kcal").setValue(kcal).addOnSuccessListener {
+            Log.d("Test", date)
+            databaseReference.child("kcal").setValue(kcal)
+            databaseReference.child("amount").setValue(1)
+                .addOnSuccessListener {
                 // Update foodList after food is deleted
                 updateFoodData()
             }
@@ -323,6 +332,33 @@ class FirebaseViewModel : ViewModel() {
                 updateMoodData()
             }
         }
+    }
+
+    fun fetchMoodSummaryForTheDay(date: String = chosenDate, callback: (Map<Int, Int>) -> Unit) {
+        val moodRef = database.getReference("Users")
+            .child(Authentication.userId)
+            .child(date)
+            .child("ListOfMoods")
+
+        val moodCountMap = mutableMapOf<Int, Int>()
+
+        moodRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (moodSnapshot in snapshot.children) {
+                    val moodType = moodSnapshot.child("emojiIndex").value.toString().toInt()
+                    if (moodCountMap.containsKey(moodType)) {
+                        moodCountMap[moodType] = moodCountMap[moodType]!! + 1
+                    } else {
+                        moodCountMap[moodType] = 1
+                    }
+                }
+                callback(moodCountMap)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
     }
 
     fun addGoal(title: String, isDone: Boolean, date: String = chosenDate) {
@@ -442,55 +478,156 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
-//    fun countUp(foodName: String, firstValue: Int, date: String = chosenDate) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            val databaseReference = database.getReference("Users")
-//                .child(Authentication.userId)
-//                .child(date)
-//                .child("ListOfFood")
-//                .child(foodName)
-//            databaseReference.child("kcal").setValue(firstValue * 2)
-//                .addOnSuccessListener {
-//                // Update foodList after food is deleted
-//                updateFoodData()
-//            }
-//        }
-//    }
+    fun getUserName(callback: (String) -> Unit) {
+        val userRef = database.getReference("Users")
+            .child(Authentication.userId)
+            .child("UserName")
 
-    fun countUp(foodName: String, kcalOfTheProduct: Int, date: String = chosenDate) {
-        val firstValueRef = database.getReference("Users")
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val name = snapshot.value.toString()
+                    callback(name)
+                } else {
+                    callback("")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error here
+            }
+        })
+    }
+
+    fun addUserName(userName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+            databaseReference.child("UserName").setValue(userName)
+        }
+    }
+
+    fun getFoodsTotalCalories(foodName: String, date: String = chosenDate, callback: (Int) -> Unit) {
+        val databaseReference = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
             .child("ListOfFood")
             .child(foodName)
-            .child("firstValue")
 
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val amount = snapshot.child("amount").value?.toString()?.toIntOrNull() ?: 0
+                    val kcal = snapshot.child("kcal").value?.toString()?.toIntOrNull() ?: 0
+                    callback(amount * kcal)
+                } else {
+                    callback(0)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error here
+            }
+        })
+    }
+
+    fun getTotalCaloriesForADay(date: String = chosenDate, callback: (Int) -> Unit) {
+        val databaseReference = database.getReference("Users")
+            .child(Authentication.userId)
+            .child(date)
+            .child("ListOfFood")
+        var totalKcal = 0
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (foodSnapshot in snapshot.children) {
+                    var amount = foodSnapshot.child("amount").value
+                    var kcal = foodSnapshot.child("kcal").value
+                    if (amount != null) {
+                        amount = amount.toString().toInt()
+                    } else {
+                        amount = 0
+                    }
+                    if (kcal != null) {
+                        kcal = kcal.toString().toInt()
+                    } else {
+                        kcal = 0
+                    }
+                    totalKcal += amount * kcal
+                }
+                callback(totalKcal)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+    fun countUp(foodName: String, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
-            // Get the original first value from the database
-            val originalFirstValue = firstValueRef.get().await().getValue(Int::class.java) ?: 0
-
-            // Calculate the new first value by adding the original first value and kcalOfTheProduct
-            val newFirstValue = originalFirstValue + kcalOfTheProduct
-
-            // Update the first value in the database
-            firstValueRef.setValue(newFirstValue).await()
-
-            // Get the current kcal value from the database
-            val kcalRef = database.getReference("Users")
+            val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
                 .child(date)
                 .child("ListOfFood")
                 .child(foodName)
-                .child("kcal")
-            val currentKcal = kcalRef.get().await().getValue(Int::class.java) ?: 0
+            databaseReference.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(currentData: MutableData): Transaction.Result {
+                    val amount = currentData.child("amount").getValue(Int::class.java) ?: 0
+                    currentData.child("amount").value = amount + 1
+                    return Transaction.success(currentData)
+                }
 
-            // Update the kcal value in the database by adding kcalOfTheProduct to the current value
-            kcalRef.setValue(currentKcal + kcalOfTheProduct).await()
-
-            // Update foodList after food is added
-            updateFoodData()
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    currentData: DataSnapshot?
+                ) {
+                    if (committed) {
+                        // Update foodList after food is added
+                        updateFoodData()
+                    } else {
+                        Log.e("Firebase", "Transaction failed", error?.toException())
+                    }
+                }
+            })
         }
     }
+
+    fun countDown(foodName: String, date: String = chosenDate) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
+                .child("ListOfFood")
+                .child(foodName)
+            databaseReference.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(currentData: MutableData): Transaction.Result {
+                    val amount = currentData.child("amount").getValue(Int::class.java) ?: 0
+                    if (amount == 1) {
+                        return Transaction.abort()
+                    }
+                    currentData.child("amount").value = amount - 1
+                    return Transaction.success(currentData)
+                }
+
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    currentData: DataSnapshot?
+                ) {
+                    if (committed) {
+                        // Update foodList after food is added
+                        updateFoodData()
+                    } else {
+                        Log.e("Firebase", "Transaction failed", error?.toException())
+                    }
+                }
+            })
+        }
+    }
+
+
 
 
     fun logInWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {

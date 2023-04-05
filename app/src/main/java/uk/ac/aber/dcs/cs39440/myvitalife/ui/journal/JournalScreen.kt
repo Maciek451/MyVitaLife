@@ -45,6 +45,9 @@ fun JournalScreen(
 ) {
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
 
+    val tab0Button by remember { mutableStateOf(Icons.Filled.Mood) }
+    val tab1Button by remember { mutableStateOf(Icons.Filled.CheckBox) }
+
     val listOfGoals by firebaseViewModel.goalData.observeAsState(emptyList())
     val listOfMoods by firebaseViewModel.moodsList.observeAsState(emptyList())
 
@@ -65,10 +68,17 @@ fun JournalScreen(
 
                 }
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add"
-                )
+                if (selectedTabIndex == 0) {
+                    Icon(
+                        imageVector = tab0Button,
+                        contentDescription = "Add"
+                    )
+                } else {
+                    Icon(
+                        imageVector = tab1Button,
+                        contentDescription = "Modify"
+                    )
+                }
             }
         },
         navController = navController,

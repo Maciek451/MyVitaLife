@@ -62,7 +62,8 @@ private fun BuildNavigationGraph(
     var startScreenRoute = Screen.LoginSignIn.route
     if (user != null) {
         Authentication.userId = user.uid
-        startScreenRoute = Screen.Journal.route
+        Authentication.userEmail = user.email.toString()
+        startScreenRoute = Screen.Insights.route
     }
 
     NavHost(
@@ -80,7 +81,6 @@ private fun BuildNavigationGraph(
         composable(Screen.AddMoodOrGoal.route) { AddMoodOrGoalScreen(navController) }
         composable(Screen.AddMood.route) { AddMoodScreen(navController) }
         composable(Screen.AddSteps.route) { AddStepsScreen(navController) }
-//        composable(Screen.Summary.route) { SummaryScreen(navController) }
         composable(Screen.Account.route) { AccountScreen(navController) }
         composable(Screen.LoginSignIn.route) { LoginSignUpScreen(navController) }
     }

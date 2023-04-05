@@ -33,7 +33,7 @@ fun SleepScreen(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
-    var currentFabImage by remember { mutableStateOf(Icons.Filled.Add) }
+    var currentFabImage by remember { mutableStateOf(Icons.Filled.Bedtime) }
     val sleepData by firebaseViewModel.sleepHours.observeAsState(Sleep(0f, "", "", "", ""))
 
     TopLevelScaffold(
@@ -58,7 +58,6 @@ fun SleepScreen(
                 .fillMaxSize()
         ) {
             if (sleepData != Sleep(0f, "", "", "", "")) {
-                currentFabImage = Icons.Filled.Settings
                 Column(
                     modifier = Modifier
                         .fillMaxSize()

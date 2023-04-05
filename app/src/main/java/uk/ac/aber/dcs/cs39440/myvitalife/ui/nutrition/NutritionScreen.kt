@@ -5,8 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Remove
@@ -28,8 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.model.Water
@@ -43,7 +40,9 @@ fun NutritionScreen(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
-    var currentFabImage by remember { mutableStateOf(Icons.Filled.Add) }
+    val tab0Button by remember { mutableStateOf(Icons.Filled.EmojiFoodBeverage) }
+    val tab1Button by remember { mutableStateOf(Icons.Filled.Fastfood) }
+
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
 
     val listOfFood by firebaseViewModel.foodList.observeAsState(emptyList())
@@ -70,10 +69,17 @@ fun NutritionScreen(
                     }
                 },
             ) {
-                Icon(
-                    imageVector = currentFabImage,
-                    contentDescription = "Add"
-                )
+                if (selectedTabIndex == 0) {
+                    Icon(
+                        imageVector = tab0Button,
+                        contentDescription = "Add"
+                    )
+                } else {
+                    Icon(
+                        imageVector = tab1Button,
+                        contentDescription = "Add"
+                    )
+                }
             }
         },
         navController = navController,
@@ -107,7 +113,6 @@ fun NutritionScreen(
                 when (selectedTabIndex) {
                     0 -> {
                         if (waterData != Water(0, 0)) {
-                            currentFabImage = Icons.Filled.Settings
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize(),
@@ -138,12 +143,11 @@ fun NutritionScreen(
                         }
                     }
                     1 -> {
-                        currentFabImage = Icons.Filled.Add
                         if (listOfFood.isNotEmpty()) {
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(top = 12.dp),
+                                    .padding(top = 12.dp, bottom = 20.dp),
                                 contentPadding = PaddingValues(bottom = 16.dp)
                             )
                             {
@@ -158,7 +162,7 @@ fun NutritionScreen(
                                         ) {
                                             FoodCard(
                                                 name = entry.name,
-                                                kcal = entry.kcal,
+                                                amount = entry.amount,
                                                 openConfirmationDialog = { isOpen ->
                                                     isConfirmationDialogOpen = isOpen
                                                     foodToDelete = entry.name
@@ -202,10 +206,14 @@ fun NutritionScreen(
 @Composable
 fun FoodCard(
     name: String,
-    kcal: Int,
+    amount: Int,
     openConfirmationDialog: (Boolean) -> Unit = {},
     firebaseViewModel: FirebaseViewModel = viewModel(),
 ) {
+    var totalKcal by rememberSaveable { mutableStateOf(0) }
+    firebaseViewModel.getFoodsTotalCalories(name) { kcal ->
+        totalKcal = kcal
+    }
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -227,12 +235,21 @@ fun FoodCard(
                     fontSize = 20.sp
                 )
                 Text(
-                    text = kcal.toString(),
+                    text = totalKcal.toString(),
                     fontSize = 20.sp,
                     color = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    text = stringResource(id = R.string.amount),
+                    fontSize = 20.sp,
                     modifier = Modifier.padding(
-                        start = 8.dp,
+                        start = 20.dp,
                     )
+                )
+                Text(
+                    text = amount.toString(),
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         }
@@ -242,7 +259,7 @@ fun FoodCard(
             Column() {
                 IconButton(
                     onClick = {
-//                        firebaseViewModel.countUp(name, kcal)
+                        firebaseViewModel.countUp(name)
                     }
                 ) {
                     Icon(
@@ -252,7 +269,7 @@ fun FoodCard(
                 }
                 IconButton(
                     onClick = {
-//                        firebaseViewModel.countDown()
+                        firebaseViewModel.countDown(name)
                     }
                 ) {
                     Icon(

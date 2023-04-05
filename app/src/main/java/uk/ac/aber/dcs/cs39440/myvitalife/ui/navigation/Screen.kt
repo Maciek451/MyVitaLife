@@ -21,8 +21,8 @@ sealed class Screen(
 }
 val screens = listOf(
     Screen.Steps,
-    Screen.Insights,
     Screen.Journal,
+    Screen.Insights,
     Screen.Nutrition,
     Screen.Sleep,
 )
