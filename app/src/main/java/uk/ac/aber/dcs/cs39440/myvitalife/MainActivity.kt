@@ -22,7 +22,6 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.AccountScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood.AddMoodScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_mood_or_goal.AddMoodOrGoalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_sleep.AddSleepScreen
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_steps.AddStepsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.login_sign_up.LoginSignUpScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.steps.StepsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.InsightsScreen
@@ -80,7 +79,6 @@ private fun BuildNavigationGraph(
         composable(Screen.AddSleep.route) { AddSleepScreen(navController)}
         composable(Screen.AddMoodOrGoal.route) { AddMoodOrGoalScreen(navController) }
         composable(Screen.AddMood.route) { AddMoodScreen(navController) }
-        composable(Screen.AddSteps.route) { AddStepsScreen(navController) }
         composable(Screen.Account.route) { AccountScreen(navController) }
         composable(Screen.LoginSignIn.route) { LoginSignUpScreen(navController) }
     }

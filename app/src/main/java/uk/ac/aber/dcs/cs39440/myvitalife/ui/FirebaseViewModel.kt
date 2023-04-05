@@ -452,19 +452,6 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
-    fun deleteSleep(date: String = chosenDate) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference("Users")
-                .child(Authentication.userId)
-                .child(date)
-                .child("SleepData")
-            databaseReference.removeValue().addOnSuccessListener {
-                // Update foodList after food is deleted
-                updateSleepData()
-            }
-        }
-    }
-
     fun updateWaterCounter(incVal: Int, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")

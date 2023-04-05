@@ -40,6 +40,8 @@ fun NutritionScreen(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
+    val appBarTitle = stringResource(R.string.nutrition)
+
     val tab0Button by remember { mutableStateOf(Icons.Filled.EmojiFoodBeverage) }
     val tab1Button by remember { mutableStateOf(Icons.Filled.Fastfood) }
 
@@ -83,6 +85,7 @@ fun NutritionScreen(
             }
         },
         navController = navController,
+        appBarTitle = appBarTitle,
         givenDate = DesiredDate.date
     ) { innerPadding ->
         Surface(
@@ -120,18 +123,18 @@ fun NutritionScreen(
                             ) {
                                 Text(
                                     modifier = Modifier
-                                        .padding(top = 30.dp),
+                                        .padding(top = 20.dp),
                                     text = stringResource(id = R.string.hydration_goal),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.sp,
                                     textAlign = TextAlign.Center
                                 )
-                                Spacer(modifier = Modifier.padding(15.dp))
+                                Spacer(modifier = Modifier.padding(25.dp))
                                 Utils.CircularProgressBar(
                                     currentValue = waterData.waterDrunk,
                                     maxGoal = waterData.hydrationGoal
                                 )
-                                Spacer(modifier = Modifier.padding(15.dp))
+                                Spacer(modifier = Modifier.padding(25.dp))
                                 Button(onClick = {
                                     firebaseViewModel.updateWaterCounter(waterData.cupSize)
                                 }) {
@@ -221,15 +224,15 @@ fun FoodCard(
     ) {
         Column(
             horizontalAlignment = Alignment.Start,
-            modifier = Modifier.padding(
-                start = 8.dp
-            )
+            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
         ) {
             Text(
                 text = name,
                 fontSize = 25.sp,
             )
-            Row() {
+            Row(
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
                 Text(
                     text = stringResource(id = R.string.kcal),
                     fontSize = 20.sp
@@ -237,7 +240,7 @@ fun FoodCard(
                 Text(
                     text = totalKcal.toString(),
                     fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = stringResource(id = R.string.amount),
@@ -249,7 +252,7 @@ fun FoodCard(
                 Text(
                     text = amount.toString(),
                     fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.tertiary,
                 )
             }
         }

@@ -43,6 +43,7 @@ fun JournalScreen(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
+    val appBarTitle = stringResource(R.string.journal)
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
 
     val tab0Button by remember { mutableStateOf(Icons.Filled.Mood) }
@@ -82,6 +83,7 @@ fun JournalScreen(
             }
         },
         navController = navController,
+        appBarTitle = appBarTitle,
         givenDate = DesiredDate.date
     ) { innerPadding ->
         Surface(

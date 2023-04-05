@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.NordicWalking
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavHostController
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
@@ -25,18 +28,21 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 @Composable
 fun StepsScreen(
     navController: NavHostController
 ) {
+    val appBarTitle = stringResource(R.string.steps)
+
+    var isDialogOpen by rememberSaveable { mutableStateOf(false) }
+
     TopLevelScaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.AddSteps.route)
+                    isDialogOpen = true
                 }
             ) {
                 Icon(
@@ -46,6 +52,7 @@ fun StepsScreen(
             }
         },
         navController = navController,
+        appBarTitle = appBarTitle,
         givenDate = DesiredDate.date
     ) { innerPadding ->
         Surface(
@@ -58,6 +65,12 @@ fun StepsScreen(
             )
         }
     }
+    AddStepsDialog(
+        dialogIsOpen = isDialogOpen,
+        dialogOpen = { isOpen ->
+            isDialogOpen = isOpen
+        }
+    )
 }
 
 @Composable

@@ -11,11 +11,8 @@ sealed class Screen(
     object Sleep : Screen("sleep")
     object ProvideName : Screen("provide_name")
     object AddSleep : Screen("add_sleep")
-    object TimeAndDate : Screen("time_and_date")
     object AddMoodOrGoal : Screen("add_mood_or_goal")
     object AddMood : Screen("add_mood")
-    object AddSteps : Screen("add_steps")
-    object Summary : Screen("summary")
     object Account : Screen("account")
     object LoginSignIn : Screen("login_sign_in")
 }

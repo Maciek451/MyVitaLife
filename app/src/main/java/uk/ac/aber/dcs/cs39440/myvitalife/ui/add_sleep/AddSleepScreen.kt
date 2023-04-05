@@ -89,85 +89,87 @@ fun AddSleepScreen(
             Text(
                 text = stringResource(R.string.rate_your_sleep),
                 fontSize = 25.sp,
-                modifier = Modifier.padding(top = 10.dp)
+                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
+            )
+
+            Text(
+                text = sliderPosition.toInt().toString() + "/10",
+                fontSize = 25.sp,
+                color = MaterialTheme.colorScheme.tertiary
             )
 
             Slider(
                 value = sliderPosition,
                 onValueChange = { sliderPosition = it },
                 valueRange = 0f..10f,
-                modifier = Modifier.width(200.dp)
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(bottom = 10.dp)
             )
 
-            Text(text = sliderPosition.toInt().toString())
+            Spacer(modifier = Modifier.padding(10.dp))
+            Divider(thickness = 1.dp)
+            Spacer(modifier = Modifier.padding(10.dp))
 
             Text(
                 text = stringResource(R.string.how_do_you_feel),
                 fontSize = 25.sp,
-                modifier = Modifier.padding(top = 10.dp)
+                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
             )
 
             OutlinedTextField(
                 value = answer,
                 onValueChange = { answer = it },
                 modifier = Modifier
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = 10.dp)
             )
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = "Start:",
-                    fontSize = 25.sp,
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                )
-                TextButton(onClick = {
+            Spacer(modifier = Modifier.padding(10.dp))
+            Divider(thickness = 1.dp)
+            Spacer(modifier = Modifier.padding(10.dp))
+            Text(
+                text = "Start:",
+                fontSize = 25.sp,
+                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
+            )
+            TextButton(
+                onClick = {
                     sleepTime = SleepTime.START
                     clockState.show()
-                }) {
-                    Text(
-                        text = startTime,
-                        fontSize = 25.sp,
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                    )
-                }
-            }
-            Icon(
-                imageVector = Icons.Default.SingleBed,
-                contentDescription = "Bed",
-                modifier = Modifier
-                    .size(200.dp)
-            )
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
+                },
+                modifier = Modifier.padding(bottom = 10.dp)
             ) {
                 Text(
-                    text = "End:",
+                    text = startTime,
                     fontSize = 25.sp,
                     modifier = Modifier
                         .padding(top = 10.dp)
                 )
-                TextButton(onClick = {
+            }
+            Spacer(modifier = Modifier.padding(10.dp))
+            Divider(thickness = 1.dp)
+            Spacer(modifier = Modifier.padding(10.dp))
+            Text(
+                text = "End:",
+                fontSize = 25.sp,
+                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
+            )
+            TextButton(
+                onClick = {
                     sleepTime = SleepTime.END
                     clockState.show()
-                }) {
-                    Text(
-                        text = endTime,
-                        fontSize = 25.sp,
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                    )
-                }
+                },
+                modifier = Modifier.padding(bottom = 10.dp)
+            ) {
+                Text(
+                    text = endTime,
+                    fontSize = 25.sp,
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                )
             }
-
+            Spacer(modifier = Modifier.padding(10.dp))
+            Divider(thickness = 1.dp)
+            Spacer(modifier = Modifier.padding(10.dp))
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

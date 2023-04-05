@@ -21,11 +21,12 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 @Composable
 fun HomeScreenTopBar(
     navController: NavHostController,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    title: String
 ) {
     CenterAlignedTopAppBar(
         title = {
-            Text(stringResource(id = R.string.app_name))
+            Text(title)
         },
         navigationIcon = {
             IconButton(onClick = onClick) {
@@ -61,5 +62,5 @@ fun HomeScreenTopBar(
 @Composable
 fun HomeScreenTopBarPreview() {
     val navController = rememberNavController()
-    HomeScreenTopBar(navController)
+//    HomeScreenTopBar(navController)
 }

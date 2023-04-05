@@ -23,6 +23,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 @Composable
 fun TopLevelScaffold(
     navController: NavHostController,
+    appBarTitle: String,
     givenDate: String,
     floatingActionButton: @Composable () -> Unit = { },
     pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {}
@@ -59,6 +60,7 @@ fun TopLevelScaffold(
             topBar = {
                 Column() {
                     HomeScreenTopBar(
+                        title = appBarTitle,
                         onClick = {
                             coroutineScope.launch {
                                 if (drawerState.isOpen) {
@@ -68,7 +70,7 @@ fun TopLevelScaffold(
                                 }
                             }
                         },
-                        navController = navController
+                        navController = navController,
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,

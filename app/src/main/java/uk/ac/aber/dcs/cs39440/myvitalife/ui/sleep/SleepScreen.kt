@@ -33,7 +33,8 @@ fun SleepScreen(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
-    var currentFabImage by remember { mutableStateOf(Icons.Filled.Bedtime) }
+    val appBarTitle = stringResource(R.string.sleep)
+    val currentFabImage by remember { mutableStateOf(Icons.Filled.Bedtime) }
     val sleepData by firebaseViewModel.sleepHours.observeAsState(Sleep(0f, "", "", "", ""))
 
     TopLevelScaffold(
@@ -50,6 +51,7 @@ fun SleepScreen(
             }
         },
         navController = navController,
+        appBarTitle = appBarTitle,
         givenDate = DesiredDate.date
     ) { innerPadding ->
         Surface(
@@ -64,51 +66,57 @@ fun SleepScreen(
                         .padding(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
+                    Divider(thickness = 1.dp)
+                    Spacer(modifier = Modifier.padding(10.dp))
                     Text(
                         text = stringResource(id = R.string.duration_of_the_sleep),
                         fontSize = 20.sp
                     )
                     Text(
                         text = sleepData.duration,
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 30.sp
                     )
-
-                    Spacer(modifier = Modifier.padding(20.dp))
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Divider(thickness = 1.dp)
+                    Spacer(modifier = Modifier.padding(10.dp))
 
                     Text(
                         text = stringResource(id = R.string.rating),
                         fontSize = 20.sp
                     )
                     Text(
-                        text = sleepData.score.toString() + "/10",
+                        text = sleepData.score.toInt().toString() + "/10",
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 30.sp
                     )
-
-                    Spacer(modifier = Modifier.padding(20.dp))
-
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Divider(thickness = 1.dp)
+                    Spacer(modifier = Modifier.padding(10.dp))
                     Text(
                         text = stringResource(id = R.string.start_of_the_sleep),
                         fontSize = 20.sp
                     )
                     Text(
                         text = sleepData.start,
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 30.sp
                     )
-
-                    Spacer(modifier = Modifier.padding(20.dp))
-
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Divider(thickness = 1.dp)
+                    Spacer(modifier = Modifier.padding(10.dp))
                     Text(
                         text = stringResource(id = R.string.end_of_the_sleep),
                         fontSize = 20.sp
                     )
                     Text(
                         text = sleepData.end,
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 30.sp
                     )
-
-                    Spacer(modifier = Modifier.padding(20.dp))
-
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Divider(thickness = 1.dp)
+                    Spacer(modifier = Modifier.padding(10.dp))
                     Text(
                         text = stringResource(R.string.note),
                         fontSize = 20.sp
@@ -116,8 +124,11 @@ fun SleepScreen(
 
                     Text(
                         text = sleepData.note,
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 30.sp
                     )
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Divider(thickness = 1.dp)
                 }
             } else {
                 EmptySleepScreen()

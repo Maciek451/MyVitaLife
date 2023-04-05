@@ -35,21 +35,30 @@ import uk.ac.aber.dcs.cs39440.myvitalife.model.Water
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
+import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
+import java.time.LocalTime
 
 @Composable
 fun InsightsScreen(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
-
+    val appBarTitle = stringResource(R.string.insights)
     var userName by rememberSaveable { mutableStateOf("") }
     var totalCalories by rememberSaveable { mutableStateOf(0) }
     val waterData by firebaseViewModel.waterData.observeAsState(Water(0, 0))
     val sleepData by firebaseViewModel.sleepHours.observeAsState(Sleep(0f, "", "", "", ""))
+    firebaseViewModel.getUserName {
+        userName = it
+    }
+    firebaseViewModel.getTotalCaloriesForADay() {
+        totalCalories = it
+    }
 
     TopLevelScaffold(
         floatingActionButton = {},
         navController = navController,
+        appBarTitle = appBarTitle,
         givenDate = DesiredDate.date
     ) { innerPadding ->
         Surface(
@@ -64,39 +73,101 @@ fun InsightsScreen(
                     .padding(all = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                firebaseViewModel.getUserName {
-                    userName = it
-                }
                 Text(
-                    modifier = Modifier
-                        .padding(top = 30.dp),
-                    text = userName,
+                    text = greeting(userName),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(bottom = 20.dp)
                 )
                 MoodCounter(firebaseViewModel)
-                firebaseViewModel.getTotalCaloriesForADay() {
-                    totalCalories = it
+                Card(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = 10.dp),
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.total_calories),
+                            modifier = Modifier.padding(top = 6.dp),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = totalCalories.toString(),
+                            fontSize = 50.sp
+                        )
+                    }
                 }
-                Text(
-                    text = stringResource(id = R.string.total_calories) + totalCalories.toString(),
-                    fontSize = 20.sp
-                )
-                Text(
-                    text = stringResource(id = R.string.water_intake) + waterData.waterDrunk + "/" + waterData.hydrationGoal
-                )
-                Text(
-                    text = stringResource(id = R.string.hours_of_sleep) + sleepData.duration
-                )
+                Card(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = 10.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.water_intake),
+                            modifier = Modifier.padding(top = 6.dp),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = "${waterData.waterDrunk} / ${waterData.hydrationGoal}",
+                            fontSize = 50.sp
+                        )
+                    }
+                }
+                Card(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = 10.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.hours_of_sleep),
+                            modifier = Modifier.padding(top = 6.dp),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                        val duration = sleepData.duration.ifEmpty { "00:00" }
+                        Text(
+                            text = duration,
+                            fontSize = 50.sp
+                        )
+                    }
+                }
             }
         }
     }
 }
 
-@Composable
-fun Greeting() {
+fun greeting(userName: String): String {
+    val currentTime = LocalTime.now()
+    val morning = LocalTime.parse("06:00")
+    val afternoon = LocalTime.parse("12:00")
+    val evening = LocalTime.parse("18:00")
+    val night = LocalTime.parse("00:00")
 
+    val timeOfDay = when {
+        currentTime.isAfter(morning) && currentTime.isBefore(afternoon) -> "morning"
+        currentTime.isAfter(afternoon) && currentTime.isBefore(evening) -> "afternoon"
+        currentTime.isAfter(evening) || currentTime.isBefore(night) -> "evening"
+        else -> "night"
+    }
+
+    return "Good $timeOfDay $userName!"
 }
 
 @Composable
@@ -125,10 +196,13 @@ fun MoodCounter(
             .fillMaxSize()
             .padding(all = 10.dp)
     ) {
-        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 text = stringResource(id = R.string.mood_counter),
-                modifier = Modifier.padding(start = 10.dp, top = 6.dp),
+                modifier = Modifier.padding(top = 6.dp),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
