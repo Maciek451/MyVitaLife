@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,6 +49,8 @@ fun LoginSignUpScreen(
 
     val context = LocalContext.current
 
+    var isDialogOpen by rememberSaveable { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .padding(start = 8.dp, end = 8.dp)
@@ -65,12 +68,12 @@ fun LoginSignUpScreen(
         OutlinedTextField(
             value = email,
             label = {
-                Text(text = stringResource(id = R.string.user_name))
+                Text(text = stringResource(id = R.string.email))
             },
             onValueChange = {
                 email = it
                 errorMessage = ""
-                            },
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
@@ -90,7 +93,7 @@ fun LoginSignUpScreen(
             onValueChange = {
                 password = it
                 errorMessage = ""
-                            },
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
@@ -105,8 +108,8 @@ fun LoginSignUpScreen(
                 // Please provide localized description for accessibility services
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
-                IconButton(onClick = {passwordVisible = !passwordVisible}){
-                    Icon(imageVector  = image, description)
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = image, description)
                 }
             }
         )
@@ -120,7 +123,7 @@ fun LoginSignUpScreen(
                 firebaseViewModel.logInWithEmailAndPassword(email, password) { returnVal ->
                     errorMessage = processLoginUi(returnVal)
                     if (returnVal == 0) {
-                        navController.navigate(Screen.Journal.route)
+                        navController.navigate(Screen.Insights.route)
                     }
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 }
@@ -138,7 +141,7 @@ fun LoginSignUpScreen(
                 firebaseViewModel.signUpWithEmailAndPassword(email, password) { returnVal ->
                     errorMessage = processLoginUi(returnVal)
                     if (returnVal == 0) {
-                        navController.navigate(Screen.Journal.route)
+                        navController.navigate(Screen.Insights.route)
                     }
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 }
@@ -149,7 +152,27 @@ fun LoginSignUpScreen(
         ) {
             Text(text = stringResource(id = R.string.signUp_button))
         }
+
+        TextButton(
+            onClick = {
+                isDialogOpen = true
+            },
+            modifier = Modifier
+                .padding(top = 10.dp),
+        ) {
+            Text(
+                text = stringResource(id = R.string.forgot_password),
+                textDecoration = TextDecoration.Underline,
+                color = MaterialTheme.colorScheme.tertiary
+            )
+        }
     }
+    ForgotPasswordDialog(
+        dialogIsOpen = isDialogOpen,
+        dialogOpen = { isOpen ->
+            isDialogOpen = isOpen
+        }
+    )
 }
 
 //if (viewModel.isLoggedIn.value) {

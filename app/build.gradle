@@ -97,11 +97,13 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
 
+    //GSON
+    implementation 'com.google.code.gson:gson:2.10.1'
     //Dagger - Hilt
 //    implementation 'com.google.dagger:hilt-android:2.44'
 //    kapt 'com.google.dagger:hilt-android-compiler:2.44'
 //    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
-    
+
 //    implementation 'androidx.compose.material3:material3:1.0.0-alpha14'
 //    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
 //    implementation 'androidx.activity:activity-compose:1.6.1'

@@ -1,37 +1,39 @@
-package uk.ac.aber.dcs.cs39440.myvitalife.ui.steps
+package uk.ac.aber.dcs.cs39440.myvitalife.ui.login_sign_up
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddStepsDialog(
+fun ForgotPasswordDialog(
     dialogIsOpen: Boolean,
     dialogOpen: (Boolean) -> Unit = {},
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
-    var stepsGoal by rememberSaveable {
+    var email by rememberSaveable {
         mutableStateOf("")
     }
 
-    var isError by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
 
     if (dialogIsOpen) {
         Dialog(
@@ -44,10 +46,10 @@ fun AddStepsDialog(
                 ConstraintLayout(
                     modifier = Modifier.padding(start = 8.dp, end = 8.dp)
                 ) {
-                    val (mainText, field, error, saveButton, cancelButton) = createRefs()
+                    val (mainText, firstField, sendButton, cancelButton) = createRefs()
 
                     Text(
-                        text = stringResource(id = R.string.steps_goal),
+                        text = stringResource(id = R.string.reset_your_password_text),
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -60,64 +62,48 @@ fun AddStepsDialog(
                     )
 
                     OutlinedTextField(
-                        value = stepsGoal,
-                        onValueChange = { stepsGoal = it },
-                        label = { Text(text = stringResource(id = R.string.number_of_steps)) },
+                        value = email,
+                        onValueChange = { email = it },
+                        label = { Text(text = stringResource(id = R.string.email)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 8.dp)
-                            .constrainAs(field) {
+                            .constrainAs(firstField) {
                                 start.linkTo(parent.start)
                                 top.linkTo(mainText.bottom)
-                            },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Number,
-                        ),
-                        isError = isError,
+                            }
                     )
-                    if (isError) {
-                        Text(
-                            text = stringResource(id = R.string.must_be_a_number),
-                            fontSize = 10.sp,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier
-                                .constrainAs(error) {
-                                    top.linkTo(field.bottom)
-                                    bottom.linkTo(field.top)
-                                }
-                        )
-                    }
 
                     Button(
                         onClick = {
-//                            firebaseViewModel.addGoal(goalTitle, false)
+                            firebaseViewModel.sendPasswordResetEmail(email, context)
 
-                            stepsGoal = ""
+                            email = ""
 
                             dialogOpen(false)
                         },
                         modifier = Modifier
                             .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
-                            .constrainAs(saveButton) {
-                                top.linkTo(field.bottom)
+                            .constrainAs(sendButton) {
+                                top.linkTo(firstField.bottom)
                                 end.linkTo(parent.end)
                             }
                             .height(50.dp)
                             .width(120.dp),
-                        enabled = stepsGoal.isNotEmpty()
+                        enabled = email.isNotEmpty()
                     ) {
                         Text(stringResource(R.string.confirm_button))
                     }
 
                     Button(
                         onClick = {
-                            stepsGoal = ""
+                            email = ""
                             dialogOpen(false)
                         },
                         modifier = Modifier
                             .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
                             .constrainAs(cancelButton) {
-                                top.linkTo(field.bottom)
+                                top.linkTo(firstField.bottom)
                                 start.linkTo(parent.absoluteLeft)
                             }
                             .height(50.dp)
@@ -128,14 +114,5 @@ fun AddStepsDialog(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun AddStepsScreenPreview() {
-    val navController = rememberNavController()
-    MyVitaLifeTheme(dynamicColor = false) {
-//        AddStepsDialog(navController)
     }
 }

@@ -17,19 +17,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.MoodCounter
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.greeting
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition.AddWaterDialog
 
 @Composable
 fun AccountScreen(
@@ -116,30 +110,6 @@ fun AccountScreen(
                 ) {
                     Text(text = stringResource(id = R.string.signOut))
                 }
-            }
-        }
-        Card(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 40.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(all = 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(id = R.string.user_identifier),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = Authentication.userId,
-                    modifier = Modifier.padding(top = 6.dp),
-                    fontSize = 20.sp
-                )
             }
         }
     }

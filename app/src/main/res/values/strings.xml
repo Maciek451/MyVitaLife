@@ -54,7 +54,7 @@
     <string name="password">Password</string>
     <string name="name_of_food">Name of the product</string>
     <string name="number_of_calories">Number of calories</string>
-    <string name="must_be_a_number">Must be a number!</string>
+    <string name="must_be_a_number">Must be a decimal number!</string>
     <string name="hydration_goal">Your hydration goal:</string>
     <string name="drawer_image">Drawer image</string>
     <string name="mood_chart">Mood chart</string>
@@ -87,4 +87,9 @@
     <string name="user_identifier">User identifier:</string>
     <string name="steps_goal">Steps goal for today</string>
     <string name="number_of_steps">Number of steps</string>
+    <string name="data_exported">Data exported to downloads folder</string>
+    <string name="export_data">Do you want to export your data to txt file?</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="reset_your_password_text">Send password reset email</string>
+    <string name="email">Email</string>
 </resources>

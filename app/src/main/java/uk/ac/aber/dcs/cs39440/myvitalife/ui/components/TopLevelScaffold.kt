@@ -11,12 +11,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import kotlinx.coroutines.launch
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,9 +26,9 @@ import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 fun TopLevelScaffold(
     navController: NavHostController,
     appBarTitle: String,
-    givenDate: String,
     floatingActionButton: @Composable () -> Unit = { },
-    pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {}
+    givenDate: String,
+    pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {},
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()

@@ -1,21 +1,31 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui
 
+import android.content.Context
+import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import uk.ac.aber.dcs.cs39440.myvitalife.model.*
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
+import java.io.FileWriter
+import java.io.IOException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 object Authentication {
     var userId = ""
@@ -614,8 +624,36 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
+    fun exportData() {
+        // Get reference to the Firebase Realtime Database node
+        val databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Authentication.userId)
 
+// Attach a listener to the node to retrieve the data
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Convert the DataSnapshot to a JSON string
+                val gson = GsonBuilder().setPrettyPrinting().create()
+                val json = gson.toJson(dataSnapshot.value)
+                Log.d("JOSN", json)
+                // Write the JSON string to a file
+                try {
+                    val downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    val downloadFolderPath = downloadFolder.absolutePath
+                    val currentDate = Utils.getCurrentDate()
+                    val jsonFilePath = "$downloadFolderPath/data_$currentDate.txt"
+                    val fileWriter = FileWriter(jsonFilePath)
+                    fileWriter.write(json)
+                    fileWriter.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
 
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error
+            }
+        })
+    }
 
     fun logInWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {
         Firebase.auth.signInWithEmailAndPassword(email, password)
@@ -678,6 +716,19 @@ class FirebaseViewModel : ViewModel() {
                             }
                         }
                     }
+                }
+            }
+    }
+
+    fun sendPasswordResetEmail(email: String, context: Context) {
+        val auth = FirebaseAuth.getInstance()
+
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(context, "Password reset email sent", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Failed to send password reset email", Toast.LENGTH_SHORT).show()
                 }
             }
     }

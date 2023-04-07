@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -78,6 +79,15 @@ class Utils {
             animDuration: Int = 100,
             animDelay: Int = 0
         ) {
+            val lightModeText = Color.Black
+            val darkModeText = Color.White
+
+            val currentColor = if (isSystemInDarkTheme()) {
+                darkModeText
+            } else {
+                lightModeText
+            }
+
             var animationPlayed by remember {
                 mutableStateOf(false)
             }
@@ -108,7 +118,7 @@ class Utils {
                 }
                 Text(
                     text = "$currentValue/$maxGoal",
-                    color = Color.Black,
+                    color = currentColor,
                     fontSize = fontSize,
                     fontWeight = FontWeight.Bold
                 )
