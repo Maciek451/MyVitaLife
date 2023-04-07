@@ -194,17 +194,17 @@ fun MoodCounter(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(id = R.string.mood_counter),
-                modifier = Modifier.padding(top = 6.dp),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
+//            Text(
+//                text = stringResource(id = R.string.mood_counter),
+//                modifier = Modifier.padding(top = 6.dp),
+//                fontSize = 20.sp,
+//                fontWeight = FontWeight.Bold,
+//                textAlign = TextAlign.Center
+//            )
         }
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(top = 15.dp, bottom = 15.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
@@ -214,14 +214,16 @@ fun MoodCounter(
             ) {
                 Icon(
                     modifier = Modifier
-                        .background(color = Color.Cyan, shape = CircleShape)
-                        .size(30.dp),
+                        .background(color = Color.Green, shape = CircleShape)
+                        .size(50.dp),
                     imageVector = Icons.Filled.SentimentVerySatisfied,
                     contentDescription = "Amazing"
                 )
                 Text(
+                    modifier = Modifier.padding(top = 10.dp),
                     text = moodCountMap[AMAZING].toString(),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
                 )
             }
             Column(
@@ -229,14 +231,16 @@ fun MoodCounter(
             ) {
                 Icon(
                     modifier = Modifier
-                        .background(color = Color.Green, shape = CircleShape)
-                        .size(30.dp),
+                        .background(color = Color.Cyan, shape = CircleShape)
+                        .size(50.dp),
                     imageVector = Icons.Filled.SentimentSatisfied,
                     contentDescription = "Good"
                 )
                 Text(
+                    modifier = Modifier.padding(top = 10.dp),
                     text = moodCountMap[GOOD].toString(),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
                 )
             }
             Column(
@@ -245,28 +249,15 @@ fun MoodCounter(
                 Icon(
                     modifier = Modifier
                         .background(color = Color.Yellow, shape = CircleShape)
-                        .size(30.dp),
+                        .size(50.dp),
                     imageVector = Icons.Filled.SentimentNeutral,
                     contentDescription = "Neutral"
                 )
                 Text(
+                    modifier = Modifier.padding(top = 10.dp),
                     text = moodCountMap[NEUTRAL].toString(),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .background(color = Color.Red, shape = CircleShape)
-                        .size(30.dp),
-                    imageVector = Icons.Filled.SentimentDissatisfied,
-                    contentDescription = "Bad"
-                )
-                Text(
-                    text = moodCountMap[BAD].toString(),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
                 )
             }
             Column(
@@ -275,13 +266,32 @@ fun MoodCounter(
                 Icon(
                     modifier = Modifier
                         .background(color = Color.Magenta, shape = CircleShape)
-                        .size(30.dp),
+                        .size(50.dp),
+                    imageVector = Icons.Filled.SentimentDissatisfied,
+                    contentDescription = "Bad"
+                )
+                Text(
+                    modifier = Modifier.padding(top = 10.dp),
+                    text = moodCountMap[BAD].toString(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .background(color = Color.Red, shape = CircleShape)
+                        .size(50.dp),
                     imageVector = Icons.Filled.SentimentVeryDissatisfied,
                     contentDescription = "Awful"
                 )
                 Text(
+                    modifier = Modifier.padding(top = 10.dp),
                     text = moodCountMap[AWFUL].toString(),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
                 )
             }
         }

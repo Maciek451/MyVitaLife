@@ -18,6 +18,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -48,7 +49,7 @@ fun JournalScreen(
     val appBarTitle = stringResource(R.string.journal)
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
 
-    val tab0Button by remember { mutableStateOf(Icons.Filled.Mood) }
+    val tab0Button by remember { mutableStateOf(Icons.Filled.AddReaction) }
     val tab1Button by remember { mutableStateOf(Icons.Filled.CheckBox) }
 
     val listOfGoals by firebaseViewModel.goalData.observeAsState(emptyList())
@@ -57,6 +58,7 @@ fun JournalScreen(
     var itemToDelete by remember { mutableStateOf("") }
 
     var isGoalDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var isMoodDialogOpen by rememberSaveable { mutableStateOf(false) }
     var isConfirmationDialogOpen by rememberSaveable { mutableStateOf(false) }
 
     TopLevelScaffold(
@@ -64,7 +66,8 @@ fun JournalScreen(
             FloatingActionButton(
                 onClick = {
                     if (selectedTabIndex == 0) {
-                        navController.navigate(Screen.AddMood.route)
+//                        navController.navigate(Screen.AddMood.route)
+                        isMoodDialogOpen = true
                     } else {
                         isGoalDialogOpen = true
                     }
@@ -96,8 +99,7 @@ fun JournalScreen(
             Column(
                 modifier = Modifier
                     .padding(start = 8.dp, end = 8.dp)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TabRow(
@@ -190,6 +192,12 @@ fun JournalScreen(
         dialogIsOpen = isGoalDialogOpen,
         dialogOpen = { isOpen ->
             isGoalDialogOpen = isOpen
+        }
+    )
+    AddMoodDialog(
+        dialogIsOpen = isMoodDialogOpen,
+        dialogOpen = { isOpen ->
+            isMoodDialogOpen = isOpen
         }
     )
     DeleteConfirmationDialog(
@@ -384,14 +392,12 @@ private fun EmptyJournal(tabIndex: Int) {
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.padding(10.dp))
-            Image(
+            Icon(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp),
-                painter = painterResource(id = R.drawable.emptyjournal),
-                contentDescription = stringResource(R.string.empty_journal_image),
-                contentScale = ContentScale.Crop
+                    .fillMaxSize()
+                    .alpha(0.1f),
+                imageVector = Icons.Default.Mood,
+                contentDescription = "EmptySleepScreen"
             )
         } else {
             Text(
@@ -402,14 +408,12 @@ private fun EmptyJournal(tabIndex: Int) {
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.padding(20.dp))
-            Image(
+            Icon(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp),
-                painter = painterResource(id = R.drawable.goalstabimage),
-                contentDescription = stringResource(R.string.goals_tab_image),
-                contentScale = ContentScale.Crop
+                    .fillMaxSize()
+                    .alpha(0.1f),
+                imageVector = Icons.Default.AddTask,
+                contentDescription = "EmptySleepScreen"
             )
         }
 

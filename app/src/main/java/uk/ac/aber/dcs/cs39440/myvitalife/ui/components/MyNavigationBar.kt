@@ -47,8 +47,8 @@ fun NavigationBar(
             label = stringResource(id = R.string.insights)
         ),
         Screen.Sleep to IconGroup(
-            filledIcon = Icons.Filled.Bed,
-            outlineIcon = Icons.Outlined.Bed,
+            filledIcon = Icons.Filled.Hotel,
+            outlineIcon = Icons.Outlined.Hotel,
             label = stringResource(id = R.string.sleep)
         ),
     )

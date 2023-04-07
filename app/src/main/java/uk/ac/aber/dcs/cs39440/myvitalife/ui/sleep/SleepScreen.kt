@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -155,11 +156,12 @@ private fun EmptySleepScreen() {
             fontSize = 20.sp,
             textAlign = TextAlign.Center
         )
-        Image(
-            modifier = Modifier.fillMaxWidth(),
-            painter = painterResource(id = R.drawable.sleepimage),
-            contentDescription = stringResource(R.string.sleep_image),
-            contentScale = ContentScale.Crop
+        Icon(
+            modifier = Modifier
+                .fillMaxSize()
+                .alpha(0.1f),
+            imageVector = Icons.Default.Hotel,
+            contentDescription = "EmptySleepScreen"
         )
     }
 }

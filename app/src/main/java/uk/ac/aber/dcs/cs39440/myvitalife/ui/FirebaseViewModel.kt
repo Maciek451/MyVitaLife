@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -97,6 +98,24 @@ class FirebaseViewModel : ViewModel() {
     }
 
     private fun updateSleepData() {
+        fetchSleepData(chosenDate) { sleeps ->
+            _sleepHours.value = sleeps
+        }
+    }
+
+    private fun updateAllData() {
+        fetchFoodData(chosenDate) { foods ->
+            _foodList.value = foods
+        }
+        fetchMoodData(chosenDate) { moods ->
+            _moodsList.value = moods
+        }
+        fetchGoalData(chosenDate) { goals ->
+            _goalList.value = goals
+        }
+        fetchWaterData(chosenDate) { water ->
+            _waterData.value = water
+        }
         fetchSleepData(chosenDate) { sleeps ->
             _sleepHours.value = sleeps
         }
@@ -395,6 +414,17 @@ class FirebaseViewModel : ViewModel() {
             databaseReference.removeValue().addOnSuccessListener {
                 // Update foodList after food is deleted
                 updateGoalData()
+            }
+        }
+    }
+
+    fun deleteAllUserData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+            databaseReference.removeValue().addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateAllData()
             }
         }
     }

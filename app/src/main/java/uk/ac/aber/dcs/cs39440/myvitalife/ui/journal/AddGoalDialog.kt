@@ -29,7 +29,7 @@ fun AddGoalDialog(
 
     if (dialogIsOpen) {
         Dialog(
-            onDismissRequest = { /* Empty so clicking outside has no effect */ }
+            onDismissRequest = { dialogOpen(false) }
         ) {
             Surface(
                 shape = MaterialTheme.shapes.large,

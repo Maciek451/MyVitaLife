@@ -42,7 +42,7 @@ fun AddFoodDialog(
 
     if (dialogIsOpen) {
         Dialog(
-            onDismissRequest = { },
+            onDismissRequest = { dialogOpen(false) },
         ) {
             Surface(
                 shape = MaterialTheme.shapes.large,

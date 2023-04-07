@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NordicWalking
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.navigation.NavHostController
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,9 +62,27 @@ fun StepsScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            StepsScreenContent(
-                modifier = Modifier.padding(8.dp)
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(top = 30.dp),
+                    text = stringResource(id = R.string.daily_steps_text),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
+                )
+                Icon(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .alpha(0.1f),
+                    imageVector = Icons.Default.NordicWalking,
+                    contentDescription = "EmptySleepScreen"
+                )
+            }
         }
     }
     AddStepsDialog(
@@ -71,32 +91,6 @@ fun StepsScreen(
             isDialogOpen = isOpen
         }
     )
-}
-
-@Composable
-fun StepsScreenContent(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(top = 30.dp),
-            text = stringResource(id = R.string.daily_steps_text),
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center
-        )
-        Image(
-            modifier = Modifier.fillMaxWidth(),
-            painter = painterResource(id = R.drawable.dailystepsimage),
-            contentDescription = stringResource(R.string.daily_steps_image),
-            contentScale = ContentScale.Crop
-        )
-    }
 }
 
 @Preview

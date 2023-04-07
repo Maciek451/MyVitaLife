@@ -92,4 +92,9 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="reset_your_password_text">Send password reset email</string>
     <string name="email">Email</string>
+    <string name="warning">Clear all data?</string>
+    <string name="warning2">You can\'t undo this. Your data will be permanently deleted after clicking confirm</string>
+    <string name="data_removed">Data removed</string>
+    <string name="choose_theme">Choose theme</string>
+    <string name="ok">Ok</string>
 </resources>

@@ -17,6 +17,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -44,7 +45,7 @@ fun NutritionScreen(
 ) {
     val appBarTitle = stringResource(R.string.nutrition)
 
-    val tab0Button by remember { mutableStateOf(Icons.Filled.EmojiFoodBeverage) }
+    val tab0Button by remember { mutableStateOf(Icons.Filled.Coffee) }
     val tab1Button by remember { mutableStateOf(Icons.Filled.Fastfood) }
 
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
@@ -313,11 +314,12 @@ private fun EmptyScreen(tabIndex: Int) {
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.padding(10.dp))
-            Image(
-                painter = painterResource(id = R.drawable.hydrationimage),
-                contentDescription = stringResource(R.string.hydration_image),
-                contentScale = ContentScale.Crop
+            Icon(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(0.1f),
+                imageVector = Icons.Default.WaterDrop,
+                contentDescription = "EmptySleepScreen"
             )
         } else {
             Text(
@@ -328,13 +330,12 @@ private fun EmptyScreen(tabIndex: Int) {
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.padding(10.dp))
-            Image(
+            Icon(
                 modifier = Modifier
-                    .size(300.dp),
-                painter = painterResource(id = R.drawable.eatingimage),
-                contentDescription = stringResource(R.string.eating_image),
-                contentScale = ContentScale.Crop
+                    .fillMaxSize()
+                    .alpha(0.1f),
+                imageVector = Icons.Default.Restaurant,
+                contentDescription = "EmptySleepScreen"
             )
         }
     }
