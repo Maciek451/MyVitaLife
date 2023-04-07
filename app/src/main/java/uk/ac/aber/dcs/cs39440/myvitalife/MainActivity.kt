@@ -20,7 +20,8 @@ import com.google.firebase.ktx.Firebase
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.AccountScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_sleep.AddSleepScreen
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.login_sign_up.LoginSignUpScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.authentication.SignInScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.authentication.SignUpScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.steps.StepsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.InsightsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.journal.JournalScreen
@@ -70,10 +71,11 @@ private fun BuildNavigationGraph(
         composable(Screen.Insights.route) { InsightsScreen(navController)}
         composable(Screen.Nutrition.route) { NutritionScreen(navController)}
         composable(Screen.Journal.route) { JournalScreen(navController)}
-        composable(Screen.LoginSignUp.route) { LoginSignUpScreen(navController)}
+        composable(Screen.SignIn.route) { SignInScreen(navController)}
+        composable(Screen.SignUp.route) { SignUpScreen(navController)}
         composable(Screen.AddSleep.route) { AddSleepScreen(navController)}
         composable(Screen.Account.route) { AccountScreen(navController) }
-        composable(Screen.LoginSignIn.route) { LoginSignUpScreen(navController) }
+        composable(Screen.LoginSignIn.route) { SignInScreen(navController) }
     }
 }
 

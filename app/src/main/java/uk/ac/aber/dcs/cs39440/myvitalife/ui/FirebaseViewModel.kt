@@ -13,9 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,8 +23,6 @@ import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 import java.io.FileWriter
 import java.io.IOException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 object Authentication {
     var userId = ""
@@ -38,8 +34,8 @@ object Authentication {
     const val ACCOUNT_DOES_NOT_EXIST = 2
     const val OTHER = 3
 
-    // Sign in error codes
-    const val SIGNED_IN_SUCCESSFULLY = 0
+    // Sign up error codes
+    const val SIGNED_UP_SUCCESSFULLY = 0
     const val USER_ALREADY_EXISTS = 4
     const val EMAIL_WRONG_FORMAT = 5
     const val PASSWORD_WRONG_FORMAT = 6
@@ -664,7 +660,6 @@ class FirebaseViewModel : ViewModel() {
                 // Convert the DataSnapshot to a JSON string
                 val gson = GsonBuilder().setPrettyPrinting().create()
                 val json = gson.toJson(dataSnapshot.value)
-                Log.d("JOSN", json)
                 // Write the JSON string to a file
                 try {
                     val downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -685,7 +680,7 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    fun logInWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {
+    fun signInWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {
         Firebase.auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 // User signed in successfully
@@ -726,7 +721,7 @@ class FirebaseViewModel : ViewModel() {
                         Authentication.userId = user.uid
                         Authentication.userEmail = user.email.toString()
                     }
-                    callback(Authentication.SIGNED_IN_SUCCESSFULLY)
+                    callback(Authentication.SIGNED_UP_SUCCESSFULLY)
                 } else {
                     // User sign up failed
                     val exception = task.exception

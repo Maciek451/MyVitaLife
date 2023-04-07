@@ -13,7 +13,7 @@
     <string name="sleep_image">Sleep screen (image)</string>
     <string name="add_button">+ Add</string>
     <string name="new_goal_button">New goal</string>
-    <string name="login_button">Login</string>
+    <string name="sign_in_button">Sign in</string>
     <string name="daily_steps_text">Set up your daily steps goal!</string>
     <string name="nutrition_text1">Add your daily hydration goal!</string>
     <string name="nutrition_text2">Add your food</string>
@@ -66,7 +66,7 @@
     <string name="water_data">Water data</string>
     <string name="account_icon">Account icon</string>
     <string name="account">Your account</string>
-    <string name="signUp_button">Sign up</string>
+    <string name="sign_up_button">Sign up</string>
     <string name="signOut">Sign out</string>
     <string name="start_of_the_sleep">Start of the sleep:</string>
     <string name="sleep_end_button">End of the sleep</string>
@@ -96,5 +96,8 @@
     <string name="warning2">You can\'t undo this. Your data will be permanently deleted after clicking confirm</string>
     <string name="data_removed">Data removed</string>
     <string name="choose_theme">Choose theme</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
+    <string name="create_account">Create account</string>
+    <string name="app_icon">App icon</string>
+    <string name="user_name_optional">Username (optional)</string>
 </resources>

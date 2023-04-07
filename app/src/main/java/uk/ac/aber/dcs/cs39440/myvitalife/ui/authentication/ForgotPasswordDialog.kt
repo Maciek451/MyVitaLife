@@ -1,4 +1,4 @@
-package uk.ac.aber.dcs.cs39440.myvitalife.ui.login_sign_up
+package uk.ac.aber.dcs.cs39440.myvitalife.ui.authentication
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height

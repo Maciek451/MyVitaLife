@@ -235,7 +235,7 @@ private fun MoodCard(
                     0 -> {
                         Icon(
                             modifier = Modifier
-                                .background(color = Color.Cyan, shape = CircleShape)
+                                .background(color = Color.Green, shape = CircleShape)
                                 .size(30.dp),
                             imageVector = Icons.Filled.SentimentVerySatisfied,
                             contentDescription = "Amazing"
@@ -248,7 +248,7 @@ private fun MoodCard(
                     1 -> {
                         Icon(
                             modifier = Modifier
-                                .background(color = Color.Green, shape = CircleShape)
+                                .background(color = Color.Cyan, shape = CircleShape)
                                 .size(30.dp),
                             imageVector = Icons.Filled.SentimentSatisfied,
                             contentDescription = "Good"
@@ -274,7 +274,7 @@ private fun MoodCard(
                     3 -> {
                         Icon(
                             modifier = Modifier
-                                .background(color = Color.Red, shape = CircleShape)
+                                .background(color = Color.Magenta, shape = CircleShape)
                                 .size(30.dp),
                             imageVector = Icons.Filled.SentimentDissatisfied,
                             contentDescription = "Bad"
@@ -287,7 +287,7 @@ private fun MoodCard(
                     4 -> {
                         Icon(
                             modifier = Modifier
-                                .background(color = Color.Magenta, shape = CircleShape)
+                                .background(color = Color.Red, shape = CircleShape)
                                 .size(30.dp),
                             imageVector = Icons.Filled.SentimentVeryDissatisfied,
                             contentDescription = "Awful"

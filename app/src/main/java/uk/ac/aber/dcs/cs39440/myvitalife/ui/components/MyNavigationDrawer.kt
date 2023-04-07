@@ -61,17 +61,17 @@ fun MainPageNavigationDrawer(
             "Why you should track your lifestyle?"
         ),
         Pair(
-            Icons.Default.DeleteForever,
-            "Clear all data"
-        ),
-        Pair(
             Icons.Default.ImportExport,
             "Export data to txt file"
         ),
         Pair(
             Icons.Default.BrightnessMedium,
             "Choose theme"
-        )
+        ),
+        Pair(
+            Icons.Default.DeleteForever,
+            "Clear all data"
+        ),
     )
 
     ModalNavigationDrawer(
@@ -98,18 +98,23 @@ fun MainPageNavigationDrawer(
                         label = { Text(item.second) },
                         selected = false,
                         onClick = {
-                            if (index == 0) {
-//                                navController.navigate(route = Screen.Login.route)
-//                                closeDrawer()
-                            } else if (index == 1) {
-                                isDeleteDataDialogOpen = true
-                                closeDrawer()
-                            } else if (index == 2) {
-                                isExportDialogOpen = true
-                                closeDrawer()
-                            } else if (index == 3) {
-                                isThemeDialogOpen = true
-                                closeDrawer()
+                            when (index) {
+                                0 -> {
+                        //                                navController.navigate(route = Screen.Login.route)
+                        //                                closeDrawer()
+                                }
+                                1 -> {
+                                    isExportDialogOpen = true
+                                    closeDrawer()
+                                }
+                                2 -> {
+                                    isThemeDialogOpen = true
+                                    closeDrawer()
+                                }
+                                3 -> {
+                                    isDeleteDataDialogOpen = true
+                                    closeDrawer()
+                                }
                             }
                         }
                     )
@@ -245,7 +250,7 @@ fun DeleteAllDataConfirmationDialog(
 fun ChooseThemeDialog(
     dialogIsOpen: Boolean,
     dialogOpen: (Boolean) -> Unit = {},
-    navController: NavController
+    navController: NavController,
 ) {
     val options = listOf("Light", "Dark", "System Default")
     var selectedOptionIndex by rememberSaveable { mutableStateOf(0) }
@@ -256,7 +261,7 @@ fun ChooseThemeDialog(
             title = {
                 Text(
                     text = stringResource(id = R.string.choose_theme),
-                    fontSize = 20.sp
+                    fontSize = 25.sp
                 )
             },
             text = {
@@ -264,8 +269,7 @@ fun ChooseThemeDialog(
                     items(options.size) { index ->
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(5.dp),
+                                .fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
@@ -274,8 +278,7 @@ fun ChooseThemeDialog(
                             )
                             Text(
                                 text = options[index],
-                                modifier = Modifier.padding(start = 16.dp),
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.bodyLarge
                             )
                         }
                     }
@@ -285,11 +288,19 @@ fun ChooseThemeDialog(
                 TextButton(
                     onClick = {
                         when (selectedOptionIndex) {
-                            0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                            1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                            2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                            0 -> {
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                                dialogOpen(false)
+                            }
+                            1 -> {
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                                dialogOpen(false)
+                            }
+                            2 -> {
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                                dialogOpen(false)
+                            }
                         }
-                        dialogOpen(false)
                     }
                 ) {
                     Text(stringResource(R.string.ok))
