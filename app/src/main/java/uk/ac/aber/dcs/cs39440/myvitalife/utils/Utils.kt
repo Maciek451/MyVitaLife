@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import uk.ac.aber.dcs.cs39440.myvitalife.model.ThemeSettings
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -82,10 +83,10 @@ class Utils {
             animDuration: Int = 100,
             animDelay: Int = 0
         ) {
-            val lightModeText = Color.Black
-            val darkModeText = Color.White
+            val lightModeText = Color.White
+            val darkModeText = Color.Black
 
-            val currentColor = if (isSystemInDarkTheme()) {
+            val currentColor = if (ThemeSettings.isDarkTheme) {
                 darkModeText
             } else {
                 lightModeText
