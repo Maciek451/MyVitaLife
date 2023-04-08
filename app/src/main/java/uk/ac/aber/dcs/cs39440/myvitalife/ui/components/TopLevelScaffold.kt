@@ -39,7 +39,7 @@ fun TopLevelScaffold(
         state = calendarState,
         selection = CalendarSelection.Date { _date ->
             Log.d("SelectedDate", "$_date")
-            val chosenDate = _date.toString()
+            val chosenDate = Utils.getFormattedDateString(_date.toString())
             if (chosenDate.isNotEmpty()) {
                 DesiredDate.date = chosenDate
                 DesiredDate.notifyDateChangeListeners()

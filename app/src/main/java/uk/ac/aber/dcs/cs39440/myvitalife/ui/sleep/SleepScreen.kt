@@ -146,22 +146,22 @@ private fun EmptySleepScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            modifier = Modifier
-                .padding(top = 30.dp),
-            text = stringResource(id = R.string.sleep_text),
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center
-        )
         Icon(
             modifier = Modifier
-                .fillMaxSize()
-                .alpha(0.1f),
-            imageVector = Icons.Default.Hotel,
+                .size(100.dp)
+                .alpha(0.3f),
+            imageVector = Icons.Default.BedtimeOff,
             contentDescription = "EmptySleepScreen"
+        )
+        Text(
+            modifier = Modifier
+                .alpha(0.3f),
+            text = stringResource(id = R.string.sleep_text),
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center
         )
     }
 }

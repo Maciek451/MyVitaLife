@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
+import uk.ac.aber.dcs.cs39440.myvitalife.model.ThemeSettings
 
 val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -77,7 +78,6 @@ val DarkColors = darkColorScheme(
 
 @Composable
 fun MyVitaLifeTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
@@ -85,16 +85,16 @@ fun MyVitaLifeTheme(
     val colorScheme = when {
         dynamicColor -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (ThemeSettings.isDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-        darkTheme -> DarkColors
+        ThemeSettings.isDarkTheme -> DarkColors
         else -> LightColors
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
+            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = ThemeSettings.isDarkTheme
         }
     }
 

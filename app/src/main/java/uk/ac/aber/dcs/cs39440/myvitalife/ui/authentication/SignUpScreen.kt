@@ -2,7 +2,9 @@ package uk.ac.aber.dcs.cs39440.myvitalife.ui.authentication
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -23,6 +25,7 @@ import androidx.navigation.NavHostController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +34,7 @@ fun SignUpScreen(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
-
+    val title = R.string.app_name
     var email by remember {
         mutableStateOf("")
     }
@@ -41,23 +44,24 @@ fun SignUpScreen(
     var password by remember {
         mutableStateOf("")
     }
+    var passwordConfirmation by remember {
+        mutableStateOf("")
+    }
 
     var errorMessage by rememberSaveable { mutableStateOf("") }
 
     val context = LocalContext.current
 
-    var isDialogOpen by rememberSaveable { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
-            .padding(start = 8.dp, end = 8.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
+        TopAppBarWithArrow(navController, title)
         Text(
             text = stringResource(id = R.string.create_account),
-            modifier = Modifier.padding(bottom = 25.dp, top = 25.dp),
+            modifier = Modifier.padding(bottom = 25.dp, top = 120.dp),
             fontSize = 30.sp
         )
         OutlinedTextField(
@@ -71,7 +75,7 @@ fun SignUpScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 25.dp),
+                .padding(top = 25.dp, start = 8.dp, end = 8.dp),
             isError = errorMessage.isNotEmpty()
         )
         OutlinedTextField(
@@ -84,11 +88,13 @@ fun SignUpScreen(
                 errorMessage = ""
             },
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp),
             isError = errorMessage.isNotEmpty()
         )
 
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
+        var passwordConfirmationVisible by rememberSaveable { mutableStateOf(false) }
         OutlinedTextField(
             value = password,
             label = {
@@ -100,7 +106,7 @@ fun SignUpScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
+                .padding(start = 8.dp, end = 8.dp),
             isError = errorMessage.isNotEmpty(),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
@@ -113,6 +119,34 @@ fun SignUpScreen(
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = image, description)
+                }
+            }
+        )
+        OutlinedTextField(
+            value = passwordConfirmation,
+            label = {
+                Text(text = stringResource(id = R.string.confirm_password))
+            },
+            onValueChange = {
+                passwordConfirmation = it
+                errorMessage = ""
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
+            isError = errorMessage.isNotEmpty(),
+            visualTransformation = if (passwordConfirmationVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+            trailingIcon = {
+                val image = if (passwordConfirmationVisible)
+                    Icons.Filled.Visibility
+                else Icons.Filled.VisibilityOff
+
+                // Please provide localized description for accessibility services
+                val description = if (passwordConfirmationVisible) "Hide password" else "Show password"
+
+                IconButton(onClick = { passwordConfirmationVisible = !passwordConfirmationVisible }) {
                     Icon(imageVector = image, description)
                 }
             }
@@ -134,8 +168,8 @@ fun SignUpScreen(
                 }
             },
             modifier = Modifier
-                .padding(top = 10.dp),
-            enabled = email.isNotEmpty() && password.isNotEmpty()
+                .padding(top = 25.dp),
+            enabled = email.isNotEmpty() && password.isNotEmpty() && password == passwordConfirmation
         ) {
             Text(text = stringResource(id = R.string.sign_up_button))
         }

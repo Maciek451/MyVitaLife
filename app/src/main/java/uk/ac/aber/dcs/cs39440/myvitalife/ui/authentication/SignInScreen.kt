@@ -65,6 +65,12 @@ fun SignInScreen(
             contentDescription = stringResource(id = R.string.app_icon),
             contentScale = ContentScale.Crop
         )
+        Text(
+            text = stringResource(id = R.string.app_name),
+            modifier = Modifier
+                .padding(top = 25.dp),
+            fontSize = 30.sp
+        )
         OutlinedTextField(
             value = email,
             label = {
@@ -76,7 +82,7 @@ fun SignInScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 25.dp, bottom = 3.dp),
+                .padding(top = 50.dp, bottom = 3.dp),
             isError = errorMessage.isNotEmpty()
         )
 

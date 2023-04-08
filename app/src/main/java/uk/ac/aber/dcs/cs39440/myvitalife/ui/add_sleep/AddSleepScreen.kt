@@ -221,7 +221,7 @@ fun AddSleepScreen(
 // This function takes two strings, dateString and timeString, and combines them into a Date object
 fun parseDateTime(dateString: String, timeString: String): Date {
     val dateTimeString = "$dateString $timeString"
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault())
     // Disable leniency to ensure that the date is parsed strictly according to the format
     dateFormat.isLenient = false
     return dateFormat.parse(dateTimeString)!!

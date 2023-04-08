@@ -69,7 +69,6 @@ fun InsightsScreen(
             ) {
                 Text(
                     text = greeting(userName),
-                    fontWeight = FontWeight.Bold,
                     fontSize = 30.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(bottom = 20.dp)
@@ -88,7 +87,6 @@ fun InsightsScreen(
                             text = stringResource(id = R.string.total_calories),
                             modifier = Modifier.padding(top = 6.dp),
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
                         Text(
@@ -110,7 +108,6 @@ fun InsightsScreen(
                             text = stringResource(id = R.string.water_intake),
                             modifier = Modifier.padding(top = 6.dp),
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
                         Text(
@@ -132,7 +129,6 @@ fun InsightsScreen(
                             text = stringResource(id = R.string.hours_of_sleep),
                             modifier = Modifier.padding(top = 6.dp),
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
                         val duration = sleepData.duration.ifEmpty { "00:00" }
@@ -194,13 +190,6 @@ fun MoodCounter(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-//            Text(
-//                text = stringResource(id = R.string.mood_counter),
-//                modifier = Modifier.padding(top = 6.dp),
-//                fontSize = 20.sp,
-//                fontWeight = FontWeight.Bold,
-//                textAlign = TextAlign.Center
-//            )
         }
         Row(
             modifier = Modifier
@@ -222,7 +211,6 @@ fun MoodCounter(
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
                     text = moodCountMap[AMAZING].toString(),
-                    fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
             }
@@ -239,7 +227,6 @@ fun MoodCounter(
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
                     text = moodCountMap[GOOD].toString(),
-                    fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
             }
@@ -256,7 +243,6 @@ fun MoodCounter(
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
                     text = moodCountMap[NEUTRAL].toString(),
-                    fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
             }
@@ -273,7 +259,6 @@ fun MoodCounter(
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
                     text = moodCountMap[BAD].toString(),
-                    fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
             }
@@ -290,7 +275,6 @@ fun MoodCounter(
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
                     text = moodCountMap[AWFUL].toString(),
-                    fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
             }

@@ -1,11 +1,9 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.steps
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DoNotStep
 import androidx.compose.material.icons.filled.NordicWalking
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.*
@@ -65,22 +63,22 @@ fun StepsScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    modifier = Modifier
-                        .padding(top = 30.dp),
-                    text = stringResource(id = R.string.daily_steps_text),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center
-                )
                 Icon(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .alpha(0.1f),
-                    imageVector = Icons.Default.NordicWalking,
+                        .size(100.dp)
+                        .alpha(0.3f),
+                    imageVector = Icons.Default.DoNotStep,
                     contentDescription = "EmptySleepScreen"
+                )
+                Text(
+                    modifier = Modifier
+                        .alpha(0.3f),
+                    text = stringResource(id = R.string.daily_steps_text),
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
                 )
             }
         }

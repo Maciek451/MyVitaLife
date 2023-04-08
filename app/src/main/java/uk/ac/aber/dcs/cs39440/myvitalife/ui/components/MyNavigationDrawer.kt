@@ -4,8 +4,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -24,25 +26,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.datastorage.IS_DARK_THEME_ON_KEY
+import uk.ac.aber.dcs.cs39440.myvitalife.model.DataViewModel
+import uk.ac.aber.dcs.cs39440.myvitalife.model.ThemeSettings
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
-/**
- * Creates the navigation drawer. Uses Material 3 ModalNavigationDrawer.
- * Current implementation has an image at the top and then three items.
- * @param navController To pass through the NavHostController since navigation is required
- * @param drawerState The state of the drawer, i.e. whether open or closed
- * @param closeDrawer To pass in the close navigation drawer behaviour as a lambda.
- * By default has an empty lambda.
- * @param content To pass in the page content for the page when the navigation drawer is closed
- * @author Chris Loftus
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPageNavigationDrawer(
@@ -58,19 +54,20 @@ fun MainPageNavigationDrawer(
     val items = listOf(
         Pair(
             Icons.Default.QuestionMark,
-            "Why you should track your lifestyle?"
+            stringResource(id = R.string.why_to_track)
         ),
         Pair(
             Icons.Default.ImportExport,
-            "Export data to txt file"
+            stringResource(id = R.string.export_data_drawer)
+
         ),
         Pair(
             Icons.Default.BrightnessMedium,
-            "Choose theme"
+            stringResource(id = R.string.choose_theme_drawer)
         ),
         Pair(
             Icons.Default.DeleteForever,
-            "Clear all data"
+            stringResource(id = R.string.clear_data)
         ),
     )
 
@@ -84,8 +81,13 @@ fun MainPageNavigationDrawer(
             ) {
                 Text(
                     text = stringResource(id = R.string.app_name),
-                    modifier = Modifier.padding(bottom = 25.dp, top = 10.dp, start = 15.dp),
+                    modifier = Modifier.padding(bottom = 20.dp, top = 10.dp, start = 20.dp),
                     fontSize = 25.sp
+                )
+                Divider(
+                    thickness = 1.dp,
+                    modifier = Modifier
+                        .padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
                 )
                 items.forEachIndexed { index, item ->
                     NavigationDrawerItem(
@@ -100,8 +102,8 @@ fun MainPageNavigationDrawer(
                         onClick = {
                             when (index) {
                                 0 -> {
-                        //                                navController.navigate(route = Screen.Login.route)
-                        //                                closeDrawer()
+                                    navController.navigate(route = Screen.Info.route)
+                                    closeDrawer()
                                 }
                                 1 -> {
                                     isExportDialogOpen = true
@@ -140,8 +142,7 @@ fun MainPageNavigationDrawer(
         dialogIsOpen = isThemeDialogOpen,
         dialogOpen = { isOpen ->
             isThemeDialogOpen = isOpen
-        },
-        navController = navController
+        }
     )
 }
 
@@ -250,10 +251,12 @@ fun DeleteAllDataConfirmationDialog(
 fun ChooseThemeDialog(
     dialogIsOpen: Boolean,
     dialogOpen: (Boolean) -> Unit = {},
-    navController: NavController,
+    dataViewModel: DataViewModel = hiltViewModel()
 ) {
-    val options = listOf("Light", "Dark", "System Default")
-    var selectedOptionIndex by rememberSaveable { mutableStateOf(0) }
+    val options = listOf("Light", "Dark")
+    var selectedOptionIndex by rememberSaveable { mutableStateOf(2) }
+
+    selectedOptionIndex = if (ThemeSettings.isDarkTheme) 1 else 0
 
     if (dialogIsOpen) {
         AlertDialog(
@@ -269,7 +272,11 @@ fun ChooseThemeDialog(
                     items(options.size) { index ->
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth(),
+                                .fillMaxWidth()
+                                .selectable(
+                                    selected = selectedOptionIndex == index,
+                                    onClick = { selectedOptionIndex = index }
+                                ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
@@ -289,18 +296,15 @@ fun ChooseThemeDialog(
                     onClick = {
                         when (selectedOptionIndex) {
                             0 -> {
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                                ThemeSettings.isDarkTheme = false
                                 dialogOpen(false)
                             }
                             1 -> {
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                                dialogOpen(false)
-                            }
-                            2 -> {
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                                ThemeSettings.isDarkTheme = true
                                 dialogOpen(false)
                             }
                         }
+                        dataViewModel.saveBoolean(ThemeSettings.isDarkTheme, IS_DARK_THEME_ON_KEY)
                     }
                 ) {
                     Text(stringResource(R.string.ok))

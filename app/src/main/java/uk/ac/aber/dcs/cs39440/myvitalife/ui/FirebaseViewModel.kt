@@ -344,6 +344,20 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
+    fun modifyMood(moodEntryId: String, type: Int, description: String, date: String = chosenDate) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
+                .child("ListOfMoods")
+                .child(moodEntryId)
+            databaseReference.child("emojiIndex").setValue(type.toString())
+            databaseReference.child("optionalDescription").setValue(description)
+                .addOnSuccessListener {
+                    updateMoodData()
+                }
+        }
+    }
 
     fun deleteMood(time: String, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {

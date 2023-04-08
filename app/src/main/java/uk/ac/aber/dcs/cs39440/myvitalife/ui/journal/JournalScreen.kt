@@ -381,39 +381,38 @@ private fun GoalCard(
 private fun EmptyJournal(tabIndex: Int) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center
     ) {
         if (tabIndex == 0) {
-            Text(
-                modifier = Modifier
-                    .padding(top = 30.dp),
-                text = stringResource(id = R.string.empty_mood_tab),
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center
-            )
             Icon(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(0.1f),
-                imageVector = Icons.Default.Mood,
+                    .size(100.dp)
+                    .alpha(0.3f),
+                imageVector = Icons.Default.FaceRetouchingOff,
                 contentDescription = "EmptySleepScreen"
+            )
+            Text(
+                modifier = Modifier
+                    .alpha(0.3f),
+                text = stringResource(id = R.string.empty_mood_tab),
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
             )
         } else {
-            Text(
-                modifier = Modifier
-                    .padding(top = 30.dp),
-                text = stringResource(id = R.string.empty_goal_tab),
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center
-            )
             Icon(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(0.1f),
-                imageVector = Icons.Default.AddTask,
+                    .size(100.dp)
+                    .alpha(0.3f),
+                imageVector = Icons.Default.Unpublished,
                 contentDescription = "EmptySleepScreen"
+            )
+            Text(
+                modifier = Modifier
+                    .alpha(0.3f),
+                text = stringResource(id = R.string.empty_goal_tab),
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
             )
         }
 

@@ -1,17 +1,14 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.utils
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -21,10 +18,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import com.maxkeppeler.sheets.calendar.CalendarDialog
-import com.maxkeppeler.sheets.calendar.models.CalendarSelection
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,7 +25,7 @@ class Utils {
     companion object {
         fun getCurrentDate(): String {
             val date = Calendar.getInstance().time
-            val formatter = SimpleDateFormat("yyyy-MM-dd")
+            val formatter = SimpleDateFormat("dd-MM-yyyy")
 
             return formatter.format(date)
         }
@@ -44,6 +37,16 @@ class Utils {
             return formatter.format(time)
         }
 
+        fun getFormattedDateString(inputDate: String): String {
+            val inputDateFormat = SimpleDateFormat("yyyy-MM-dd")
+            val outputDateFormat = SimpleDateFormat("dd-MM-yyyy")
+            //30
+
+            val date: Date = inputDateFormat.parse(inputDate) as Date
+
+            return outputDateFormat.format(date)
+        }
+
         fun getDateDayBefore(date: String): String {
             return calculateDate(date, -1) ?: ""
         }
@@ -53,7 +56,7 @@ class Utils {
         }
 
         private fun calculateDate(date: String, numOfDays: Int): String? {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+            val dateFormat = SimpleDateFormat("dd-MM-yyyy")
             return try {
                 val date = dateFormat.parse(date)
                 val calendar = Calendar.getInstance()

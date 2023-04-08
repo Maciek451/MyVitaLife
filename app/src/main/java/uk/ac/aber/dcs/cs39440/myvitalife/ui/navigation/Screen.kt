@@ -13,6 +13,7 @@ sealed class Screen(
     object AddSleep : Screen("add_sleep")
     object Account : Screen("account")
     object LoginSignIn : Screen("login_sign_in")
+    object Info : Screen("info")
 }
 val screens = listOf(
     Screen.Steps,

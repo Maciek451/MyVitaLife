@@ -303,39 +303,38 @@ fun FoodCard(
 private fun EmptyScreen(tabIndex: Int) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center
     ) {
         if (tabIndex == 0) {
-            Text(
-                modifier = Modifier
-                    .padding(top = 30.dp),
-                text = stringResource(id = R.string.nutrition_text1),
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center
-            )
             Icon(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(0.1f),
-                imageVector = Icons.Default.WaterDrop,
+                    .size(100.dp)
+                    .alpha(0.3f),
+                imageVector = Icons.Default.FormatColorReset,
                 contentDescription = "EmptySleepScreen"
+            )
+            Text(
+                modifier = Modifier
+                    .alpha(0.3f),
+                text = stringResource(id = R.string.nutrition_text1),
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
             )
         } else {
-            Text(
-                modifier = Modifier
-                    .padding(top = 30.dp),
-                text = stringResource(id = R.string.nutrition_text2),
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center
-            )
             Icon(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(0.1f),
-                imageVector = Icons.Default.Restaurant,
+                    .size(100.dp)
+                    .alpha(0.3f),
+                imageVector = Icons.Default.NoMeals,
                 contentDescription = "EmptySleepScreen"
+            )
+            Text(
+                modifier = Modifier
+                    .alpha(0.3f),
+                text = stringResource(id = R.string.nutrition_text2),
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
             )
         }
     }
