@@ -83,8 +83,8 @@ class Utils {
             animDuration: Int = 100,
             animDelay: Int = 0
         ) {
-            val lightModeText = Color.White
-            val darkModeText = Color.Black
+            val lightModeText = Color.Black
+            val darkModeText = Color.White
 
             val currentColor = if (ThemeSettings.isDarkTheme) {
                 darkModeText

@@ -1,5 +1,6 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.account
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -19,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
@@ -36,6 +40,7 @@ fun AccountScreen(
     firebaseViewModel.getUserName {
         userName = it
     }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -103,6 +108,7 @@ fun AccountScreen(
                     onClick = {
                         firebaseViewModel.signOut { }
                         navController.popBackStack(navController.graph.startDestinationId, false)
+                        Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
                         navController.navigate(Screen.LoginSignIn.route)
                     },
                     modifier = Modifier.padding(top = 6.dp),

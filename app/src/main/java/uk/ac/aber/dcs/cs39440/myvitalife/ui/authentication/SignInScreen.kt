@@ -50,7 +50,8 @@ fun SignInScreen(
 
     val context = LocalContext.current
 
-    var isDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var isPasswordDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var isVerificationDialogOpen by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -124,10 +125,17 @@ fun SignInScreen(
             onClick = {
                 firebaseViewModel.signInWithEmailAndPassword(email, password) { returnVal ->
                     errorMessage = processLoginUi(returnVal)
-                    if (returnVal == 0) {
-                        navController.navigate(Screen.Insights.route)
+                    when (returnVal) {
+                        Authentication.LOGGED_IN_SUCCESSFULLY -> {
+                            navController.navigate(Screen.Insights.route)
+                        }
+                        Authentication.USER_IS_NOT_VERIFIED -> {
+                            isVerificationDialogOpen = true
+                        }
+                        else -> {
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                        }
                     }
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 }
 
             },
@@ -160,7 +168,7 @@ fun SignInScreen(
 
             TextButton(
                 onClick = {
-                    isDialogOpen = true
+                    isPasswordDialogOpen = true
                 },
                 modifier = Modifier
                     .padding(top = 10.dp),
@@ -174,18 +182,68 @@ fun SignInScreen(
         }
     }
     ForgotPasswordDialog(
-        dialogIsOpen = isDialogOpen,
+        dialogIsOpen = isPasswordDialogOpen,
         dialogOpen = { isOpen ->
-            isDialogOpen = isOpen
+            isPasswordDialogOpen = isOpen
         }
+    )
+    VerificationDialog(
+        dialogIsOpen = isVerificationDialogOpen,
+        dialogOpen = { isOpen ->
+            isVerificationDialogOpen = isOpen
+        },
+        firebaseViewModel = firebaseViewModel
     )
 }
 
-//if (viewModel.isLoggedIn.value) {
-//    // Display content for logged in user
-//} else {
-//    // Display content for not logged in user
-//}
+@Composable
+fun VerificationDialog(
+    dialogIsOpen: Boolean,
+    dialogOpen: (Boolean) -> Unit = {},
+    firebaseViewModel: FirebaseViewModel = viewModel()
+) {
+    val context = LocalContext.current
+
+    if (dialogIsOpen) {
+        AlertDialog(
+            onDismissRequest = { dialogOpen(false) },
+            title = {
+                Text(
+                    text = stringResource(id = R.string.verification_needed_title),
+                    fontSize = 20.sp
+                )
+            },
+            text = {
+
+                Text(
+                    text = stringResource(id = R.string.verification_needed_1),
+                    fontSize = 15.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        firebaseViewModel.sendVerificationEmail(context)
+                        dialogOpen(false)
+                    }
+                ) {
+                    Text(stringResource(R.string.resend_email))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        firebaseViewModel.signOut()
+                        dialogOpen(false)
+                    }
+                ) {
+                    Text(text = stringResource(R.string.try_again))
+                }
+            }
+        )
+    }
+}
+
 private fun processLoginUi(errorCode: Int): String {
     when (errorCode) {
         Authentication.LOGGED_IN_SUCCESSFULLY ->
@@ -196,6 +254,9 @@ private fun processLoginUi(errorCode: Int): String {
             return "Account does not exist"
         Authentication.EMAIL_WRONG_FORMAT ->
             return "Wrong format of the email"
+        // Dialog open instead
+        Authentication.USER_IS_NOT_VERIFIED ->
+            return "User is not verified"
     }
     return "Unknown issue"
 }

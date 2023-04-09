@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
@@ -47,8 +48,10 @@ fun SignUpScreen(
     var passwordConfirmation by remember {
         mutableStateOf("")
     }
+    var isVerificationDialogOpen by rememberSaveable { mutableStateOf(false) }
 
     var errorMessage by rememberSaveable { mutableStateOf("") }
+    var passwordError by rememberSaveable { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -107,7 +110,7 @@ fun SignUpScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp, end = 8.dp),
-            isError = errorMessage.isNotEmpty(),
+            isError = passwordError,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
             trailingIcon = {
@@ -135,7 +138,7 @@ fun SignUpScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
-            isError = errorMessage.isNotEmpty(),
+            isError = passwordError,
             visualTransformation = if (passwordConfirmationVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
             trailingIcon = {
@@ -144,9 +147,12 @@ fun SignUpScreen(
                 else Icons.Filled.VisibilityOff
 
                 // Please provide localized description for accessibility services
-                val description = if (passwordConfirmationVisible) "Hide password" else "Show password"
+                val description =
+                    if (passwordConfirmationVisible) "Hide password" else "Show password"
 
-                IconButton(onClick = { passwordConfirmationVisible = !passwordConfirmationVisible }) {
+                IconButton(onClick = {
+                    passwordConfirmationVisible = !passwordConfirmationVisible
+                }) {
                     Icon(imageVector = image, description)
                 }
             }
@@ -158,22 +164,72 @@ fun SignUpScreen(
 
         Button(
             onClick = {
-                firebaseViewModel.signUpWithEmailAndPassword(email, password) { returnVal ->
-                    errorMessage = processLoginUi(returnVal)
-                    if (returnVal == 0) {
-                        navController.navigate(Screen.Insights.route)
-                        firebaseViewModel.addUserName(username)
+                passwordError = passwordConfirmation != password
+                if (!passwordError) {
+                    firebaseViewModel.signUpWithEmailAndPassword(
+                        email,
+                        password,
+                        username
+                    ) { returnVal ->
+                        errorMessage = processLoginUi(returnVal)
+                        if (returnVal == Authentication.SIGNED_UP_SUCCESSFULLY) {
+                            firebaseViewModel.sendVerificationEmail(context)
+                            isVerificationDialogOpen = true
+                        }
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                        errorMessage = ""
                     }
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 }
             },
             modifier = Modifier
                 .padding(top = 25.dp),
-            enabled = email.isNotEmpty() && password.isNotEmpty() && password == passwordConfirmation
+            enabled = email.isNotEmpty() && password.isNotEmpty() && passwordConfirmation.isNotEmpty()
         ) {
             Text(text = stringResource(id = R.string.sign_up_button))
         }
+    }
+    VerificationInfoDialog(
+        dialogIsOpen = isVerificationDialogOpen,
+        dialogOpen = { isOpen ->
+            isVerificationDialogOpen = isOpen
+        },
+        navController = navController
+    )
+}
 
+@Composable
+fun VerificationInfoDialog(
+    dialogIsOpen: Boolean,
+    dialogOpen: (Boolean) -> Unit = {},
+    navController: NavController
+) {
+    if (dialogIsOpen) {
+        AlertDialog(
+            onDismissRequest = { dialogOpen(false) },
+            title = {
+                Text(
+                    text = stringResource(id = R.string.verification_needed_title),
+                    fontSize = 20.sp
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(id = R.string.verification_needed_2),
+                    fontSize = 15.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        dialogOpen(false)
+                        navController.navigate(Screen.SignIn.route)
+                    }
+                ) {
+                    Text(stringResource(R.string.ok))
+                }
+            }
+
+        )
     }
 }
 

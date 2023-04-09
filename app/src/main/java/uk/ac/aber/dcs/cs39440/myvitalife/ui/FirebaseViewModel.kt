@@ -5,6 +5,7 @@ import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,6 +34,7 @@ object Authentication {
     const val PASSWORD_WRONG = 1
     const val ACCOUNT_DOES_NOT_EXIST = 2
     const val OTHER = 3
+    const val USER_IS_NOT_VERIFIED = 7
 
     // Sign up error codes
     const val SIGNED_UP_SUCCESSFULLY = 0
@@ -308,9 +310,9 @@ class FirebaseViewModel : ViewModel() {
             databaseReference.child("kcal").setValue(kcal)
             databaseReference.child("amount").setValue(1)
                 .addOnSuccessListener {
-                // Update foodList after food is deleted
-                updateFoodData()
-            }
+                    // Update foodList after food is deleted
+                    updateFoodData()
+                }
         }
     }
 
@@ -495,10 +497,11 @@ class FirebaseViewModel : ViewModel() {
             databaseReference.child("sleepStart").setValue(start)
             databaseReference.child("sleepEnd").setValue(end)
             databaseReference.child("sleepDuration").setValue(duration)
-            databaseReference.child("optionalDescription").setValue(description).addOnSuccessListener {
-                // Update foodList after food is deleted
-                updateSleepData()
-            }
+            databaseReference.child("optionalDescription").setValue(description)
+                .addOnSuccessListener {
+                    // Update foodList after food is deleted
+                    updateSleepData()
+                }
         }
     }
 
@@ -508,10 +511,11 @@ class FirebaseViewModel : ViewModel() {
                 .child(Authentication.userId)
                 .child(date)
                 .child("WaterData")
-            databaseReference.child("waterDrunk").setValue(_waterData.value!!.waterDrunk + incVal).addOnSuccessListener {
-                // Update foodList after food is deleted
-                updateWaterData()
-            }
+            databaseReference.child("waterDrunk").setValue(_waterData.value!!.waterDrunk + incVal)
+                .addOnSuccessListener {
+                    // Update foodList after food is deleted
+                    updateWaterData()
+                }
         }
     }
 
@@ -544,7 +548,11 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
-    fun getFoodsTotalCalories(foodName: String, date: String = chosenDate, callback: (Int) -> Unit) {
+    fun getFoodsTotalCalories(
+        foodName: String,
+        date: String = chosenDate,
+        callback: (Int) -> Unit
+    ) {
         val databaseReference = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -666,7 +674,8 @@ class FirebaseViewModel : ViewModel() {
 
     fun exportData() {
         // Get reference to the Firebase Realtime Database node
-        val databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(Authentication.userId)
+        val databaseReference =
+            FirebaseDatabase.getInstance().getReference("Users").child(Authentication.userId)
 
 // Attach a listener to the node to retrieve the data
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -676,7 +685,8 @@ class FirebaseViewModel : ViewModel() {
                 val json = gson.toJson(dataSnapshot.value)
                 // Write the JSON string to a file
                 try {
-                    val downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    val downloadFolder =
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                     val downloadFolderPath = downloadFolder.absolutePath
                     val currentDate = Utils.getCurrentDate()
                     val jsonFilePath = "$downloadFolderPath/data_$currentDate.txt"
@@ -698,12 +708,19 @@ class FirebaseViewModel : ViewModel() {
         Firebase.auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 // User signed in successfully
-                isLoggedIn.value = true
                 val user = Firebase.auth.currentUser
+
                 if (user != null) {
                     Authentication.userId = user.uid
                     Authentication.userEmail = user.email.toString()
+                    // Check if user email is verified
+                    if (!user.isEmailVerified) {
+                        callback(Authentication.USER_IS_NOT_VERIFIED)
+                        return@addOnSuccessListener
+                    }
                 }
+
+                isLoggedIn.value = true
                 callback(Authentication.LOGGED_IN_SUCCESSFULLY)
             }
             .addOnFailureListener { exception ->
@@ -725,7 +742,7 @@ class FirebaseViewModel : ViewModel() {
             }
     }
 
-    fun signUpWithEmailAndPassword(email: String, password: String, callback: (Int) -> Unit) {
+    fun signUpWithEmailAndPassword(email: String, password: String, username: String, callback: (Int) -> Unit) {
         Firebase.auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -734,6 +751,9 @@ class FirebaseViewModel : ViewModel() {
                     if (user != null) {
                         Authentication.userId = user.uid
                         Authentication.userEmail = user.email.toString()
+                        if (username.isNotEmpty()) {
+                            addUserName(username)
+                        }
                     }
                     callback(Authentication.SIGNED_UP_SUCCESSFULLY)
                 } else {
@@ -759,6 +779,20 @@ class FirebaseViewModel : ViewModel() {
             }
     }
 
+    fun sendVerificationEmail(context: Context) {
+        val auth = FirebaseAuth.getInstance()
+        val user = auth.currentUser
+
+        user?.sendEmailVerification()?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(context, "Verification email sent. Please check your inbox.", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Failed to send verification email.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        signOut()
+    }
+
     fun sendPasswordResetEmail(email: String, context: Context) {
         val auth = FirebaseAuth.getInstance()
 
@@ -772,7 +806,7 @@ class FirebaseViewModel : ViewModel() {
             }
     }
 
-    fun signOut(callback: (Boolean) -> Unit) {
+    fun signOut(callback: (Boolean) -> Unit = {}) {
         Firebase.auth.signOut()
         isLoggedIn.value = false
         Authentication.userId = ""
