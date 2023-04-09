@@ -1,6 +1,7 @@
 package uk.ac.aber.dcs.cs39440.myvitalife
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,12 +30,14 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.AccountScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_sleep.AddSleepScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.authentication.SignInScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.authentication.SignUpScreen
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.steps.StepsScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.quotes.QuotesScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.InsightsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.journal.JournalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition.NutritionScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.sleep.SleepScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.quotes.QuoteOfTheDay
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.quotes.service
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.why_to_track.InfoScreen
 
@@ -68,12 +72,19 @@ private fun BuildNavigationGraph() {
         Authentication.userEmail = user.email.toString()
         startScreenRoute = Screen.Insights.route
     }
+    LaunchedEffect(Unit) {
+        try {
+            QuoteOfTheDay.quote = service.getQuoteOfTheDay()
+        } catch (e: Exception) {
+            Log.e("QUOTE_ERROR", e.toString())
+        }
+    }
 
     NavHost(
         navController = navController,
         startDestination = startScreenRoute
     ) {
-        composable(Screen.Steps.route) { StepsScreen(navController)}
+        composable(Screen.Quote.route) { QuotesScreen(navController)}
         composable(Screen.Sleep.route) { SleepScreen(navController)}
         composable(Screen.Insights.route) { InsightsScreen(navController)}
         composable(Screen.Nutrition.route) { NutritionScreen(navController)}

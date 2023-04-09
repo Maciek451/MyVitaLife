@@ -3,7 +3,7 @@ package uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation
 sealed class Screen(
     val route: String
 )   {
-    object Steps : Screen("steps")
+    object Quote : Screen("quote")
     object Insights : Screen("insights")
     object Journal : Screen("journal")
     object Nutrition : Screen("nutrition")
@@ -16,7 +16,7 @@ sealed class Screen(
     object Info : Screen("info")
 }
 val screens = listOf(
-    Screen.Steps,
+    Screen.Quote,
     Screen.Journal,
     Screen.Insights,
     Screen.Nutrition,

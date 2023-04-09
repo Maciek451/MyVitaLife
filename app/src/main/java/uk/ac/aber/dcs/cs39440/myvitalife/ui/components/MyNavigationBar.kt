@@ -26,10 +26,10 @@ fun NavigationBar(
     navController: NavController
 ) {
     val icons = mapOf(
-        Screen.Steps to IconGroup(
-            filledIcon = Icons.Filled.DirectionsWalk,
-            outlineIcon = Icons.Outlined.DirectionsWalk,
-            label = stringResource(id = R.string.steps)
+        Screen.Quote to IconGroup(
+            filledIcon = Icons.Filled.FormatQuote,
+            outlineIcon = Icons.Outlined.FormatQuote,
+            label = stringResource(id = R.string.quotes)
         ),
         Screen.Nutrition to IconGroup(
             filledIcon = Icons.Filled.Restaurant,

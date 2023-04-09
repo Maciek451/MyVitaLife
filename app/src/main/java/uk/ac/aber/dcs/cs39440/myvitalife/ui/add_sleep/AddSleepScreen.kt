@@ -1,11 +1,8 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.add_sleep
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SingleBed
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,8 +30,6 @@ import java.time.Duration
 import java.time.LocalTime
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.absoluteValue
-import kotlin.math.min
 
 enum class SleepTime {
     START, END
