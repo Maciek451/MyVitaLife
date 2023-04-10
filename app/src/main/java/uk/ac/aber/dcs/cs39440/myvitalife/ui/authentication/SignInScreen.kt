@@ -29,7 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -127,7 +127,7 @@ fun SignInScreen(
                     errorMessage = processLoginUi(returnVal)
                     when (returnVal) {
                         Authentication.LOGGED_IN_SUCCESSFULLY -> {
-                            navController.navigate(Screen.Insights.route)
+                            navController.navigate(Screens.Insights.route) { popUpTo(0) }
                         }
                         Authentication.USER_IS_NOT_VERIFIED -> {
                             isVerificationDialogOpen = true
@@ -137,7 +137,6 @@ fun SignInScreen(
                         }
                     }
                 }
-
             },
             modifier = Modifier
                 .padding(top = 10.dp),
@@ -154,7 +153,7 @@ fun SignInScreen(
         ) {
             TextButton(
                 onClick = {
-                    navController.navigate(Screen.SignUp.route)
+                    navController.navigate(Screens.SignUp.route)
                 },
                 modifier = Modifier
                     .padding(top = 10.dp),

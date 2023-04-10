@@ -5,7 +5,6 @@ import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -54,6 +53,9 @@ class FirebaseViewModel : ViewModel() {
     private val _waterData = MutableLiveData<Water>()
     val waterData: LiveData<Water> = _waterData
 
+    private val _quoteData = MutableLiveData<Quote>()
+    val quoteData: LiveData<Quote> = _quoteData
+
     private val _goalList = MutableLiveData<List<Goal>>()
     val goalData: LiveData<List<Goal>> = _goalList
 
@@ -95,6 +97,12 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
+    private fun updateQuoteData() {
+        fetchQuoteData(chosenDate) { quote ->
+            _quoteData.value = quote
+        }
+    }
+
     private fun updateSleepData() {
         fetchSleepData(chosenDate) { sleeps ->
             _sleepHours.value = sleeps
@@ -117,6 +125,9 @@ class FirebaseViewModel : ViewModel() {
         fetchSleepData(chosenDate) { sleeps ->
             _sleepHours.value = sleeps
         }
+        fetchQuoteData(chosenDate) { quotes ->
+            _quoteData.value = quotes
+        }
     }
 
     private fun fetchAllData() {
@@ -126,6 +137,7 @@ class FirebaseViewModel : ViewModel() {
         updateGoalData()
         updateMoodData()
         updateSleepData()
+        updateQuoteData()
     }
 
     init {
@@ -255,6 +267,35 @@ class FirebaseViewModel : ViewModel() {
                     }
                 } else {
                     callback(Water(0, 0))
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+    fun fetchQuoteData(date: String, callback: (Quote) -> Unit) {
+        val quoteRef = database.getReference("Users")
+            .child(Authentication.userId)
+            .child(date)
+            .child("QuoteOfTheDay")
+
+        quoteRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val quotes = snapshot.child("quote").value.toString()
+                    val author = snapshot.child("author").value.toString()
+                    if (quotes != "" && author != "") {
+                        val quote = Quote(
+                            quotes,
+                            author
+                        )
+                        callback(quote)
+                    }
+                } else {
+                    callback(Quote("", ""))
                 }
             }
 
@@ -463,6 +504,20 @@ class FirebaseViewModel : ViewModel() {
             databaseReference.child("waterDrunk").setValue(0).addOnSuccessListener {
                 // Update foodList after food is deleted
                 updateWaterData()
+            }
+        }
+    }
+
+    fun addQuote(quote: String, author: String, date: String = chosenDate) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
+                .child("QuoteOfTheDay")
+            databaseReference.child("quote").setValue(quote)
+            databaseReference.child("author").setValue(author).addOnSuccessListener {
+                // Update foodList after food is deleted
+                updateQuoteData()
             }
         }
     }

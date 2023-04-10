@@ -27,7 +27,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -222,7 +222,7 @@ fun VerificationInfoDialog(
                 TextButton(
                     onClick = {
                         dialogOpen(false)
-                        navController.navigate(Screen.SignIn.route)
+                        navController.navigate(Screens.SignIn.route)
                     }
                 ) {
                     Text(stringResource(R.string.ok))

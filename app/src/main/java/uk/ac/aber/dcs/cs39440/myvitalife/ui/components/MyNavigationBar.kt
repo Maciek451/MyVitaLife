@@ -17,7 +17,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
@@ -26,27 +26,27 @@ fun NavigationBar(
     navController: NavController
 ) {
     val icons = mapOf(
-        Screen.Quote to IconGroup(
+        Screens.Quote to IconGroup(
             filledIcon = Icons.Filled.FormatQuote,
             outlineIcon = Icons.Outlined.FormatQuote,
             label = stringResource(id = R.string.quotes)
         ),
-        Screen.Nutrition to IconGroup(
+        Screens.Nutrition to IconGroup(
             filledIcon = Icons.Filled.Restaurant,
             outlineIcon = Icons.Outlined.Restaurant,
             label = stringResource(id = R.string.nutrition)
         ),
-        Screen.Journal to IconGroup(
+        Screens.Journal to IconGroup(
             filledIcon = Icons.Filled.NoteAdd,
             outlineIcon = Icons.Outlined.NoteAdd,
             label = stringResource(id = R.string.journal)
         ),
-        Screen.Insights to IconGroup(
+        Screens.Insights to IconGroup(
             filledIcon = Icons.Filled.Insights,
             outlineIcon = Icons.Outlined.Insights,
             label = stringResource(id = R.string.insights)
         ),
-        Screen.Sleep to IconGroup(
+        Screens.Sleep to IconGroup(
             filledIcon = Icons.Filled.Hotel,
             outlineIcon = Icons.Outlined.Hotel,
             label = stringResource(id = R.string.sleep)

@@ -21,13 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 
 @Composable
 fun AccountScreen(
@@ -107,9 +105,9 @@ fun AccountScreen(
                 Button(
                     onClick = {
                         firebaseViewModel.signOut { }
-                        navController.popBackStack(navController.graph.startDestinationId, false)
+//                        navController.popBackStack(navController.graph.startDestinationId, false)
+                        navController.navigate(Screens.SignIn.route) { popUpTo(0) }
                         Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
-                        navController.navigate(Screen.LoginSignIn.route)
                     },
                     modifier = Modifier.padding(top = 6.dp),
                     colors = ButtonDefaults.buttonColors(Color.Red)

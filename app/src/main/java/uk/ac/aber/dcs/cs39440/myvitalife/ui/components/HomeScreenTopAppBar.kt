@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +44,7 @@ fun HomeScreenTopBar(
             ) {
                 IconButton(
                     onClick = {
-                        navController.navigate(Screen.Account.route)
+                        navController.navigate(Screens.Account.route)
                     },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {

@@ -22,7 +22,7 @@ import com.maxkeppeler.sheets.clock.models.ClockConfig
 import com.maxkeppeler.sheets.clock.models.ClockSelection
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 import java.text.SimpleDateFormat
@@ -107,7 +107,7 @@ fun AddSleepScreen(
             Spacer(modifier = Modifier.padding(10.dp))
 
             Text(
-                text = stringResource(R.string.how_do_you_feel),
+                text = stringResource(R.string.note),
                 fontSize = 25.sp,
                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
             )
@@ -175,7 +175,7 @@ fun AddSleepScreen(
                 }
         ) {
             Button(
-                onClick = { navController.navigate(Screen.Sleep.route) },
+                onClick = { navController.navigate(Screens.Sleep.route) },
                 modifier = Modifier
                     .width(100.dp)
                     .height(40.dp)
@@ -200,7 +200,7 @@ fun AddSleepScreen(
                     sleepDuration = "00:00"
                     answer = ""
 
-                    navController.navigate(Screen.Sleep.route)
+                    navController.navigate(Screens.Sleep.route)
                 },
                 modifier = Modifier
                     .width(100.dp)

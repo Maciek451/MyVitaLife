@@ -59,6 +59,10 @@ fun NutritionScreen(
     var isFoodDialogOpen by rememberSaveable { mutableStateOf(false) }
     var isConfirmationDialogOpen by rememberSaveable { mutableStateOf(false) }
 
+    var totalCalories by rememberSaveable { mutableStateOf(0) }
+    firebaseViewModel.getTotalCaloriesForADay() {
+        totalCalories = it
+    }
     //The LocalContext is a Compose function that provides access to the current context of the application,
     // which is required for many operations such as creating views or accessing resources.
     val context = LocalContext.current
@@ -118,7 +122,13 @@ fun NutritionScreen(
                 }
                 when (selectedTabIndex) {
                     0 -> {
-                        if (waterData != Water(0, 0)) {
+                        if (waterData.waterDrunk >= waterData.hydrationGoal && waterData != Water(
+                                0,
+                                0
+                            )
+                        ) {
+                            CompletedScreen(waterDrunk = waterData.waterDrunk)
+                        } else if (waterData != Water(0, 0)) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -126,23 +136,24 @@ fun NutritionScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Text(
-                                    modifier = Modifier
-                                        .padding(top = 20.dp),
+                                    modifier = Modifier.padding(top = 20.dp, bottom = 40.dp),
                                     text = stringResource(id = R.string.hydration_goal),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 20.sp,
+                                    fontSize = 25.sp,
                                     textAlign = TextAlign.Center
                                 )
-                                Spacer(modifier = Modifier.padding(25.dp))
                                 Utils.CircularProgressBar(
                                     currentValue = waterData.waterDrunk,
                                     maxGoal = waterData.hydrationGoal
                                 )
-                                Spacer(modifier = Modifier.padding(25.dp))
-                                Button(onClick = {
-                                    firebaseViewModel.updateWaterCounter(waterData.cupSize)
-                                }) {
-                                    Text("+ ${waterData.cupSize}ml")
+                                Button(
+                                    onClick = {
+                                        firebaseViewModel.updateWaterCounter(waterData.cupSize)
+                                    },
+                                    modifier = Modifier.padding(top = 40.dp)
+                                ) {
+                                    Text(
+                                        "+ ${waterData.cupSize}ml",
+                                    )
                                 }
                             }
                         } else {
@@ -151,10 +162,29 @@ fun NutritionScreen(
                     }
                     1 -> {
                         if (listOfFood.isNotEmpty()) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp, bottom = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.total_calories),
+                                    fontSize = 20.sp,
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    text = totalCalories.toString(),
+                                    fontSize = 20.sp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            Divider(thickness = 1.dp)
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(top = 12.dp, bottom = 20.dp),
+                                    .padding(bottom = 20.dp),
                                 contentPadding = PaddingValues(bottom = 16.dp)
                             )
                             {
@@ -337,6 +367,35 @@ private fun EmptyScreen(tabIndex: Int) {
                 textAlign = TextAlign.Center
             )
         }
+    }
+}
+
+@Composable
+private fun CompletedScreen(waterDrunk: Int) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            modifier = Modifier.padding(bottom = 20.dp),
+            text = stringResource(id = R.string.completed_text),
+            fontSize = 25.sp,
+            textAlign = TextAlign.Center
+        )
+        Icon(
+            modifier = Modifier
+                .size(100.dp),
+            imageVector = Icons.Default.WaterDrop,
+            contentDescription = "CompletedScreen",
+            tint = MaterialTheme.colorScheme.tertiaryContainer
+        )
+        Text(
+            text = "$waterDrunk ml",
+            fontSize = 50.sp
+        )
     }
 }
 
