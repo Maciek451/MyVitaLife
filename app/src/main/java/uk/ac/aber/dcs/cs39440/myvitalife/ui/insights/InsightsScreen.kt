@@ -53,7 +53,7 @@ fun InsightsScreen(
         floatingActionButton = {},
         navController = navController,
         appBarTitle = appBarTitle,
-        givenDate = DesiredDate.date
+
     ) { innerPadding ->
         Surface(
             modifier = Modifier

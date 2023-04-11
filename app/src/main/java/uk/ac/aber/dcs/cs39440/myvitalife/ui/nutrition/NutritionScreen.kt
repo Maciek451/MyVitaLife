@@ -60,9 +60,6 @@ fun NutritionScreen(
     var isConfirmationDialogOpen by rememberSaveable { mutableStateOf(false) }
 
     var totalCalories by rememberSaveable { mutableStateOf(0) }
-    firebaseViewModel.getTotalCaloriesForADay() {
-        totalCalories = it
-    }
     //The LocalContext is a Compose function that provides access to the current context of the application,
     // which is required for many operations such as creating views or accessing resources.
     val context = LocalContext.current
@@ -93,7 +90,7 @@ fun NutritionScreen(
         },
         navController = navController,
         appBarTitle = appBarTitle,
-        givenDate = DesiredDate.date
+
     ) { innerPadding ->
         Surface(
             modifier = Modifier
@@ -203,6 +200,9 @@ fun NutritionScreen(
                                                 openConfirmationDialog = { isOpen ->
                                                     isConfirmationDialogOpen = isOpen
                                                     foodToDelete = entry.name
+                                                },
+                                                updateTotalCalories = {
+                                                    totalCalories = it
                                                 }
                                             )
                                         }
@@ -246,11 +246,16 @@ fun FoodCard(
     amount: Int,
     openConfirmationDialog: (Boolean) -> Unit = {},
     firebaseViewModel: FirebaseViewModel = viewModel(),
+    updateTotalCalories: (Int) -> Unit = {}
 ) {
     var totalKcal by rememberSaveable { mutableStateOf(0) }
     firebaseViewModel.getFoodsTotalCalories(name) { kcal ->
         totalKcal = kcal
     }
+    firebaseViewModel.getTotalCaloriesForADay { kcal ->
+        updateTotalCalories(kcal)
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

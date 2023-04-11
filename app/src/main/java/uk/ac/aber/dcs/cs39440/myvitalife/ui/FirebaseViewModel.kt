@@ -20,6 +20,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import uk.ac.aber.dcs.cs39440.myvitalife.model.*
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
+import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.Quote
+import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.QuoteOfTheDay
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 import java.io.FileWriter
 import java.io.IOException
@@ -53,8 +55,8 @@ class FirebaseViewModel : ViewModel() {
     private val _waterData = MutableLiveData<Water>()
     val waterData: LiveData<Water> = _waterData
 
-    private val _quoteData = MutableLiveData<Quote>()
-    val quoteData: LiveData<Quote> = _quoteData
+    private val _favouriteQuotes = MutableLiveData<List<Quote>>()
+    val favouriteQuotes: LiveData<List<Quote>> = _favouriteQuotes
 
     private val _goalList = MutableLiveData<List<Goal>>()
     val goalData: LiveData<List<Goal>> = _goalList
@@ -97,36 +99,18 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
-    private fun updateQuoteData() {
+    private fun updateQuotesData() {
         fetchQuoteData(chosenDate) { quote ->
-            _quoteData.value = quote
+            QuoteOfTheDay.quote = quote
+        }
+        fetchFavouriteQuotes { quotes ->
+            _favouriteQuotes.value = quotes
         }
     }
 
     private fun updateSleepData() {
         fetchSleepData(chosenDate) { sleeps ->
             _sleepHours.value = sleeps
-        }
-    }
-
-    private fun updateAllData() {
-        fetchFoodData(chosenDate) { foods ->
-            _foodList.value = foods
-        }
-        fetchMoodData(chosenDate) { moods ->
-            _moodsList.value = moods
-        }
-        fetchGoalData(chosenDate) { goals ->
-            _goalList.value = goals
-        }
-        fetchWaterData(chosenDate) { water ->
-            _waterData.value = water
-        }
-        fetchSleepData(chosenDate) { sleeps ->
-            _sleepHours.value = sleeps
-        }
-        fetchQuoteData(chosenDate) { quotes ->
-            _quoteData.value = quotes
         }
     }
 
@@ -137,7 +121,7 @@ class FirebaseViewModel : ViewModel() {
         updateGoalData()
         updateMoodData()
         updateSleepData()
-        updateQuoteData()
+        updateQuotesData()
     }
 
     init {
@@ -146,7 +130,7 @@ class FirebaseViewModel : ViewModel() {
         fetchAllData()
     }
 
-    fun fetchFoodData(date: String, callback: (List<Food>) -> Unit) {
+    fun fetchFoodData(date: String = chosenDate, callback: (List<Food>) -> Unit) {
         val foodRef = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -187,7 +171,7 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    fun fetchMoodData(date: String, callback: (List<Mood>) -> Unit) {
+    fun fetchMoodData(date: String = chosenDate, callback: (List<Mood>) -> Unit) {
         val moodRef = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -220,7 +204,7 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    fun fetchGoalData(date: String, callback: (List<Goal>) -> Unit) {
+    fun fetchGoalData(date: String = chosenDate, callback: (List<Goal>) -> Unit) {
         val goalRef = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -245,7 +229,7 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    fun fetchWaterData(date: String, callback: (Water) -> Unit) {
+    fun fetchWaterData(date: String = chosenDate, callback: (Water) -> Unit) {
         val waterRef = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -276,7 +260,7 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    fun fetchQuoteData(date: String, callback: (Quote) -> Unit) {
+    fun fetchQuoteData(date: String = chosenDate, callback: (Quote) -> Unit) {
         val quoteRef = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -287,10 +271,12 @@ class FirebaseViewModel : ViewModel() {
                 if (snapshot.exists()) {
                     val quotes = snapshot.child("quote").value.toString()
                     val author = snapshot.child("author").value.toString()
+                    val isFavourite = snapshot.child("isFavourite").value.toString().toBoolean()
                     if (quotes != "" && author != "") {
                         val quote = Quote(
                             quotes,
-                            author
+                            author,
+                            isFavourite
                         )
                         callback(quote)
                     }
@@ -305,7 +291,40 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    fun fetchSleepData(date: String, callback: (Sleep) -> Unit) {
+    fun fetchFavouriteQuotes(callback: (List<Quote>) -> Unit) {
+        val userRef = database.getReference("Users")
+            .child(Authentication.userId)
+
+        val quotes = mutableListOf<Quote>()
+
+        userRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (dateSnapShot in snapshot.children) {
+                    val quoteOfTheDay = dateSnapShot.child("QuoteOfTheDay")
+
+                    if(quoteOfTheDay.exists()){
+                        val quoteText = quoteOfTheDay.child("quote").value.toString()
+                        val author = quoteOfTheDay.child("author").value.toString()
+                        val isFavourite = quoteOfTheDay.child("isFavourite").getValue(Boolean::class.java)
+                        val date = dateSnapShot.key.toString()
+
+                        if(isFavourite == true){
+                            val quote = Quote(quoteText, author, isFavourite, date)
+                            quotes.add(quote)
+                            Log.d("FirebaseViewModel", "Quote: $quoteText, Author: $author, isFavorite: $isFavourite")
+                        }
+                    }
+                }
+                callback(quotes)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+    fun fetchSleepData(date: String = chosenDate, callback: (Sleep) -> Unit) {
         val sleepRef = database.getReference("Users")
             .child(Authentication.userId)
             .child(date)
@@ -387,21 +406,6 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
-    fun modifyMood(moodEntryId: String, type: Int, description: String, date: String = chosenDate) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference("Users")
-                .child(Authentication.userId)
-                .child(date)
-                .child("ListOfMoods")
-                .child(moodEntryId)
-            databaseReference.child("emojiIndex").setValue(type.toString())
-            databaseReference.child("optionalDescription").setValue(description)
-                .addOnSuccessListener {
-                    updateMoodData()
-                }
-        }
-    }
-
     fun deleteMood(time: String, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
@@ -477,7 +481,7 @@ class FirebaseViewModel : ViewModel() {
                 .child(Authentication.userId)
             databaseReference.removeValue().addOnSuccessListener {
                 // Update foodList after food is deleted
-                updateAllData()
+                fetchAllData()
             }
         }
     }
@@ -508,17 +512,46 @@ class FirebaseViewModel : ViewModel() {
         }
     }
 
-    fun addQuote(quote: String, author: String, date: String = chosenDate) {
+    fun addQuote(quote: Quote, date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
                 .child(date)
                 .child("QuoteOfTheDay")
-            databaseReference.child("quote").setValue(quote)
-            databaseReference.child("author").setValue(author).addOnSuccessListener {
+            databaseReference.child("quote").setValue(quote.text)
+            databaseReference.child("isFavourite").setValue(quote.isFavourite)
+            databaseReference.child("author").setValue(quote.author).addOnSuccessListener {
                 // Update foodList after food is deleted
-                updateQuoteData()
+                updateQuotesData()
             }
+        }
+    }
+
+    fun changeQuotesFavouriteStatus(date: String = chosenDate) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+                .child(date)
+                .child("QuoteOfTheDay")
+            databaseReference.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(currentData: MutableData): Transaction.Result {
+                    val isFavourite = currentData.child("isFavourite").getValue(Boolean::class.java) ?: false
+                    currentData.child("isFavourite").value = !isFavourite
+                    return Transaction.success(currentData)
+                }
+
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    currentData: DataSnapshot?
+                ) {
+                    if (committed) {
+                       updateQuotesData()
+                    } else {
+                        Log.e("Firebase", "Transaction failed", error?.toException())
+                    }
+                }
+            })
         }
     }
 
@@ -797,7 +830,12 @@ class FirebaseViewModel : ViewModel() {
             }
     }
 
-    fun signUpWithEmailAndPassword(email: String, password: String, username: String, callback: (Int) -> Unit) {
+    fun signUpWithEmailAndPassword(
+        email: String,
+        password: String,
+        username: String,
+        callback: (Int) -> Unit
+    ) {
         Firebase.auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -840,9 +878,14 @@ class FirebaseViewModel : ViewModel() {
 
         user?.sendEmailVerification()?.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Toast.makeText(context, "Verification email sent. Please check your inbox.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Verification email sent. Please check your inbox.",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                Toast.makeText(context, "Failed to send verification email.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Failed to send verification email.", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
         signOut()
@@ -856,7 +899,11 @@ class FirebaseViewModel : ViewModel() {
                 if (task.isSuccessful) {
                     Toast.makeText(context, "Password reset email sent", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Failed to send password reset email", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Failed to send password reset email",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }

@@ -8,8 +8,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,8 +25,9 @@ import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import uk.ac.aber.dcs.cs39440.myvitalife.datastorage.IS_DARK_THEME_ON_KEY
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DataViewModel
-import uk.ac.aber.dcs.cs39440.myvitalife.model.QuoteOfTheDay
+import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.QuoteOfTheDay
 import uk.ac.aber.dcs.cs39440.myvitalife.model.ThemeSettings
+import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.GenerateQuoteIfEmpty
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.AccountScreen
@@ -39,7 +40,6 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.journal.JournalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition.NutritionScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.sleep.SleepScreen
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.quotes.service
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.why_to_track.InfoScreen
 
@@ -73,7 +73,7 @@ private fun BuildNavigationGraph() {
     if (user != null) {
         Authentication.userId = user.uid
         Authentication.userEmail = user.email.toString()
-        IsQuoteToday()
+        GenerateQuote()
         startScreenRoute = Screens.Insights.route
     }
 
@@ -81,35 +81,31 @@ private fun BuildNavigationGraph() {
         navController = navController,
         startDestination = startScreenRoute
     ) {
-        composable(Screens.Quote.route) { QuotesScreen(navController)}
-        composable(Screens.Sleep.route) { SleepScreen(navController)}
-        composable(Screens.Insights.route) { InsightsScreen(navController)}
-        composable(Screens.Nutrition.route) { NutritionScreen(navController)}
-        composable(Screens.Journal.route) { JournalScreen(navController)}
-        composable(Screens.SignIn.route) { SignInScreen(navController)}
-        composable(Screens.SignUp.route) { SignUpScreen(navController)}
-        composable(Screens.AddSleep.route) { AddSleepScreen(navController)}
+        composable(Screens.Quote.route) { QuotesScreen(navController) }
+        composable(Screens.Sleep.route) { SleepScreen(navController) }
+        composable(Screens.Insights.route) { InsightsScreen(navController) }
+        composable(Screens.Nutrition.route) { NutritionScreen(navController) }
+        composable(Screens.Journal.route) { JournalScreen(navController) }
+        composable(Screens.SignIn.route) { SignInScreen(navController) }
+        composable(Screens.SignUp.route) { SignUpScreen(navController) }
+        composable(Screens.AddSleep.route) { AddSleepScreen(navController) }
         composable(Screens.Account.route) { AccountScreen(navController) }
         composable(Screens.Info.route) { InfoScreen(navController) }
     }
 }
 
 @Composable
-fun IsQuoteToday(
+fun GenerateQuote(
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
-    if (QuoteOfTheDay.quote.text.isEmpty()) {
-        LaunchedEffect(Unit) {
-            try {
-                QuoteOfTheDay.quote = service.getQuoteOfTheDay()
-            } catch (e: Exception) {
-                Log.e("QUOTE_ERROR", e.toString())
-            }
-        }
-        firebaseViewModel.addQuote(QuoteOfTheDay.quote.text, QuoteOfTheDay.quote.author)
+    var isQuoteObtained by rememberSaveable { mutableStateOf(false) }
+
+    firebaseViewModel.fetchQuoteData { quote ->
+        QuoteOfTheDay.quote = quote
+        isQuoteObtained = true
     }
-    else {
-//        firebaseViewModel.addQuote(QuoteOfTheDay.quote.text, QuoteOfTheDay.quote.author)
+    if (isQuoteObtained) {
+        GenerateQuoteIfEmpty()
     }
 }
 

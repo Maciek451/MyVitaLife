@@ -7,18 +7,15 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import kotlinx.coroutines.launch
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,7 +24,6 @@ fun TopLevelScaffold(
     navController: NavHostController,
     appBarTitle: String,
     floatingActionButton: @Composable () -> Unit = { },
-    givenDate: String,
     pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {},
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)

@@ -20,6 +20,7 @@
     <string name="click_to_confirm">Click to confirm</string>
     <string name="confirmation_text">Are you sure you want to delete %s?</string>
     <string name="confirm_button">Confirm</string>
+    <string name="confirm_delete">CONFIRM</string>
     <string name="rate_your_sleep">Rate your sleep:</string>
     <string name="save_button">Save</string>
     <string name="select_date">Select date</string>
@@ -94,7 +95,7 @@
     <string name="app_icon">App icon</string>
     <string name="user_name_optional">Username (optional)</string>
     <string name="empty_string" />
-    <string name="why_to_track">Why you should track your lifestyle?</string>
+    <string name="about">About the app</string>
     <string name="export_data_drawer">Export data to txt file</string>
     <string name="choose_theme_drawer">Choose theme</string>
     <string name="clear_data">Clear all data</string>
@@ -105,8 +106,14 @@
     <string name="resend_email">Resend email</string>
     <string name="try_again">Try again</string>
     <string name="verification_needed_2">To fully activate your account, please verify your email address by following the instructions in the verification email that we sent to your registered email address.</string>
-    <string name="no_quotes">No quotes</string>
-    <string name="completed_text">Daily water intake completed:</string>
+    <string name="no_quotes">No favourite quotes</string>
+    <string name="completed_text">You have completed your daily water intake</string>
     <string name="great_job">Great job!</string>
     <string name="save">Save</string>
+    <string name="app_description">Tracking your lifestyle is even more convenient with MyVitaLife. With this application, you can instantly check and add information that will help you keep control over aspects of everyday life.</string>
+    <string name="app_version">Your app version:</string>
+    <string name="creator">Creator of the app:</string>
+    <string name="creator_name">Maciej Traczyk</string>
+    <string name="version_of_the_app">1.0</string>
+    <string name="write_confirm">Write \"CONFIRM\"</string>
 </resources>

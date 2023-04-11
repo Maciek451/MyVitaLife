@@ -46,10 +46,6 @@ fun MainPageNavigationDrawer(
 
     val items = listOf(
         Pair(
-            Icons.Default.QuestionMark,
-            stringResource(id = R.string.why_to_track)
-        ),
-        Pair(
             Icons.Default.ImportExport,
             stringResource(id = R.string.export_data_drawer)
 
@@ -62,6 +58,10 @@ fun MainPageNavigationDrawer(
             Icons.Default.DeleteForever,
             stringResource(id = R.string.clear_data)
         ),
+        Pair(
+            Icons.Default.Info,
+            stringResource(id = R.string.about)
+        )
     )
 
     ModalNavigationDrawer(
@@ -80,7 +80,7 @@ fun MainPageNavigationDrawer(
                 Divider(
                     thickness = 1.dp,
                     modifier = Modifier
-                        .padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
+                        .padding(bottom = 15.dp, start = 20.dp, end = 20.dp)
                 )
                 items.forEachIndexed { index, item ->
                     NavigationDrawerItem(
@@ -95,19 +95,19 @@ fun MainPageNavigationDrawer(
                         onClick = {
                             when (index) {
                                 0 -> {
-                                    navController.navigate(route = Screens.Info.route)
-                                    closeDrawer()
-                                }
-                                1 -> {
                                     isExportDialogOpen = true
                                     closeDrawer()
                                 }
-                                2 -> {
+                                1 -> {
                                     isThemeDialogOpen = true
                                     closeDrawer()
                                 }
-                                3 -> {
+                                2 -> {
                                     isDeleteDataDialogOpen = true
+                                    closeDrawer()
+                                }
+                                3 -> {
+                                    navController.navigate(route = Screens.Info.route)
                                     closeDrawer()
                                 }
                             }
@@ -189,6 +189,7 @@ fun ExportConfirmationDialog(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeleteAllDataConfirmationDialog(
     dialogIsOpen: Boolean,
@@ -198,6 +199,7 @@ fun DeleteAllDataConfirmationDialog(
 ) {
     val context = LocalContext.current
     val prompt = stringResource(id = R.string.data_removed)
+    var confirm by rememberSaveable { mutableStateOf("") }
 
     if (dialogIsOpen) {
         AlertDialog(
@@ -209,11 +211,21 @@ fun DeleteAllDataConfirmationDialog(
                 )
             },
             text = {
-
-                Text(
-                    text = stringResource(id = R.string.warning2),
-                    fontSize = 15.sp
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.warning2),
+                        fontSize = 15.sp
+                    )
+                OutlinedTextField(
+                    value = confirm,
+                    onValueChange = { confirm = it },
+                    modifier = Modifier
+                        .padding(top = 10.dp),
+                    label = { Text(text = stringResource(id = R.string.confirm_delete)) },
                 )
+                }
             },
             confirmButton = {
                 TextButton(
@@ -222,7 +234,8 @@ fun DeleteAllDataConfirmationDialog(
                         navController.navigate(Screens.Account.route)
                         firebaseViewModel.deleteAllUserData()
                         Toast.makeText(context, prompt, Toast.LENGTH_LONG).show()
-                    }
+                    },
+                    enabled = confirm == "CONFIRM"
                 ) {
                     Text(stringResource(R.string.confirm_button))
                 }

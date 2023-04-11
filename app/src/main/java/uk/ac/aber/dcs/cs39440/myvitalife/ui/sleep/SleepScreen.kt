@@ -51,7 +51,7 @@ fun SleepScreen(
         },
         navController = navController,
         appBarTitle = appBarTitle,
-        givenDate = DesiredDate.date
+
     ) { innerPadding ->
         Surface(
             modifier = Modifier

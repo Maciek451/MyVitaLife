@@ -1,8 +1,15 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.quotes
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.HeartBroken
+import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -12,6 +19,9 @@ import androidx.navigation.NavHostController
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -21,19 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.*
+import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.GenerateQuoteIfEmpty
+import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.QuoteOfTheDay
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
-
-val retrofit = Retrofit.Builder()
-    .baseUrl("https://api.forismatic.com/")
-    .addConverterFactory(GsonConverterFactory.create())
-    .build()
-
-val service = retrofit.create(QuoteService::class.java)
 
 @Composable
 fun QuotesScreen(
@@ -42,20 +45,17 @@ fun QuotesScreen(
 ) {
     val appBarTitle = stringResource(R.string.quotes)
 
-    val tab0Button by remember { mutableStateOf(Icons.Filled.AddReaction) }
-    val tab1Button by remember { mutableStateOf("") }
-
-    val quoteData by firebaseViewModel.quoteData.observeAsState(Quote("", ""))
-
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
+    val favouriteQuotes by firebaseViewModel.favouriteQuotes.observeAsState(emptyList())
 
     var isDialogOpen by rememberSaveable { mutableStateOf(false) }
+
+    GenerateQuoteIfEmpty()
 
     TopLevelScaffold(
         floatingActionButton = {},
         navController = navController,
         appBarTitle = appBarTitle,
-        givenDate = DesiredDate.date
     ) { innerPadding ->
         Surface(
             modifier = Modifier
@@ -76,7 +76,7 @@ fun QuotesScreen(
                         onClick = { selectedTabIndex = 0 }
                     )
                     Tab(
-                        text = { Text("Saved quotes") },
+                        text = { Text("Favourite quotes") },
                         selected = selectedTabIndex == 1,
                         onClick = { selectedTabIndex = 1 }
                     )
@@ -91,7 +91,7 @@ fun QuotesScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "\"${quoteData.text}\"",
+                                text = "\"${QuoteOfTheDay.quote.text}\"",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 32.sp,
                                 fontFamily = FontFamily.Cursive,
@@ -99,23 +99,76 @@ fun QuotesScreen(
                                 modifier = Modifier.padding(bottom = 20.dp),
                             )
                             Text(
-                                text = "- " + quoteData.author,
+                                text = "- ${QuoteOfTheDay.quote.author}",
                                 fontSize = 20.sp
                             )
-                            Button(
+                            IconButton(
                                 onClick = {
-
+                                    firebaseViewModel.changeQuotesFavouriteStatus(DesiredDate.date)
                                 },
                                 modifier = Modifier.padding(top = 40.dp)
                             ) {
-                                Text(
-                                    text = stringResource(id = R.string.save)
+                                val imageIndex =
+                                    if (QuoteOfTheDay.quote.isFavourite) R.drawable.filled_favorite else R.drawable.outlined_favorite
+                                val tintColor =
+                                    if (ThemeSettings.isDarkTheme) Color.White else Color.Black
+                                Image(
+                                    painter = painterResource(id = imageIndex),
+                                    contentDescription = "Favourite icon",
+                                    modifier = Modifier.size(100.dp),
+                                    colorFilter = ColorFilter.tint(tintColor)
                                 )
                             }
                         }
                     }
                     1 -> {
-                        EmptyScreen()
+                        if (favouriteQuotes.isEmpty()) {
+                            EmptyScreen()
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                            )
+                            {
+                                items(favouriteQuotes) { entry ->
+                                    Column(
+                                        modifier = Modifier.fillMaxSize(),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = "\"${entry.text}\"",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 30.sp,
+                                            fontFamily = FontFamily.Cursive,
+                                            lineHeight = 30.sp,
+                                            modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
+                                        )
+                                        Text(
+                                            text = "- ${entry.author}",
+                                            fontSize = 20.sp
+                                        )
+                                        IconButton(
+                                            onClick = {
+                                                firebaseViewModel.changeQuotesFavouriteStatus(entry.date)
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.HeartBroken,
+                                                contentDescription = "Remove",
+                                                modifier = Modifier.padding(bottom = 10.dp)
+                                            )
+                                        }
+                                    }
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(5.dp)
+                                            .fillMaxWidth()
+                                    )
+                                }
+                            }
+                        }
+
                     }
                 }
             }
@@ -134,7 +187,7 @@ private fun EmptyScreen() {
             modifier = Modifier
                 .size(100.dp)
                 .alpha(0.3f),
-            imageVector = Icons.Default.BookmarkRemove,
+            imageVector = Icons.Default.Favorite,
             contentDescription = "Quotes"
         )
         Text(
