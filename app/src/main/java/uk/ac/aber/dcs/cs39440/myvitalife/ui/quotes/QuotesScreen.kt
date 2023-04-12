@@ -5,6 +5,8 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Favorite
@@ -65,7 +67,7 @@ fun QuotesScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 8.dp, end = 8.dp),
+                    .padding(start = 8.dp, end = 8.dp)
             ) {
                 TabRow(
                     selectedTabIndex = selectedTabIndex
@@ -86,7 +88,8 @@ fun QuotesScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(start = 8.dp, end = 8.dp),
+                                .padding(start = 8.dp, end = 8.dp)
+                                .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -147,6 +150,11 @@ fun QuotesScreen(
                                         Text(
                                             text = "- ${entry.author}",
                                             fontSize = 20.sp
+                                        )
+                                        Text(
+                                            text = "Quote of ${entry.date}",
+                                            fontSize = 15.sp,
+                                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
                                         )
                                         IconButton(
                                             onClick = {

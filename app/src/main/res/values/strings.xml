@@ -18,7 +18,7 @@
     <string name="sleep_text">No sleep data</string>
     <string name="cancel_button">Cancel</string>
     <string name="click_to_confirm">Click to confirm</string>
-    <string name="confirmation_text">Are you sure you want to delete %s?</string>
+    <string name="confirmation_text">Are you sure you want to delete %s entry?</string>
     <string name="confirm_button">Confirm</string>
     <string name="confirm_delete">CONFIRM</string>
     <string name="rate_your_sleep">Rate your sleep:</string>
@@ -75,8 +75,8 @@
     <string name="kcal">kcal: </string>
     <string name="amount">amount: </string>
     <string name="total_calories">"Total calories: "</string>
-    <string name="water_intake">Water intake:</string>
-    <string name="hours_of_sleep">Sleep duration:</string>
+    <string name="water_intake">Water intake (ml):</string>
+    <string name="hours_of_sleep">Sleep duration (hh:mm):</string>
     <string name="set_user_name">Set username</string>
     <string name="user_name">Username:</string>
     <string name="your_email">Email address:</string>
@@ -116,4 +116,6 @@
     <string name="creator_name">Maciej Traczyk</string>
     <string name="version_of_the_app">1.0</string>
     <string name="write_confirm">Write \"CONFIRM\"</string>
+    <string name="sleep_recording">Sleep recording</string>
+    <string name="note_text">Note:</string>
 </resources>

@@ -6,11 +6,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -33,7 +30,7 @@ fun AddMoodDialog(
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
     var optionalDescription by rememberSaveable { mutableStateOf("") }
-    var selectedValue by rememberSaveable { mutableStateOf(-1) }
+    var selectedValue by remember { mutableStateOf(-1) }
 
     if (dialogIsOpen) {
         Dialog(
@@ -123,10 +120,15 @@ fun AddMoodDialog(
                             }
                         }
                     }
+                    val maxChar = 25
 
                     OutlinedTextField(
                         value = optionalDescription,
-                        onValueChange = { optionalDescription = it },
+                        onValueChange = {
+                            if (it.length <= maxChar) {
+                                optionalDescription = it
+                            }
+                        },
                         label = { Text(text = stringResource(id = R.string.note)) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -135,7 +137,7 @@ fun AddMoodDialog(
                                 start.linkTo(parent.start)
                                 top.linkTo(card.bottom)
                             },
-                        )
+                    )
 
                     Button(
                         onClick = {
@@ -161,7 +163,7 @@ fun AddMoodDialog(
 
                     Button(
                         onClick = {
-                            selectedValue = 0
+                            selectedValue = -1
                             dialogOpen(false)
                         },
                         modifier = Modifier

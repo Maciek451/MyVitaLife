@@ -124,7 +124,7 @@ fun NutritionScreen(
                                 0
                             )
                         ) {
-                            CompletedScreen(waterDrunk = waterData.waterDrunk)
+                            CompletedScreen(waterDrunk = waterData.hydrationGoal)
                         } else if (waterData != Water(0, 0)) {
                             Column(
                                 modifier = Modifier

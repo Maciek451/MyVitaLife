@@ -7,11 +7,8 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -199,7 +196,7 @@ fun DeleteAllDataConfirmationDialog(
 ) {
     val context = LocalContext.current
     val prompt = stringResource(id = R.string.data_removed)
-    var confirm by rememberSaveable { mutableStateOf("") }
+    var confirm by remember { mutableStateOf("") }
 
     if (dialogIsOpen) {
         AlertDialog(

@@ -118,12 +118,15 @@ fun SleepScreen(
                     Divider(thickness = 1.dp)
                     Spacer(modifier = Modifier.padding(10.dp))
                     Text(
-                        text = stringResource(R.string.note),
+                        text = stringResource(R.string.note_text),
                         fontSize = 20.sp
                     )
-
+                    var noteText = ""
+                    noteText = sleepData.note.ifEmpty {
+                        "(empty)"
+                    }
                     Text(
-                        text = sleepData.note,
+                        text = noteText,
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 30.sp
                     )

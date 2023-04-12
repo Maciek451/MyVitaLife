@@ -2,19 +2,20 @@ package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.DoneOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBarWithArrow(
+fun TopAppBarWithSave(
     navController: NavHostController,
     title: Int,
+    onClick: () -> Unit
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -31,15 +32,17 @@ fun TopAppBarWithArrow(
                 )
             }
         },
+        actions = {
+            IconButton(
+                onClick = { onClick() }
+            )
+            {
+                Icon(
+                    imageVector = Icons.Filled.Done,
+                    contentDescription =
+                    stringResource(R.string.save_button)
+                )
+            }
+        }
     )
-}
-
-@Preview
-@Composable
-fun SummaryScreenTopBarPreview() {
-    val title = 0
-    val click: Unit
-    MyVitaLifeTheme(dynamicColor = false) {
-//        TopAppBarWithArrow(title, click)
-    }
 }

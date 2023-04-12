@@ -1,6 +1,7 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.journal
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +32,7 @@ import kotlinx.coroutines.withContext
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.model.Mood
+import uk.ac.aber.dcs.cs39440.myvitalife.model.ThemeSettings
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
@@ -83,7 +86,7 @@ fun JournalScreen(
         navController = navController,
         appBarTitle = appBarTitle,
 
-    ) { innerPadding ->
+        ) { innerPadding ->
         Surface(
             modifier = Modifier
                 .padding(innerPadding)
@@ -204,19 +207,46 @@ fun JournalScreen(
 }
 
 @Composable
+private fun MoodEmoji(
+    time: String,
+    backgroundColor: Color,
+    icon: ImageVector,
+    contentDescription: String
+) {
+    Icon(
+        modifier = Modifier
+            .background(color = backgroundColor, shape = CircleShape)
+            .size(30.dp),
+        imageVector = icon,
+        contentDescription = contentDescription,
+        tint = Color.Black
+    )
+    Text(
+        text = time,
+        fontSize = 20.sp,
+    )
+}
+
+@Composable
 private fun MoodCard(
     mood: Mood,
     openConfirmationDialog: (Boolean) -> Unit = {}
 ) {
+    // Default values
+    var emojiBackgroundColor: Color = Color.Yellow
+    var emojiIcon: ImageVector = Icons.Filled.SentimentNeutral
+    var emojiDescription: String = "Neutral"
+
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .padding(all = 10.dp)
+            .padding(all = 10.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(start = 5.dp, end = 5.dp)
+                .padding(start = 10.dp, end = 5.dp)
         ) {
             Row(
                 modifier = Modifier
@@ -226,71 +256,37 @@ private fun MoodCard(
             ) {
                 when (mood.type) {
                     0 -> {
-                        Icon(
-                            modifier = Modifier
-                                .background(color = Color.Green, shape = CircleShape)
-                                .size(30.dp),
-                            imageVector = Icons.Filled.SentimentVerySatisfied,
-                            contentDescription = "Amazing"
-                        )
-                        Text(
-                            text = mood.time,
-                            fontSize = 20.sp,
-                        )
+                        emojiBackgroundColor = Color.Green
+                        emojiIcon = Icons.Filled.SentimentVerySatisfied
+                        emojiDescription = "amazing"
                     }
                     1 -> {
-                        Icon(
-                            modifier = Modifier
-                                .background(color = Color.Cyan, shape = CircleShape)
-                                .size(30.dp),
-                            imageVector = Icons.Filled.SentimentSatisfied,
-                            contentDescription = "Good"
-                        )
-                        Text(
-                            text = mood.time,
-                            fontSize = 20.sp,
-                        )
+                        emojiBackgroundColor = Color.Cyan
+                        emojiIcon = Icons.Filled.SentimentSatisfied
+                        emojiDescription = "good"
                     }
                     2 -> {
-                        Icon(
-                            modifier = Modifier
-                                .background(color = Color.Yellow, shape = CircleShape)
-                                .size(30.dp),
-                            imageVector = Icons.Filled.SentimentNeutral,
-                            contentDescription = "Neutral"
-                        )
-                        Text(
-                            text = mood.time,
-                            fontSize = 20.sp,
-                        )
+                        emojiBackgroundColor = Color.Yellow
+                        emojiIcon = Icons.Filled.SentimentNeutral
+                        emojiDescription = "neutral"
                     }
                     3 -> {
-                        Icon(
-                            modifier = Modifier
-                                .background(color = Color.Magenta, shape = CircleShape)
-                                .size(30.dp),
-                            imageVector = Icons.Filled.SentimentDissatisfied,
-                            contentDescription = "Bad"
-                        )
-                        Text(
-                            text = mood.time,
-                            fontSize = 20.sp,
-                        )
+                        emojiBackgroundColor = Color.Magenta
+                        emojiIcon = Icons.Filled.SentimentDissatisfied
+                        emojiDescription = "bad"
                     }
                     4 -> {
-                        Icon(
-                            modifier = Modifier
-                                .background(color = Color.Red, shape = CircleShape)
-                                .size(30.dp),
-                            imageVector = Icons.Filled.SentimentVeryDissatisfied,
-                            contentDescription = "Awful"
-                        )
-                        Text(
-                            text = mood.time,
-                            fontSize = 20.sp,
-                        )
+                        emojiBackgroundColor = Color.Red
+                        emojiIcon = Icons.Filled.SentimentVeryDissatisfied
+                        emojiDescription = "awful"
                     }
                 }
+                MoodEmoji(
+                    time = mood.time,
+                    backgroundColor = emojiBackgroundColor,
+                    icon = emojiIcon,
+                    contentDescription = emojiDescription
+                )
                 IconButton(
                     onClick = {
                         openConfirmationDialog(true)
@@ -302,10 +298,14 @@ private fun MoodCard(
                     )
                 }
             }
+            var noteText = ""
+            noteText = mood.description.ifEmpty {
+                "I felt $emojiDescription"
+            }
             Text(
-                text = mood.description,
+                text = noteText,
                 fontSize = 20.sp,
-                modifier = Modifier.padding(bottom = 5.dp)
+                modifier = Modifier.padding(bottom = 10.dp)
             )
         }
     }
@@ -326,10 +326,14 @@ private fun GoalCard(
         isChecked.value = goalIsDone
     }
 
+    val cardGreen =
+        if (isChecked.value) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+        else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .padding(all = 10.dp)
+            .padding(all = 10.dp),
+        colors = cardGreen
     ) {
         Column(
             modifier = Modifier

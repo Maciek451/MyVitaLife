@@ -52,10 +52,15 @@ fun AddGoalDialog(
                             },
                         fontSize = 20.sp
                     )
+                    val maxChar = 30
 
                     OutlinedTextField(
                         value = goalTitle,
-                        onValueChange = { goalTitle = it },
+                        onValueChange = {
+                            if (it.length <= maxChar) {
+                                goalTitle = it
+                            }
+                                        },
                         label = { Text(text = stringResource(id = R.string.add_your_goal_description)) },
                         modifier = Modifier
                             .fillMaxWidth()

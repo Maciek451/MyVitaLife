@@ -45,8 +45,8 @@ fun InsightsScreen(
     firebaseViewModel.getUserName {
         userName = it
     }
-    firebaseViewModel.getTotalCaloriesForADay() {
-        totalCalories = it
+    firebaseViewModel.getTotalCaloriesForADay(DesiredDate.date) { kcal ->
+        totalCalories = kcal
     }
 
     TopLevelScaffold(
@@ -111,7 +111,7 @@ fun InsightsScreen(
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            text = "${waterData.waterDrunk} / ${waterData.hydrationGoal}",
+                            text = "${waterData.waterDrunk}/${waterData.hydrationGoal}",
                             fontSize = 50.sp
                         )
                     }

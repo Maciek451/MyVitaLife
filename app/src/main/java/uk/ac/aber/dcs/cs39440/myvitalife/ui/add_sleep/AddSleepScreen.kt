@@ -1,13 +1,20 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.add_sleep
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,6 +29,8 @@ import com.maxkeppeler.sheets.clock.models.ClockConfig
 import com.maxkeppeler.sheets.clock.models.ClockSelection
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithSave
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
@@ -41,6 +50,7 @@ fun AddSleepScreen(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
+    val title = R.string.sleep_recording
     var sliderPosition by rememberSaveable { mutableStateOf(0f) }
     var answer by rememberSaveable { mutableStateOf("") }
     var startTime by rememberSaveable { mutableStateOf("00:00") }
@@ -61,26 +71,39 @@ fun AddSleepScreen(
                 SleepTime.END ->
                     endTime = time
             }
-        })
-
-    ConstraintLayout(
+        }
+    )
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(all = 8.dp)
-    )
-    {
-        val (buttons, content) = createRefs()
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(all = 8.dp)
-                .constrainAs(content) {
-                    start.linkTo(parent.start)
-                },
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TopAppBarWithSave(navController, title, onClick = {
+            sleepDuration = calculateTimeDuration(startTime, endTime)
 
+            firebaseViewModel.addSleep(
+                sliderPosition.toInt(),
+                startTime,
+                endTime,
+                sleepDuration,
+                answer
+            )
+
+            sliderPosition = 0f
+            startTime = "00:00"
+            endTime = "00:00"
+            sleepDuration = "00:00"
+            answer = ""
+
+            navController.navigate(Screens.Sleep.route)
+        }
+        )
+        Column(
+            modifier = Modifier.padding(all = 8.dp).fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround
+        ) {
             Text(
                 text = stringResource(R.string.rate_your_sleep),
                 fontSize = 25.sp,
@@ -92,7 +115,6 @@ fun AddSleepScreen(
                 fontSize = 25.sp,
                 color = MaterialTheme.colorScheme.tertiary
             )
-
             Slider(
                 value = sliderPosition,
                 onValueChange = { sliderPosition = it },
@@ -102,112 +124,88 @@ fun AddSleepScreen(
                     .padding(bottom = 10.dp)
             )
 
-            Spacer(modifier = Modifier.padding(10.dp))
-            Divider(thickness = 1.dp)
-            Spacer(modifier = Modifier.padding(10.dp))
-
             Text(
                 text = stringResource(R.string.note),
                 fontSize = 25.sp,
                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
             )
-
             OutlinedTextField(
                 value = answer,
                 onValueChange = { answer = it },
                 modifier = Modifier
                     .padding(bottom = 10.dp)
             )
-            Spacer(modifier = Modifier.padding(10.dp))
-            Divider(thickness = 1.dp)
-            Spacer(modifier = Modifier.padding(10.dp))
-            Text(
-                text = "Start:",
-                fontSize = 25.sp,
-                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
-            )
-            TextButton(
-                onClick = {
-                    sleepTime = SleepTime.START
-                    clockState.show()
-                },
-                modifier = Modifier.padding(bottom = 10.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
             ) {
-                Text(
-                    text = startTime,
-                    fontSize = 25.sp,
+                Card(
                     modifier = Modifier
-                        .padding(top = 10.dp)
-                )
-            }
-            Spacer(modifier = Modifier.padding(10.dp))
-            Divider(thickness = 1.dp)
-            Spacer(modifier = Modifier.padding(10.dp))
-            Text(
-                text = "End:",
-                fontSize = 25.sp,
-                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
-            )
-            TextButton(
-                onClick = {
-                    sleepTime = SleepTime.END
-                    clockState.show()
-                },
-                modifier = Modifier.padding(bottom = 10.dp)
-            ) {
-                Text(
-                    text = endTime,
-                    fontSize = 25.sp,
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                )
-            }
-            Spacer(modifier = Modifier.padding(10.dp))
-            Divider(thickness = 1.dp)
-            Spacer(modifier = Modifier.padding(10.dp))
-        }
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .constrainAs(buttons) {
-                    bottom.linkTo(parent.bottom)
+                        .fillMaxSize()
+                        .padding(all = 10.dp)
+                        .clickable(onClick = {
+                            sleepTime = SleepTime.START
+                            clockState.show()
+                        })
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 10.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(end = 8.dp),
+                            imageVector = Icons.Filled.Schedule,
+                            contentDescription = "Clock"
+                        )
+                        Text(
+                            text = "Start of the sleep:",
+                            fontSize = 25.sp,
+                            modifier = Modifier.padding(end = 8.dp),
+                        )
+                        Text(
+                            text = startTime,
+                            fontSize = 25.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
-        ) {
-            Button(
-                onClick = { navController.navigate(Screens.Sleep.route) },
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(40.dp)
-            ) {
-                Text(text = stringResource(R.string.cancel_button))
             }
-            Button(
-                onClick = {
-                    sleepDuration = calculateTimeDuration(startTime, endTime)
-
-                    firebaseViewModel.addSleep(
-                        sliderPosition.toInt(),
-                        startTime,
-                        endTime,
-                        sleepDuration,
-                        answer
-                    )
-
-                    sliderPosition = 0f
-                    startTime = "00:00"
-                    endTime = "00:00"
-                    sleepDuration = "00:00"
-                    answer = ""
-
-                    navController.navigate(Screens.Sleep.route)
-                },
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(40.dp),
-                enabled = startTime != "00:00" && endTime != "00:00"
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = stringResource(R.string.save_button))
+                Card(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = 10.dp)
+                        .clickable(onClick = {
+                            sleepTime = SleepTime.END
+                            clockState.show()
+                        })
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 10.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(end = 8.dp),
+                            imageVector = Icons.Filled.Schedule,
+                            contentDescription = "Clock"
+                        )
+                        Text(
+                            text = "End of the sleep:",
+                            fontSize = 25.sp,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            text = endTime,
+                            fontSize = 25.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             }
         }
     }

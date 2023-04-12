@@ -60,11 +60,14 @@ fun AddWaterDialog(
                             },
                         fontSize = 20.sp
                     )
+                    val maxChar = 5
 
                     OutlinedTextField(
                         value = hydrationGoal,
                         onValueChange = {
-                            hydrationGoal = it
+                            if (it.length <= maxChar) {
+                                hydrationGoal = it
+                            }
                             waterGoalError =
                                 (hydrationGoal.toIntOrNull() == null && hydrationGoal.isNotEmpty())
                         },
@@ -98,8 +101,10 @@ fun AddWaterDialog(
                     OutlinedTextField(
                         value = cupSize,
                         onValueChange = {
-                            cupSize = it
-                            cupSizeError = (cupSize.toIntOrNull() == null && !cupSize.isEmpty())
+                            if (it.length <= maxChar) {
+                                cupSize = it
+                            }
+                            cupSizeError = (cupSize.toIntOrNull() == null && cupSize.isNotEmpty())
                         },
                         label = { Text(text = stringResource(id = R.string.cup_size)) },
                         singleLine = true,
