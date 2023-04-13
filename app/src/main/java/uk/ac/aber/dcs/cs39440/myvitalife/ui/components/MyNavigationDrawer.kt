@@ -1,6 +1,10 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 
+import android.Manifest
+import android.os.Build
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
@@ -12,15 +16,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
+import uk.ac.aber.dcs.cs39440.myvitalife.MainActivity
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.datastorage.IS_DARK_THEME_ON_KEY
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DataViewModel
@@ -29,7 +39,8 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun MainPageNavigationDrawer(
     navController: NavHostController,
@@ -37,15 +48,17 @@ fun MainPageNavigationDrawer(
     closeDrawer: () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
+    val permissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
     var isExportDialogOpen by rememberSaveable { mutableStateOf(false) }
     var isDeleteDataDialogOpen by rememberSaveable { mutableStateOf(false) }
     var isThemeDialogOpen by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
 
     val items = listOf(
         Pair(
             Icons.Default.ImportExport,
             stringResource(id = R.string.export_data_drawer)
-
         ),
         Pair(
             Icons.Default.BrightnessMedium,
@@ -54,6 +67,10 @@ fun MainPageNavigationDrawer(
         Pair(
             Icons.Default.DeleteForever,
             stringResource(id = R.string.clear_data)
+        ),
+        Pair(
+            Icons.Default.NotificationsActive,
+            stringResource(id = R.string.notification_permission)
         ),
         Pair(
             Icons.Default.Info,
@@ -77,7 +94,7 @@ fun MainPageNavigationDrawer(
                 Divider(
                     thickness = 1.dp,
                     modifier = Modifier
-                        .padding(bottom = 15.dp, start = 20.dp, end = 20.dp)
+                        .padding(bottom = 7.dp, start = 20.dp, end = 20.dp)
                 )
                 items.forEachIndexed { index, item ->
                     NavigationDrawerItem(
@@ -104,6 +121,14 @@ fun MainPageNavigationDrawer(
                                     closeDrawer()
                                 }
                                 3 -> {
+                                    if (permissionState.hasPermission) {
+                                        Toast.makeText(context, "Permission already granted", Toast.LENGTH_LONG).show()
+                                    } else {
+                                        permissionState.launchPermissionRequest()
+                                    }
+                                    closeDrawer()
+                                }
+                                4 -> {
                                     navController.navigate(route = Screens.Info.route)
                                     closeDrawer()
                                 }
@@ -215,13 +240,13 @@ fun DeleteAllDataConfirmationDialog(
                         text = stringResource(id = R.string.warning2),
                         fontSize = 15.sp
                     )
-                OutlinedTextField(
-                    value = confirm,
-                    onValueChange = { confirm = it },
-                    modifier = Modifier
-                        .padding(top = 10.dp),
-                    label = { Text(text = stringResource(id = R.string.confirm_delete)) },
-                )
+                    OutlinedTextField(
+                        value = confirm,
+                        onValueChange = { confirm = it },
+                        modifier = Modifier
+                            .padding(top = 10.dp),
+                        label = { Text(text = stringResource(id = R.string.confirm_delete)) },
+                    )
                 }
             },
             confirmButton = {
@@ -333,6 +358,6 @@ private fun MainPageNavigationDrawerPreview() {
     MyVitaLifeTheme(dynamicColor = false) {
         val navController = rememberNavController()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
-        MainPageNavigationDrawer(navController, drawerState)
+//        MainPageNavigationDrawer(navController, drawerState)
     }
 }

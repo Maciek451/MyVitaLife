@@ -224,6 +224,7 @@ private fun MoodEmoji(
     Text(
         text = time,
         fontSize = 20.sp,
+        modifier = Modifier.padding(bottom = 9.dp)
     )
 }
 
@@ -246,11 +247,12 @@ private fun MoodCard(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(start = 10.dp, end = 5.dp)
+                .padding(start = 10.dp, end = 5.dp, top = 4.dp, bottom = 4.dp)
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(start = 3.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -294,7 +296,8 @@ private fun MoodCard(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
-                        contentDescription = "Delete food"
+                        contentDescription = "Delete food",
+                        modifier = Modifier.padding(bottom = 7.dp)
                     )
                 }
             }
@@ -305,7 +308,7 @@ private fun MoodCard(
             Text(
                 text = noteText,
                 fontSize = 20.sp,
-                modifier = Modifier.padding(bottom = 10.dp)
+                modifier = Modifier.padding(start = 3.dp, bottom = 5.dp, top = 2.dp)
             )
         }
     }
@@ -327,8 +330,8 @@ private fun GoalCard(
     }
 
     val cardGreen =
-        if (isChecked.value) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-        else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+        if (isChecked.value) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+        else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.error)
     Card(
         modifier = Modifier
             .fillMaxSize()
@@ -338,8 +341,14 @@ private fun GoalCard(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(start = 5.dp, end = 5.dp)
+                .padding(end = 5.dp, top = 2.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = title,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(top = 6.dp, bottom = 7.dp),
+            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -352,6 +361,10 @@ private fun GoalCard(
                         isChecked.value = !isChecked.value
                         firebaseViewModel.addGoal(title, isChecked.value)
                     },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = Color.Green,
+                        uncheckedColor = Color.Red
+                    )
                 )
                 IconButton(
                     onClick = {
@@ -360,16 +373,11 @@ private fun GoalCard(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
-                        contentDescription = "Delete food"
+                        contentDescription = "Delete food",
+                        modifier = Modifier.padding(bottom = 7.dp)
                     )
                 }
             }
-            Text(
-                text = title,
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .padding(bottom = 5.dp)
-            )
         }
     }
 }

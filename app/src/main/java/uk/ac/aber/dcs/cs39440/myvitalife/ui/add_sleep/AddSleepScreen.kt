@@ -100,7 +100,7 @@ fun AddSleepScreen(
         }
         )
         Column(
-            modifier = Modifier.padding(all = 8.dp).fillMaxSize(),
+            modifier = Modifier.padding(all = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround
         ) {
@@ -137,7 +137,9 @@ fun AddSleepScreen(
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
             ) {
                 Card(
                     modifier = Modifier
@@ -151,7 +153,9 @@ fun AddSleepScreen(
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp, bottom = 10.dp)
                     ) {
                         Icon(
                             modifier = Modifier.padding(end = 8.dp),
@@ -187,7 +191,9 @@ fun AddSleepScreen(
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp, bottom = 10.dp)
                     ) {
                         Icon(
                             modifier = Modifier.padding(end = 8.dp),

@@ -118,4 +118,6 @@
     <string name="write_confirm">Write \"CONFIRM\"</string>
     <string name="sleep_recording">Sleep recording</string>
     <string name="note_text">Note:</string>
+    <string name="achieved">Achieved</string>
+    <string name="notification_permission">Notifications permission</string>
 </resources>

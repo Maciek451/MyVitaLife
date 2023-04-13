@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.notifications.MyNotification
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
@@ -105,7 +106,6 @@ fun AccountScreen(
                 Button(
                     onClick = {
                         firebaseViewModel.signOut { }
-//                        navController.popBackStack(navController.graph.startDestinationId, false)
                         navController.navigate(Screens.SignIn.route) { popUpTo(0) }
                         Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
                     },
@@ -115,6 +115,12 @@ fun AccountScreen(
                     Text(text = stringResource(id = R.string.signOut))
                 }
             }
+        }
+        Button(onClick = {
+            val notification = MyNotification(context, "MyVitaLife", "Hello")
+            notification.showNotification()
+        }) {
+            Text(text = "Send notification")
         }
     }
     SetNameDialog(
