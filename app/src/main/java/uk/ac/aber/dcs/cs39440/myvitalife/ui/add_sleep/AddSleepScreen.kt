@@ -160,10 +160,10 @@ fun AddSleepScreen(
                         Icon(
                             modifier = Modifier.padding(end = 8.dp),
                             imageVector = Icons.Filled.Schedule,
-                            contentDescription = "Clock"
+                            contentDescription = stringResource(id = R.string.clock)
                         )
                         Text(
-                            text = "Start of the sleep:",
+                            text = stringResource(id = R.string.start_of_the_sleep),
                             fontSize = 25.sp,
                             modifier = Modifier.padding(end = 8.dp),
                         )
@@ -198,10 +198,10 @@ fun AddSleepScreen(
                         Icon(
                             modifier = Modifier.padding(end = 8.dp),
                             imageVector = Icons.Filled.Schedule,
-                            contentDescription = "Clock"
+                            contentDescription = stringResource(id = R.string.clock)
                         )
                         Text(
-                            text = "End of the sleep:",
+                            text = stringResource(id = R.string.end_of_the_sleep),
                             fontSize = 25.sp,
                             modifier = Modifier.padding(end = 8.dp)
                         )

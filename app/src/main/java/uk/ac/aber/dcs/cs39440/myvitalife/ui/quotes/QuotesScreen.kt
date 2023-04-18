@@ -1,5 +1,7 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.quotes
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -36,10 +38,12 @@ import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.*
 import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.GenerateQuoteIfEmpty
+import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.Quote
 import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.QuoteOfTheDay
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun QuotesScreen(
     navController: NavHostController,
@@ -49,6 +53,8 @@ fun QuotesScreen(
 
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val favouriteQuotes by firebaseViewModel.favouriteQuotes.observeAsState(emptyList())
+
+    var dateOfQuote by remember { mutableStateOf("") }
 
     var isDialogOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -73,12 +79,12 @@ fun QuotesScreen(
                     selectedTabIndex = selectedTabIndex
                 ) {
                     Tab(
-                        text = { Text("Quote of the day") },
+                        text = { Text(stringResource(id = R.string.quote_of_the_day)) },
                         selected = selectedTabIndex == 0,
                         onClick = { selectedTabIndex = 0 }
                     )
                     Tab(
-                        text = { Text("Favourite quotes") },
+                        text = { Text(stringResource(id = R.string.favourite_quotes)) },
                         selected = selectedTabIndex == 1,
                         onClick = { selectedTabIndex = 1 }
                     )
@@ -117,7 +123,7 @@ fun QuotesScreen(
                                     if (ThemeSettings.isDarkTheme) Color.White else Color.Black
                                 Image(
                                     painter = painterResource(id = imageIndex),
-                                    contentDescription = "Favourite icon",
+                                    contentDescription = stringResource(id = R.string.favourite_icon),
                                     modifier = Modifier.size(100.dp),
                                     colorFilter = ColorFilter.tint(tintColor)
                                 )
@@ -139,34 +145,15 @@ fun QuotesScreen(
                                         verticalArrangement = Arrangement.Center,
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
-                                        Text(
-                                            text = "\"${entry.text}\"",
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 30.sp,
-                                            fontFamily = FontFamily.Cursive,
-                                            lineHeight = 30.sp,
-                                            modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
-                                        )
-                                        Text(
-                                            text = "- ${entry.author}",
-                                            fontSize = 20.sp
-                                        )
-                                        Text(
-                                            text = "Quote of ${entry.date}",
-                                            fontSize = 15.sp,
-                                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
-                                        )
-                                        IconButton(
-                                            onClick = {
-                                                firebaseViewModel.changeQuotesFavouriteStatus(entry.date)
+                                        QuoteCard(
+                                            text = entry.text,
+                                            author = entry.author,
+                                            date = entry.date,
+                                            openConfirmationDialog = { isOpen ->
+                                                isDialogOpen = isOpen
+                                                dateOfQuote = entry.date
                                             }
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.HeartBroken,
-                                                contentDescription = "Remove",
-                                                modifier = Modifier.padding(bottom = 10.dp)
-                                            )
-                                        }
+                                        )
                                     }
                                     Spacer(
                                         modifier = Modifier
@@ -176,11 +163,59 @@ fun QuotesScreen(
                                 }
                             }
                         }
-
                     }
                 }
             }
         }
+    }
+    RemoveFromFavouriteConfirmationDialog(
+        dialogIsOpen = isDialogOpen,
+        dialogOpen = { isOpen ->
+            isDialogOpen = isOpen
+        },
+        date = dateOfQuote
+    )
+}
+
+@Composable
+fun QuoteCard(
+    text: String,
+    author: String,
+    date: String,
+    openConfirmationDialog: (Boolean) -> Unit = {}
+) {
+    Text(
+        text = text,
+        fontWeight = FontWeight.Bold,
+        fontSize = 30.sp,
+        fontFamily = FontFamily.Cursive,
+        lineHeight = 30.sp,
+        modifier = Modifier.padding(
+            bottom = 10.dp,
+            top = 10.dp
+        ),
+    )
+    Text(
+        text = author,
+        fontSize = 20.sp
+    )
+    Text(
+        text = stringResource(
+            id = R.string.quote_of, date
+        ),
+        fontSize = 15.sp,
+        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+    )
+    IconButton(
+        onClick = {
+            openConfirmationDialog(true)
+        }
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.HeartBroken,
+            contentDescription = stringResource(id = R.string.delete_icon),
+            modifier = Modifier.padding(bottom = 10.dp)
+        )
     }
 }
 
@@ -196,7 +231,7 @@ private fun EmptyScreen() {
                 .size(100.dp)
                 .alpha(0.3f),
             imageVector = Icons.Default.Favorite,
-            contentDescription = "Quotes"
+            contentDescription = stringResource(id = R.string.empty_quotes_icon)
         )
         Text(
             modifier = Modifier
@@ -208,11 +243,47 @@ private fun EmptyScreen() {
     }
 }
 
-@Preview
 @Composable
-fun DailyStepsPreview() {
-    val navController = rememberNavController()
-    MyVitaLifeTheme(dynamicColor = false) {
-        QuotesScreen(navController)
+fun RemoveFromFavouriteConfirmationDialog(
+    dialogIsOpen: Boolean,
+    dialogOpen: (Boolean) -> Unit = {},
+    firebaseViewModel: FirebaseViewModel = viewModel(),
+    date: String
+) {
+    if (dialogIsOpen) {
+        AlertDialog(
+            onDismissRequest = { dialogOpen(false) },
+            title = {
+                Text(
+                    text = stringResource(id = R.string.click_to_confirm),
+                    fontSize = 20.sp
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(id = R.string.remove_quote_text),
+                    fontSize = 15.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        dialogOpen(false)
+                        firebaseViewModel.changeQuotesFavouriteStatus(date)
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm_button))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        dialogOpen(false)
+                    }
+                ) {
+                    Text(stringResource(R.string.cancel_button))
+                }
+            }
+        )
     }
 }

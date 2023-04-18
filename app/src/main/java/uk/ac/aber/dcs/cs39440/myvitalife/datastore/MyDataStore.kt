@@ -1,4 +1,4 @@
-package uk.ac.aber.dcs.cs39440.myvitalife.datastorage
+package uk.ac.aber.dcs.cs39440.myvitalife.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -6,18 +6,25 @@ import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 
-private const val PREFERENCES_NAME = "DataStorage"
+private const val PREFERENCES_NAME = "MyDataStore"
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = PREFERENCES_NAME)
 
-class DataStorage(
+/**
+ * DataStore Preferences class used for persistent data storage
+ * @author Maciej Traczyk
+ */
+class MyDataStore(
     private val context: Context
 ) {
 
     /**
-     * Saves a string value in a given key
+     * Saves a string value for a given key.
+     *
+     * @param value The value to save.
+     * @param key The key associated with the value.
      */
-    suspend fun putString(value: String, key: String) {
+    suspend fun saveString(value: String, key: String) {
         val preferencesKey = stringPreferencesKey(key)
         context.dataStore.edit { preferences ->
             preferences[preferencesKey] = value
@@ -25,7 +32,10 @@ class DataStorage(
     }
 
     /**
-     * Returns a string value based on a given key
+     * Returns a string value based on a given key.
+     *
+     * @param key The key associated with the value to retrieve.
+     * @return The value associated with the key, or null if it does not exist.
      */
     suspend fun getString(key: String): String? {
         val preferencesKey = stringPreferencesKey(key)
@@ -33,16 +43,22 @@ class DataStorage(
     }
 
     /**
-     * Saves a boolean value in a given key
+     * Saves a boolean value for a given key.
+     *
+     * @param value The value to save.
+     * @param key The key associated with the value.
      */
-    suspend fun putBoolean(value: Boolean, key: String) {
+    suspend fun saveBoolean(value: Boolean, key: String) {
         context.dataStore.edit { preferences ->
             preferences[booleanPreferencesKey(key)] = value
         }
     }
 
     /**
-     * Returns a boolean value based on a given key
+     * Returns a boolean value based on a given key.
+     *
+     * @param key The key associated with the value to retrieve.
+     * @return The value associated with the key, or null if it does not exist.
      */
     suspend fun getBoolean(key: String): Boolean? {
         val preferencesKey = booleanPreferencesKey(key)

@@ -1,6 +1,8 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.journal
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -37,6 +39,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun JournalScreen(
     navController: NavHostController,
@@ -62,7 +65,6 @@ fun JournalScreen(
             FloatingActionButton(
                 onClick = {
                     if (selectedTabIndex == 0) {
-//                        navController.navigate(Screen.AddMood.route)
                         isMoodDialogOpen = true
                     } else {
                         isGoalDialogOpen = true
@@ -73,12 +75,12 @@ fun JournalScreen(
                 if (selectedTabIndex == 0) {
                     Icon(
                         imageVector = tab0Button,
-                        contentDescription = "Add"
+                        contentDescription = stringResource(id = R.string.add)
                     )
                 } else {
                     Icon(
                         imageVector = tab1Button,
-                        contentDescription = "Modify"
+                        contentDescription = stringResource(id = R.string.modify)
                     )
                 }
             }
@@ -102,12 +104,16 @@ fun JournalScreen(
                     selectedTabIndex = selectedTabIndex
                 ) {
                     Tab(
-                        text = { Text("Mood") },
+                        text = {
+                            Text(stringResource(id = R.string.mood))
+                        },
                         selected = selectedTabIndex == 0,
                         onClick = { selectedTabIndex = 0 }
                     )
                     Tab(
-                        text = { Text("Goals") },
+                        text = {
+                            Text(stringResource(id = R.string.goals))
+                        },
                         selected = selectedTabIndex == 1,
                         onClick = { selectedTabIndex = 1 }
                     )
@@ -128,7 +134,6 @@ fun JournalScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        Log.d("TEST", "creating mood card: ${entry.time}")
                                         Column(
                                             horizontalAlignment = Alignment.Start
                                         ) {
@@ -236,7 +241,7 @@ private fun MoodCard(
     // Default values
     var emojiBackgroundColor: Color = Color.Yellow
     var emojiIcon: ImageVector = Icons.Filled.SentimentNeutral
-    var emojiDescription: String = "Neutral"
+    var emojiDescription: String = stringResource(id = R.string.neutral)
 
     Card(
         modifier = Modifier
@@ -260,27 +265,27 @@ private fun MoodCard(
                     0 -> {
                         emojiBackgroundColor = Color.Green
                         emojiIcon = Icons.Filled.SentimentVerySatisfied
-                        emojiDescription = "amazing"
+                        emojiDescription = stringResource(id = R.string.amazing_lower_case)
                     }
                     1 -> {
                         emojiBackgroundColor = Color.Cyan
                         emojiIcon = Icons.Filled.SentimentSatisfied
-                        emojiDescription = "good"
+                        emojiDescription = stringResource(id = R.string.good_lower_case)
                     }
                     2 -> {
                         emojiBackgroundColor = Color.Yellow
                         emojiIcon = Icons.Filled.SentimentNeutral
-                        emojiDescription = "neutral"
+                        emojiDescription = stringResource(id = R.string.neutral_lower_case)
                     }
                     3 -> {
                         emojiBackgroundColor = Color.Magenta
                         emojiIcon = Icons.Filled.SentimentDissatisfied
-                        emojiDescription = "bad"
+                        emojiDescription = stringResource(id = R.string.bad_lower_case)
                     }
                     4 -> {
                         emojiBackgroundColor = Color.Red
                         emojiIcon = Icons.Filled.SentimentVeryDissatisfied
-                        emojiDescription = "awful"
+                        emojiDescription = stringResource(id = R.string.awful_lower_case)
                     }
                 }
                 MoodEmoji(
@@ -296,14 +301,14 @@ private fun MoodCard(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
-                        contentDescription = "Delete food",
+                        contentDescription = stringResource(id = R.string.delete_button),
                         modifier = Modifier.padding(bottom = 7.dp)
                     )
                 }
             }
             var noteText = ""
             noteText = mood.description.ifEmpty {
-                "I felt $emojiDescription"
+                stringResource(id = R.string.i_felt, emojiDescription)
             }
             Text(
                 text = noteText,
@@ -373,7 +378,7 @@ private fun GoalCard(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
-                        contentDescription = "Delete food",
+                        contentDescription = stringResource(id = R.string.delete_button),
                         modifier = Modifier.padding(bottom = 7.dp)
                     )
                 }
@@ -395,7 +400,7 @@ private fun EmptyJournal(tabIndex: Int) {
                     .size(100.dp)
                     .alpha(0.3f),
                 imageVector = Icons.Default.FaceRetouchingOff,
-                contentDescription = "EmptySleepScreen"
+                contentDescription = stringResource(id = R.string.empty_mood_tab)
             )
             Text(
                 modifier = Modifier
@@ -410,7 +415,7 @@ private fun EmptyJournal(tabIndex: Int) {
                     .size(100.dp)
                     .alpha(0.3f),
                 imageVector = Icons.Default.Unpublished,
-                contentDescription = "EmptySleepScreen"
+                contentDescription = stringResource(id = R.string.empty_goal_tab)
             )
             Text(
                 modifier = Modifier
@@ -434,7 +439,7 @@ fun DeleteConfirmationDialog(
 ) {
     if (dialogIsOpen) {
         AlertDialog(
-            onDismissRequest = { /* Empty so clicking outside has no effect */ },
+            onDismissRequest = { dialogOpen(false) },
             title = {
                 Text(
                     text = stringResource(id = R.string.click_to_confirm),
@@ -475,6 +480,7 @@ fun DeleteConfirmationDialog(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview
 @Composable
 fun JournalScreenPreview() {

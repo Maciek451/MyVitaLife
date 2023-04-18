@@ -1,5 +1,6 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight

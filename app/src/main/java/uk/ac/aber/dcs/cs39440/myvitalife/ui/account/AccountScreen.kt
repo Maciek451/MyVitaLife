@@ -107,7 +107,7 @@ fun AccountScreen(
                     onClick = {
                         firebaseViewModel.signOut { }
                         navController.navigate(Screens.SignIn.route) { popUpTo(0) }
-                        Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, R.string.signedOut, Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.padding(top = 6.dp),
                     colors = ButtonDefaults.buttonColors(Color.Red)
@@ -116,12 +116,12 @@ fun AccountScreen(
                 }
             }
         }
-        Button(onClick = {
-            val notification = MyNotification(context, "MyVitaLife", "Hello")
-            notification.showNotification()
-        }) {
-            Text(text = "Send notification")
-        }
+//        Button(onClick = {
+//            val notification = MyNotification(context, "MyVitaLife", "Hello")
+//            notification.showNotification()
+//        }) {
+//            Text(text = "Send notification")
+//        }
     }
     SetNameDialog(
         dialogIsOpen = isDialogOpen,

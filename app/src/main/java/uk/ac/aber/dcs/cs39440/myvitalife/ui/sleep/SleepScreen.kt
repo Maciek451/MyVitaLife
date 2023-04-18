@@ -1,5 +1,7 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.sleep
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -27,6 +29,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SleepScreen(
     navController: NavHostController,
@@ -123,7 +126,7 @@ fun SleepScreen(
                     )
                     var noteText = ""
                     noteText = sleepData.note.ifEmpty {
-                        "(empty)"
+                        stringResource(id = R.string.empty_with_brackets)
                     }
                     Text(
                         text = noteText,
@@ -153,7 +156,7 @@ private fun EmptySleepScreen() {
                 .size(100.dp)
                 .alpha(0.3f),
             imageVector = Icons.Default.BedtimeOff,
-            contentDescription = "EmptySleepScreen"
+            contentDescription = stringResource(id = R.string.empty_sleep_screen_icon)
         )
         Text(
             modifier = Modifier
@@ -165,6 +168,7 @@ private fun EmptySleepScreen() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 @Preview
 private fun SleepScreenPreview() {

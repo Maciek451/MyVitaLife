@@ -1,6 +1,8 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -9,15 +11,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import kotlinx.coroutines.launch
+import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopLevelScaffold(
@@ -34,7 +39,6 @@ fun TopLevelScaffold(
     CalendarDialog(
         state = calendarState,
         selection = CalendarSelection.Date { _date ->
-            Log.d("SelectedDate", "$_date")
             val chosenDate = Utils.getFormattedDateString(_date.toString())
             if (chosenDate.isNotEmpty()) {
                 DesiredDate.date = chosenDate
@@ -49,7 +53,6 @@ fun TopLevelScaffold(
         drawerState = drawerState,
         closeDrawer = {
             coroutineScope.launch {
-                // We know it will be open
                 drawerState.close()
             }
         }
@@ -86,7 +89,7 @@ fun TopLevelScaffold(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Left Arrow"
+                                contentDescription = stringResource(id = R.string.left_arrow)
                             )
                         }
                         TextButton(onClick = { calendarState.show() }) {
@@ -102,7 +105,7 @@ fun TopLevelScaffold(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.ArrowForward,
-                                contentDescription = "Right Arrow"
+                                contentDescription = stringResource(id = R.string.right_arrow)
                             )
                         }
                     }

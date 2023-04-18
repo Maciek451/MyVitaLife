@@ -1,13 +1,16 @@
+/**
+ * This class represents the main activity of the MyVitaLife application.
+ * It extends the ComponentActivity class and is annotated with the AndroidEntryPoint annotation.
+ *
+ * @author Maciej Traczyk
+ */
 package uk.ac.aber.dcs.cs39440.myvitalife
 
-import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -19,28 +22,25 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
-import uk.ac.aber.dcs.cs39440.myvitalife.datastorage.IS_DARK_THEME_ON_KEY
+import uk.ac.aber.dcs.cs39440.myvitalife.datastore.IS_DARK_THEME_ON_KEY
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DataViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.QuoteOfTheDay
 import uk.ac.aber.dcs.cs39440.myvitalife.model.ThemeSettings
 import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.GenerateQuoteIfEmpty
+import uk.ac.aber.dcs.cs39440.myvitalife.notifications.MyNotification
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.AccountScreen
@@ -55,6 +55,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition.NutritionScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.sleep.SleepScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.why_to_track.InfoScreen
+import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -73,6 +74,38 @@ class MainActivity : ComponentActivity() {
             }
         }
         setContent {
+            val morningNotification = MyNotification(applicationContext, stringResource(id = R.string.notification_title),
+                stringResource(id = R.string.notification_message))
+
+            val morning = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 10)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+            }
+            morningNotification.scheduleRepeatingNotification(morning, AlarmManager.INTERVAL_DAY)
+
+            //This should schedule 3 different notifications at 3 different times
+            //It is not working now, for future development fixing this issue has the highest priority
+            //TODO: Fix scheduling multiple notifications
+
+//            val afternoonNotification = MyNotification(applicationContext, "Stay fueled and hydrated!",
+//                "It's time to add your nutrition and hydration data! Stay on track with MyVitaLife.")
+//            val eveningNotification = MyNotification(applicationContext, "Check in and track your progress!",
+//                "How was your day? Update your mood and goals in MyVitaLife and finish strong!")
+//            val afternoon = Calendar.getInstance().apply {
+//                set(Calendar.HOUR_OF_DAY, 14)
+//                set(Calendar.MINUTE, 1)
+//                set(Calendar.SECOND, 1)
+//            }
+//            val evening = Calendar.getInstance().apply {
+//                set(Calendar.HOUR_OF_DAY, 20)
+//                set(Calendar.MINUTE, 1)
+//                set(Calendar.SECOND, 1)
+//            }
+//            afternoonNotification.scheduleRepeatingNotification(afternoon, AlarmManager.INTERVAL_DAY)
+//            eveningNotification.scheduleRepeatingNotification(evening, AlarmManager.INTERVAL_DAY)
+
+
             SetTheme()
             MyVitaLifeTheme(dynamicColor = false) {
                 Surface(
@@ -86,6 +119,11 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Builds the navigation graph for the app.
+ *
+ * @param navController The [NavController] that will be used to navigate between screens.
+ */
 @Composable
 private fun BuildNavigationGraph() {
     val navController = rememberNavController()
@@ -118,12 +156,18 @@ private fun BuildNavigationGraph() {
     }
 }
 
+/**
+ * Function to generate a quote using the [firebaseViewModel].
+ *
+ * @param firebaseViewModel the FirebaseViewModel instance used to fetch quote data.
+ */
 @Composable
 fun GenerateQuote(
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
     var isQuoteObtained by rememberSaveable { mutableStateOf(false) }
 
+    // fetch the quote data from Firebase and update the state variable once the quote is obtained
     firebaseViewModel.fetchQuoteData { quote ->
         QuoteOfTheDay.quote = quote
         isQuoteObtained = true
@@ -133,6 +177,12 @@ fun GenerateQuote(
     }
 }
 
+/**
+ * Function to set the theme based on user preferences using the [dataViewModel].
+ *
+ * @param dataViewModel the DataViewModel instance used to retrieve user theme preferences.
+ *                      Uses a default instance provided by Hilt if not specified.
+ */
 @Composable
 fun SetTheme(
     dataViewModel: DataViewModel = hiltViewModel()

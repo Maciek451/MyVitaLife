@@ -52,7 +52,7 @@ fun InfoScreen(
                 Image(
                     modifier = Modifier.size(70.dp),
                     painter = painterResource(id = R.drawable.lifestyle),
-                    contentDescription = "App icon",
+                    contentDescription = stringResource(id = R.string.app_icon),
                     contentScale = ContentScale.Crop
                 )
                 Text(

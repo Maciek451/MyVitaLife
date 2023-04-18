@@ -1,5 +1,7 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,6 +40,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun NutritionScreen(
     navController: NavHostController,
@@ -78,12 +81,12 @@ fun NutritionScreen(
                 if (selectedTabIndex == 0) {
                     Icon(
                         imageVector = tab0Button,
-                        contentDescription = "Add"
+                        contentDescription = stringResource(id = R.string.add)
                     )
                 } else {
                     Icon(
                         imageVector = tab1Button,
-                        contentDescription = "Add"
+                        contentDescription = stringResource(id = R.string.add)
                     )
                 }
             }
@@ -107,12 +110,12 @@ fun NutritionScreen(
                     selectedTabIndex = selectedTabIndex
                 ) {
                     Tab(
-                        text = { Text("Hydration") },
+                        text = { Text(stringResource(id = R.string.hydration)) },
                         selected = selectedTabIndex == 0,
                         onClick = { selectedTabIndex = 0 }
                     )
                     Tab(
-                        text = { Text("Eating") },
+                        text = { Text(stringResource(id = R.string.eating)) },
                         selected = selectedTabIndex == 1,
                         onClick = { selectedTabIndex = 1 }
                     )
@@ -306,7 +309,7 @@ fun FoodCard(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Add,
-                        contentDescription = "Add"
+                        contentDescription = stringResource(id = R.string.add)
                     )
                 }
                 IconButton(
@@ -316,7 +319,7 @@ fun FoodCard(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Remove,
-                        contentDescription = "Remove"
+                        contentDescription = stringResource(id = R.string.remove_icon)
                     )
                 }
             }
@@ -327,7 +330,7 @@ fun FoodCard(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Delete food"
+                    contentDescription = stringResource(id = R.string.delete_icon)
                 )
             }
         }
@@ -347,7 +350,7 @@ private fun EmptyScreen(tabIndex: Int) {
                     .size(100.dp)
                     .alpha(0.3f),
                 imageVector = Icons.Default.FormatColorReset,
-                contentDescription = "EmptySleepScreen"
+                contentDescription = stringResource(id = R.string.empty_hydration_tab)
             )
             Text(
                 modifier = Modifier
@@ -362,7 +365,7 @@ private fun EmptyScreen(tabIndex: Int) {
                     .size(100.dp)
                     .alpha(0.3f),
                 imageVector = Icons.Default.NoMeals,
-                contentDescription = "EmptySleepScreen"
+                contentDescription = stringResource(id = R.string.empty_eating_tab)
             )
             Text(
                 modifier = Modifier
@@ -394,7 +397,7 @@ private fun CompletedScreen(waterDrunk: Int) {
             modifier = Modifier
                 .size(100.dp),
             imageVector = Icons.Default.WaterDrop,
-            contentDescription = "CompletedScreen",
+            contentDescription = stringResource(id = R.string.completed_hydration),
             tint = MaterialTheme.colorScheme.tertiaryContainer
         )
         Text(
@@ -414,7 +417,7 @@ fun DeleteConfirmationDialog(
 ) {
     if (dialogIsOpen) {
         AlertDialog(
-            onDismissRequest = { /* Empty so clicking outside has no effect */ },
+            onDismissRequest = { dialogOpen(false) },
             title = {
                 Text(
                     text = stringResource(id = R.string.click_to_confirm),
@@ -455,6 +458,7 @@ fun DeleteConfirmationDialog(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview
 @Composable
 fun NutritionScreenPreview() {

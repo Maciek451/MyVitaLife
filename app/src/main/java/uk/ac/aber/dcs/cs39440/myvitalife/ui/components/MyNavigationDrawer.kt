@@ -3,7 +3,6 @@ package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 import android.Manifest
 import android.os.Build
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,24 +15,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import uk.ac.aber.dcs.cs39440.myvitalife.MainActivity
 import uk.ac.aber.dcs.cs39440.myvitalife.R
-import uk.ac.aber.dcs.cs39440.myvitalife.datastorage.IS_DARK_THEME_ON_KEY
+import uk.ac.aber.dcs.cs39440.myvitalife.datastore.IS_DARK_THEME_ON_KEY
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DataViewModel
+import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.model.ThemeSettings
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
@@ -122,7 +118,7 @@ fun MainPageNavigationDrawer(
                                 }
                                 3 -> {
                                     if (permissionState.hasPermission) {
-                                        Toast.makeText(context, "Permission already granted", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, R.string.permission_already_granted, Toast.LENGTH_LONG).show()
                                     } else {
                                         permissionState.launchPermissionRequest()
                                     }
@@ -183,7 +179,7 @@ fun ExportConfirmationDialog(
             text = {
 
                 Text(
-                    text = stringResource(id = R.string.export_data),
+                    text = stringResource(id = R.string.export_data, DesiredDate.date),
                     fontSize = 15.sp
                 )
             },
@@ -257,7 +253,7 @@ fun DeleteAllDataConfirmationDialog(
                         firebaseViewModel.deleteAllUserData()
                         Toast.makeText(context, prompt, Toast.LENGTH_LONG).show()
                     },
-                    enabled = confirm == "CONFIRM"
+                    enabled = confirm == stringResource(id = R.string.confirm_capital)
                 ) {
                     Text(stringResource(R.string.confirm_button))
                 }
@@ -281,7 +277,7 @@ fun ChooseThemeDialog(
     dialogOpen: (Boolean) -> Unit = {},
     dataViewModel: DataViewModel = hiltViewModel()
 ) {
-    val options = listOf("Light", "Dark")
+    val options = listOf(R.string.light, R.string.dark)
     var selectedOptionIndex by rememberSaveable { mutableStateOf(2) }
 
     selectedOptionIndex = if (ThemeSettings.isDarkTheme) 1 else 0
@@ -312,7 +308,7 @@ fun ChooseThemeDialog(
                                 onClick = { selectedOptionIndex = index }
                             )
                             Text(
-                                text = options[index],
+                                text = stringResource(id = options[index]),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }

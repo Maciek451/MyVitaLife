@@ -1,3 +1,8 @@
+/**
+ * A utility class with static methods for common operations.
+ *
+ * @author Maciej Traczyk
+ */
 package uk.ac.aber.dcs.cs39440.myvitalife.utils
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -24,6 +29,11 @@ import java.util.*
 
 class Utils {
     companion object {
+        /**
+         * Returns the current date in the format "dd-MM-yyyy".
+         *
+         * @return The current date as a string.
+         */
         fun getCurrentDate(): String {
             val date = Calendar.getInstance().time
             val formatter = SimpleDateFormat("dd-MM-yyyy")
@@ -31,6 +41,11 @@ class Utils {
             return formatter.format(date)
         }
 
+        /**
+         * Returns the current time in the format "HH:mm:ss".
+         *
+         * @return The current time as a string.
+         */
         fun getCurrentTime(): String {
             val time = Calendar.getInstance().time
             val formatter = SimpleDateFormat("HH:mm:ss")
@@ -38,6 +53,12 @@ class Utils {
             return formatter.format(time)
         }
 
+        /**
+         * Converts a date string from "yyyy-MM-dd" format to "dd-MM-yyyy" format.
+         *
+         * @param inputDate The date string to be formatted.
+         * @return The formatted date string.
+         */
         fun getFormattedDateString(inputDate: String): String {
             val inputDateFormat = SimpleDateFormat("yyyy-MM-dd")
             val outputDateFormat = SimpleDateFormat("dd-MM-yyyy")
@@ -48,14 +69,33 @@ class Utils {
             return outputDateFormat.format(date)
         }
 
+        /**
+         * Returns the date one day before the given date.
+         *
+         * @param date The date in "dd-MM-yyyy" format.
+         * @return The date one day before the given date as a string in "dd-MM-yyyy" format.
+         */
         fun getDateDayBefore(date: String): String {
             return calculateDate(date, -1) ?: ""
         }
 
+        /**
+         * Returns the date one day after the given date.
+         *
+         * @param date The date in "dd-MM-yyyy" format.
+         * @return The date one day after the given date as a string in "dd-MM-yyyy" format.
+         */
         fun getDateDayAfter(date: String): String {
             return calculateDate(date, 1) ?: ""
         }
 
+        /**
+         * Calculates a date by adding or subtracting the given number of days from the input date.
+         *
+         * @param date The input date in "dd-MM-yyyy" format.
+         * @param numOfDays The number of days to add or subtract from the input date.
+         * @return The calculated date as a string in "dd-MM-yyyy" format, or null if there is an error.
+         */
         private fun calculateDate(date: String, numOfDays: Int): String? {
             val dateFormat = SimpleDateFormat("dd-MM-yyyy")
             return try {
@@ -72,6 +112,18 @@ class Utils {
             }
         }
 
+        /**
+         * Draws a circular progress bar using Jetpack Compose.
+         *
+         * @param currentValue The current progress value.
+         * @param maxGoal The maximum goal value.
+         * @param fontSize The font size of the progress text.
+         * @param radius The radius of the progress bar.
+         * @param color The color of the progress bar.
+         * @param strokeWidth The stroke width of the progress bar.
+         * @param animDuration The duration of the progress animation.
+         * @param animDelay The delay before the progress animation starts.
+         */
         @Composable
         fun CircularProgressBar(
             currentValue: Int,

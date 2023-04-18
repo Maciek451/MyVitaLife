@@ -1,5 +1,7 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.insights
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -31,7 +33,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import java.time.LocalTime
 
-@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun InsightsScreen(
     navController: NavHostController,
@@ -143,6 +145,7 @@ fun InsightsScreen(
     }
 }
 
+@Composable
 fun greeting(userName: String): String {
     val currentTime = LocalTime.now()
     val morning = LocalTime.parse("06:00")
@@ -151,13 +154,13 @@ fun greeting(userName: String): String {
     val night = LocalTime.parse("00:00")
 
     val timeOfDay = when {
-        currentTime.isAfter(morning) && currentTime.isBefore(afternoon) -> "morning"
-        currentTime.isAfter(afternoon) && currentTime.isBefore(evening) -> "afternoon"
-        currentTime.isAfter(evening) || currentTime.isBefore(night) -> "evening"
-        else -> "night"
+        currentTime.isAfter(morning) && currentTime.isBefore(afternoon) -> stringResource(id = R.string.morning)
+        currentTime.isAfter(afternoon) && currentTime.isBefore(evening) -> stringResource(id = R.string.afternoon)
+        currentTime.isAfter(evening) || currentTime.isBefore(night) -> stringResource(id = R.string.evening)
+        else -> stringResource(id = R.string.night)
     }
 
-    return "Good $timeOfDay $userName!"
+    return stringResource(id = R.string.greeting, timeOfDay, userName)
 }
 
 @Composable
@@ -206,7 +209,7 @@ fun MoodCounter(
                         .background(color = Color.Green, shape = CircleShape)
                         .size(50.dp),
                     imageVector = Icons.Filled.SentimentVerySatisfied,
-                    contentDescription = "Amazing"
+                    contentDescription = stringResource(id = R.string.amazing)
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
@@ -222,7 +225,7 @@ fun MoodCounter(
                         .background(color = Color.Cyan, shape = CircleShape)
                         .size(50.dp),
                     imageVector = Icons.Filled.SentimentSatisfied,
-                    contentDescription = "Good"
+                    contentDescription = stringResource(id = R.string.good)
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
@@ -238,7 +241,7 @@ fun MoodCounter(
                         .background(color = Color.Yellow, shape = CircleShape)
                         .size(50.dp),
                     imageVector = Icons.Filled.SentimentNeutral,
-                    contentDescription = "Neutral"
+                    contentDescription = stringResource(id = R.string.neutral)
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
@@ -254,7 +257,7 @@ fun MoodCounter(
                         .background(color = Color.Magenta, shape = CircleShape)
                         .size(50.dp),
                     imageVector = Icons.Filled.SentimentDissatisfied,
-                    contentDescription = "Bad"
+                    contentDescription = stringResource(id = R.string.bad)
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
@@ -270,7 +273,7 @@ fun MoodCounter(
                         .background(color = Color.Red, shape = CircleShape)
                         .size(50.dp),
                     imageVector = Icons.Filled.SentimentVeryDissatisfied,
-                    contentDescription = "Awful"
+                    contentDescription = stringResource(id = R.string.awful)
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
@@ -282,6 +285,7 @@ fun MoodCounter(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview
 @Composable
 fun InsightsScreenPreview() {

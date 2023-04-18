@@ -1,52 +1,62 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.model
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import uk.ac.aber.dcs.cs39440.myvitalife.datastorage.DataStorage
+import uk.ac.aber.dcs.cs39440.myvitalife.datastore.MyDataStore
 import javax.inject.Inject
 
+/**
+ * ViewModel that manages the storage and retrieval of data using a given MyDataStore instance.
+ *
+ * @property storage The MyDataStore instance used to store and retrieve data.
+ */
 @HiltViewModel
 class DataViewModel @Inject constructor(
-    private val storage: DataStorage
+    private val storage: MyDataStore
 ) : ViewModel() {
 
     /**
-     * Saves a string value in a given key
+     * Saves a string value with the given key to the data store.
+     *
+     * @param value The string value to save.
+     * @param key The key under which to save the value.
      */
     fun saveString(value: String, key: String) {
         viewModelScope.launch {
-            storage.putString(value, key)
+            storage.saveString(value, key)
         }
     }
 
     /**
-     * Returns a string value based on a given key
+     * Retrieves a string value from the data store with the given key.
+     *
+     * @param key The key under which the value is stored.
+     * @return The string value associated with the key, or null if no such value exists.
      */
     fun getString(key: String): String? = runBlocking {
         storage.getString(key)?.trim()
     }
 
     /**
-     * Saves a boolean value in a given key
+     * Saves a boolean value with the given key to the data store.
+     *
+     * @param value The boolean value to save.
+     * @param key The key under which to save the value.
      */
     fun saveBoolean(value: Boolean, key: String) {
         viewModelScope.launch {
-            storage.putBoolean(value, key)
+            storage.saveBoolean(value, key)
         }
     }
 
     /**
-     * Returns a boolean value based on a given key
+     * Retrieves a boolean value from the data store with the given key.
+     *
+     * @param key The key under which the value is stored.
+     * @return The boolean value associated with the key, or null if no such value exists.
      */
     fun getBoolean(key: String): Boolean? = runBlocking {
         storage.getBoolean(key)

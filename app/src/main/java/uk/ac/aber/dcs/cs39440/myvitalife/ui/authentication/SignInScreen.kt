@@ -108,8 +108,8 @@ fun SignInScreen(
                     Icons.Filled.Visibility
                 else Icons.Filled.VisibilityOff
 
-                // Please provide localized description for accessibility services
-                val description = if (passwordVisible) "Hide password" else "Show password"
+                val description =
+                    if (passwordVisible) stringResource(id = R.string.hide_password) else stringResource(id = R.string.show_password)
 
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(imageVector = image, description)
