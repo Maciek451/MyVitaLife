@@ -103,6 +103,8 @@ fun AddMoodDialog(
                                         }
                                         icon?.let {
                                             Icon(
+                                                modifier = Modifier
+                                                    .alpha(0.7f),
                                                 imageVector = it,
                                                 contentDescription = null,
                                                 tint = Color.Black

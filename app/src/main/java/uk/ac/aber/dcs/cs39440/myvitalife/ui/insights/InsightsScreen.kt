@@ -15,6 +15,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -207,9 +208,10 @@ fun MoodCounter(
                 Icon(
                     modifier = Modifier
                         .background(color = Color.Green, shape = CircleShape)
-                        .size(50.dp),
+                        .size(50.dp).alpha(0.7f),
                     imageVector = Icons.Filled.SentimentVerySatisfied,
-                    contentDescription = stringResource(id = R.string.amazing)
+                    contentDescription = stringResource(id = R.string.amazing),
+                    tint = Color.Black
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
@@ -223,9 +225,10 @@ fun MoodCounter(
                 Icon(
                     modifier = Modifier
                         .background(color = Color.Cyan, shape = CircleShape)
-                        .size(50.dp),
+                        .size(50.dp).alpha(0.7f),
                     imageVector = Icons.Filled.SentimentSatisfied,
-                    contentDescription = stringResource(id = R.string.good)
+                    contentDescription = stringResource(id = R.string.good),
+                    tint = Color.Black
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
@@ -239,9 +242,10 @@ fun MoodCounter(
                 Icon(
                     modifier = Modifier
                         .background(color = Color.Yellow, shape = CircleShape)
-                        .size(50.dp),
+                        .size(50.dp).alpha(0.7f),
                     imageVector = Icons.Filled.SentimentNeutral,
-                    contentDescription = stringResource(id = R.string.neutral)
+                    contentDescription = stringResource(id = R.string.neutral),
+                    tint = Color.Black
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
@@ -255,9 +259,10 @@ fun MoodCounter(
                 Icon(
                     modifier = Modifier
                         .background(color = Color.Magenta, shape = CircleShape)
-                        .size(50.dp),
+                        .size(50.dp).alpha(0.7f),
                     imageVector = Icons.Filled.SentimentDissatisfied,
-                    contentDescription = stringResource(id = R.string.bad)
+                    contentDescription = stringResource(id = R.string.bad),
+                    tint = Color.Black
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
@@ -271,9 +276,10 @@ fun MoodCounter(
                 Icon(
                     modifier = Modifier
                         .background(color = Color.Red, shape = CircleShape)
-                        .size(50.dp),
+                        .size(50.dp).alpha(0.7f),
                     imageVector = Icons.Filled.SentimentVeryDissatisfied,
-                    contentDescription = stringResource(id = R.string.awful)
+                    contentDescription = stringResource(id = R.string.awful),
+                    tint = Color.Black,
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),

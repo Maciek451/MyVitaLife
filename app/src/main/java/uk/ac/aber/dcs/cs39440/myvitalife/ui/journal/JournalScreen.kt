@@ -221,7 +221,8 @@ private fun MoodEmoji(
     Icon(
         modifier = Modifier
             .background(color = backgroundColor, shape = CircleShape)
-            .size(30.dp),
+            .size(30.dp)
+            .alpha(0.7f),
         imageVector = icon,
         contentDescription = contentDescription,
         tint = Color.Black
