@@ -163,4 +163,17 @@
     <string name="notification_title">Time to add new entry!</string>
     <string name="notification_message">Add new data to your app and check out today\'s quote!</string>
     <string name="remove_quote_text">Confirm if you want to remove this quote from your list</string>
+    <string name="data_summary">Data summary</string>
+    <string name="journal_icon">Journal tab Icon</string>
+    <string name="nutrition_icon">Nutrition tab Icon</string>
+    <string name="sleep_icon">Sleep tab Icon</string>
+    <string name="quote_icon">Quote tab Icon</string>
+    <string name="custom_goals">Custom goals (achieved / total):</string>
+    <string name="days_with_water_data">Days with water data:</string>
+    <string name="average_calories">Average calories for a day:</string>
+    <string name="days_with_food_data">Days with food data:</string>
+    <string name="total_sleep">Time slept (dd:hh:mm):</string>
+    <string name="average_sleep_rate">Average sleep score:</string>
+    <string name="total_generated_quotes">Total generated quotes</string>
+    <string name="total_favourite_quotes">Total favourite quotes</string>
 </resources>

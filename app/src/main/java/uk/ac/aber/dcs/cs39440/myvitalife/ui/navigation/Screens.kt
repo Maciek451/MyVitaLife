@@ -7,6 +7,7 @@ sealed class Screens(
     object Insights : Screens("insights")
     object Journal : Screens("journal")
     object Nutrition : Screens("nutrition")
+    object Stats : Screens("stats")
     object Sleep : Screens("sleep")
     object SignIn : Screens("sign_in")
     object SignUp : Screens("sign_up")

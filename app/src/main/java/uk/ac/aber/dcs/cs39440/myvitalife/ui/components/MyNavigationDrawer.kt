@@ -57,6 +57,10 @@ fun MainPageNavigationDrawer(
             stringResource(id = R.string.export_data_drawer)
         ),
         Pair(
+            Icons.Default.Analytics,
+            stringResource(id = R.string.data_summary)
+        ),
+        Pair(
             Icons.Default.BrightnessMedium,
             stringResource(id = R.string.choose_theme_drawer)
         ),
@@ -109,14 +113,18 @@ fun MainPageNavigationDrawer(
                                     closeDrawer()
                                 }
                                 1 -> {
-                                    isThemeDialogOpen = true
+                                    navController.navigate(Screens.Stats.route)
                                     closeDrawer()
                                 }
                                 2 -> {
-                                    isDeleteDataDialogOpen = true
+                                    isThemeDialogOpen = true
                                     closeDrawer()
                                 }
                                 3 -> {
+                                    isDeleteDataDialogOpen = true
+                                    closeDrawer()
+                                }
+                                4 -> {
                                     if (permissionState.hasPermission) {
                                         Toast.makeText(context, R.string.permission_already_granted, Toast.LENGTH_LONG).show()
                                     } else {
@@ -124,7 +132,7 @@ fun MainPageNavigationDrawer(
                                     }
                                     closeDrawer()
                                 }
-                                4 -> {
+                                5 -> {
                                     navController.navigate(route = Screens.Info.route)
                                     closeDrawer()
                                 }

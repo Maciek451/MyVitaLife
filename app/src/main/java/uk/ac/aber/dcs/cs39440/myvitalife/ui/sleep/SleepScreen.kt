@@ -89,7 +89,7 @@ fun SleepScreen(
                         fontSize = 20.sp
                     )
                     Text(
-                        text = sleepData.score.toInt().toString() + "/10",
+                        text = "${sleepData.score.toInt()}/10",
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 30.sp
                     )

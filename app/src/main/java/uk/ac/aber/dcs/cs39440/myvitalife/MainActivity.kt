@@ -53,6 +53,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.journal.JournalScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition.NutritionScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.sleep.SleepScreen
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.statistics.StatisticsScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.why_to_track.InfoScreen
 import java.util.*
@@ -124,6 +125,7 @@ class MainActivity : ComponentActivity() {
  *
  * @param navController The [NavController] that will be used to navigate between screens.
  */
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 private fun BuildNavigationGraph() {
     val navController = rememberNavController()
@@ -149,6 +151,7 @@ private fun BuildNavigationGraph() {
         composable(Screens.Nutrition.route) { NutritionScreen(navController) }
         composable(Screens.Journal.route) { JournalScreen(navController) }
         composable(Screens.SignIn.route) { SignInScreen(navController) }
+        composable(Screens.Stats.route) { StatisticsScreen(navController) }
         composable(Screens.SignUp.route) { SignUpScreen(navController) }
         composable(Screens.AddSleep.route) { AddSleepScreen(navController) }
         composable(Screens.Account.route) { AccountScreen(navController) }

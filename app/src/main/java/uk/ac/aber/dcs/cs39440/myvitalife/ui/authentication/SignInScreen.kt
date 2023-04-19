@@ -124,7 +124,7 @@ fun SignInScreen(
         Button(
             onClick = {
                 firebaseViewModel.signInWithEmailAndPassword(email, password) { returnVal ->
-                    errorMessage = processLoginUi(returnVal)
+                    errorMessage = processSignInUi(returnVal)
                     when (returnVal) {
                         Authentication.LOGGED_IN_SUCCESSFULLY -> {
                             navController.navigate(Screens.Insights.route) { popUpTo(0) }
@@ -243,7 +243,7 @@ fun VerificationDialog(
     }
 }
 
-private fun processLoginUi(errorCode: Int): String {
+private fun processSignInUi(errorCode: Int): String {
     when (errorCode) {
         Authentication.LOGGED_IN_SUCCESSFULLY ->
             return "User logged in successfully"

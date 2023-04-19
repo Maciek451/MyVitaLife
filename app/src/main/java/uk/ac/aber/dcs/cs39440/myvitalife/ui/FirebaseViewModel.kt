@@ -25,6 +25,7 @@ import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.QuoteOfTheDay
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 import java.io.FileWriter
 import java.io.IOException
+import java.time.Duration
 
 // A singleton object to hold the currently logged in user's authentication details
 object Authentication {
@@ -859,10 +860,247 @@ class FirebaseViewModel : ViewModel() {
                     callback(0)
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
             }
         })
     }
+
+    fun convertDurationToString(duration: Duration): String {
+        val minutes = duration.toMinutes() % 60
+        val hours = (duration.toHours() % 24).toInt()
+        val days = duration.toDays().toInt()
+        return String.format(
+            "%02d:%02d:%02d",
+            days,
+            hours,
+            minutes
+        )
+    }
+
+    fun getAllTimeSleepData(callback: (DataSummary) -> Unit) {
+        val databaseReference = database.getReference("Users")
+            .child(Authentication.userId)
+
+        var totalSleepDuration = Duration.ZERO
+        var sleepCounter = 0
+        var averageScore = 0
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (dateSnapshot in snapshot.children) {
+                        val sleepSnapshot = dateSnapshot.child("SleepData")
+                        if (sleepSnapshot.exists()) {
+                            val sleepScore = sleepSnapshot.child("sleepScore").value
+                            val sleepDuration = sleepSnapshot.child("sleepDuration").value
+                            if (sleepDuration.toString().isNotEmpty() && sleepDuration != null) {
+                                val parts = sleepDuration.toString().split(":")
+                                val hours = parts[0].toLong()
+                                val minutes = parts[1].toLong()
+                                val duration = Duration.ofHours(hours).plusMinutes(minutes)
+                                totalSleepDuration = totalSleepDuration.plus(duration)
+                            }
+                            if (sleepScore != null) {
+                                sleepCounter++
+                                averageScore += sleepScore.toString().toInt()
+                            }
+                        }
+                    }
+                    if (totalSleepDuration != Duration.ZERO && sleepCounter != 0 && averageScore != 0) {
+                        callback(
+                            DataSummary(
+                                convertDurationToString(totalSleepDuration),
+                                (averageScore / sleepCounter).toString()
+                            )
+                        )
+                    } else {
+                        callback(DataSummary("0", "0"))
+                    }
+                } else {
+                    callback(DataSummary("0", "0"))
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+    fun getAllTimeWaterData(callback: (DataSummary) -> Unit) {
+        val databaseReference = database.getReference("Users")
+            .child(Authentication.userId)
+
+        var totalWaterDrunk = 0
+        var waterEntryCounter = 0
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (dateSnapshot in snapshot.children) {
+                        val waterSnapshot = dateSnapshot.child("WaterData")
+                        if (waterSnapshot.exists()) {
+                            val waterDrunk = waterSnapshot.child("waterDrunk").value
+                            waterEntryCounter++
+                            if (waterDrunk.toString().isNotEmpty() && waterDrunk != null) {
+                                val amount = waterDrunk.toString().toInt()
+                                totalWaterDrunk += amount
+                            }
+                        }
+                    }
+                }
+                callback(DataSummary(totalWaterDrunk.toString(), waterEntryCounter.toString()))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+    fun getAllTimeFoodData(callback: (DataSummary) -> Unit) {
+        val databaseReference = database.getReference("Users")
+            .child(Authentication.userId)
+
+        var totalCalories = 0
+        var dayEntryCounter = 0
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (dateSnapshot in snapshot.children) {
+                        val foodListSnapshot = dateSnapshot.child("ListOfFood")
+                        if (foodListSnapshot.exists()) {
+                            for (foodSnapshot in foodListSnapshot.children) {
+                                val amount =
+                                    foodSnapshot.child("amount").value?.toString()?.toIntOrNull()
+                                        ?: 0
+                                val kcal =
+                                    foodSnapshot.child("kcal").value?.toString()?.toIntOrNull() ?: 0
+                                totalCalories += amount * kcal
+                            }
+                            dayEntryCounter++
+                        }
+                    }
+                    if (totalCalories != 0 && dayEntryCounter != 0) {
+                        callback(
+                            DataSummary(
+                                dayEntryCounter.toString(),
+                                (totalCalories / dayEntryCounter).toString()
+                            )
+                        )
+                    } else {
+                        callback(DataSummary("0", "0"))
+                    }
+                } else {
+                    callback(DataSummary("0", "0"))
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+    fun getMoodAllTimeData(callback: (Map<Int, Int>) -> Unit) {
+        val databaseReference = database.getReference("Users")
+            .child(Authentication.userId)
+
+        val moodCountMap = mutableMapOf<Int, Int>()
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (dateSnapshot in snapshot.children) {
+                        val moodListSnapshot = dateSnapshot.child("ListOfMoods")
+                        if (moodListSnapshot.exists()) {
+                            for (moodSnapshot in moodListSnapshot.children) {
+                                val moodType =
+                                    moodSnapshot.child("emojiIndex").value.toString().toInt()
+                                if (moodCountMap.containsKey(moodType)) {
+                                    moodCountMap[moodType] = moodCountMap[moodType]!! + 1
+                                } else {
+                                    moodCountMap[moodType] = 1
+                                }
+                            }
+                        }
+                    }
+                }
+                callback(moodCountMap)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+    fun getAllTimeQuoteData(callback: (DataSummary) -> Unit) {
+        val databaseReference = database.getReference("Users")
+            .child(Authentication.userId)
+
+        var allQuotes = 0
+        var totalFavouriteQuotes = 0
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (dateSnapshot in snapshot.children) {
+                        val quoteSnapshot = dateSnapshot.child("QuoteOfTheDay")
+                        if (quoteSnapshot.exists()) {
+                            val isFavourite =
+                                quoteSnapshot.child("isFavourite").getValue(Boolean::class.java)
+                            if (isFavourite == true) {
+                                totalFavouriteQuotes++
+                            }
+                            allQuotes++
+                        }
+                    }
+                }
+                callback(DataSummary(allQuotes.toString(), totalFavouriteQuotes.toString()))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+    fun getAllTimeGoalData(callback: (DataSummary) -> Unit) {
+        val databaseReference = database.getReference("Users")
+            .child(Authentication.userId)
+
+        var allGoals = 0
+        var goalsAchieved = 0
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (dateSnapshot in snapshot.children) {
+                        val goalListSnapshot = dateSnapshot.child("CustomGoals")
+                        if (goalListSnapshot.exists()) {
+                            allGoals += goalListSnapshot.children.count()
+                            for (goalSnapshot in goalListSnapshot.children) {
+                                val isAchieved =
+                                    goalSnapshot.child("isDone").getValue(Boolean::class.java)
+                                if (isAchieved == true) {
+                                    goalsAchieved++
+                                }
+                            }
+                        }
+                    }
+                }
+                callback(DataSummary(goalsAchieved.toString(), allGoals.toString()))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseViewModel", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
 
     /**
      * Retrieves the total number of calories consumed by the currently authenticated user on a specific date.
@@ -983,7 +1221,8 @@ class FirebaseViewModel : ViewModel() {
      */
     fun exportData(date: String = chosenDate) {
         val databaseReference =
-            FirebaseDatabase.getInstance().getReference("Users").child(Authentication.userId).child(date)
+            FirebaseDatabase.getInstance().getReference("Users").child(Authentication.userId)
+                .child(date)
 
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

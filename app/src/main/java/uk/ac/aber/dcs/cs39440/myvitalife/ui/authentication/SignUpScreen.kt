@@ -170,7 +170,7 @@ fun SignUpScreen(
                         password,
                         username
                     ) { returnVal ->
-                        errorMessage = processLoginUi(returnVal)
+                        errorMessage = processSignUpUi(returnVal)
                         if (returnVal == Authentication.SIGNED_UP_SUCCESSFULLY) {
                             firebaseViewModel.sendVerificationEmail(context)
                             isVerificationDialogOpen = true
@@ -232,7 +232,7 @@ fun VerificationInfoDialog(
     }
 }
 
-private fun processLoginUi(errorCode: Int): String {
+private fun processSignUpUi(errorCode: Int): String {
     when (errorCode) {
         Authentication.SIGNED_UP_SUCCESSFULLY ->
             return "User signed up successfully"

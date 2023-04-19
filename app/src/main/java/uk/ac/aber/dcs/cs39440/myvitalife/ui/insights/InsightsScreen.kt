@@ -52,6 +52,17 @@ fun InsightsScreen(
         totalCalories = kcal
     }
 
+    var moodCountMap by rememberSaveable { mutableStateOf(mapOf(0 to 0)) }
+
+    firebaseViewModel.fetchMoodSummaryForTheDay() {
+        moodCountMap = it
+        moodCountMap = moodCountMap.toMutableMap().apply {
+            for (i in 0..4) {
+                putIfAbsent(i, 0)
+            }
+        }
+    }
+
     TopLevelScaffold(
         floatingActionButton = {},
         navController = navController,
@@ -73,10 +84,11 @@ fun InsightsScreen(
                 Text(
                     text = greeting(userName),
                     fontSize = 30.sp,
+                    lineHeight = 33.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(bottom = 20.dp)
                 )
-                MoodCounter(firebaseViewModel)
+                MoodCounter(moodCountMap)
                 Card(
                     modifier = Modifier
                         .fillMaxSize()
@@ -166,24 +178,13 @@ fun greeting(userName: String): String {
 
 @Composable
 fun MoodCounter(
-    firebaseViewModel: FirebaseViewModel
+    moodCountMap: Map<Int, Int>,
 ) {
     val AMAZING = 0
     val GOOD = 1
     val NEUTRAL = 2
     val BAD = 3
     val AWFUL = 4
-
-    var moodCountMap by rememberSaveable { mutableStateOf(mapOf(0 to 0)) }
-
-    firebaseViewModel.fetchMoodSummaryForTheDay() {
-        moodCountMap = it
-        moodCountMap = moodCountMap.toMutableMap().apply {
-            for (i in 0..4) {
-                putIfAbsent(i, 0)
-            }
-        }
-    }
 
     Card(
         modifier = Modifier
@@ -276,7 +277,7 @@ fun MoodCounter(
                 Icon(
                     modifier = Modifier
                         .background(color = Color.Red, shape = CircleShape)
-                        .size(50.dp).alpha(0.7f),
+                        .size(50.dp).alpha(0.6f),
                     imageVector = Icons.Filled.SentimentVeryDissatisfied,
                     contentDescription = stringResource(id = R.string.awful),
                     tint = Color.Black,
