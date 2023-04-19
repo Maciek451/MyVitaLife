@@ -104,7 +104,7 @@ fun AddMoodDialog(
                                         icon?.let {
                                             Icon(
                                                 modifier = Modifier
-                                                    .alpha(0.7f),
+                                                    .alpha(0.7f).fillMaxSize(),
                                                 imageVector = it,
                                                 contentDescription = null,
                                                 tint = Color.Black

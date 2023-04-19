@@ -34,11 +34,19 @@ fun AccountScreen(
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
     var userName by rememberSaveable { mutableStateOf("") }
+    var signUpDate by rememberSaveable { mutableStateOf("") }
+
     val title = R.string.account
     var isDialogOpen by rememberSaveable { mutableStateOf(false) }
+
     firebaseViewModel.getUserName {
         userName = it
     }
+
+    firebaseViewModel.displaySignUpDate {
+        signUpDate = it
+    }
+
     val context = LocalContext.current
 
     Column(
@@ -52,7 +60,7 @@ fun AccountScreen(
         Card(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 40.dp)
+                .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 20.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -84,7 +92,7 @@ fun AccountScreen(
         Card(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 40.dp)
+                .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 20.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -114,6 +122,30 @@ fun AccountScreen(
                 ) {
                     Text(text = stringResource(id = R.string.signOut))
                 }
+            }
+        }
+        Card(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 20.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(all = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(id = R.string.created_at),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    modifier = Modifier.padding(top = 6.dp),
+                    text = signUpDate,
+                    fontSize = 20.sp
+                )
             }
         }
 //        Button(onClick = {

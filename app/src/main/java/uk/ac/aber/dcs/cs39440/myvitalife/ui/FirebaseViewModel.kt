@@ -794,6 +794,19 @@ class FirebaseViewModel : ViewModel() {
     }
 
     /**
+     * Adds the given username for the currently authenticated user to the database.
+     *
+     * @param userName The username to be added to the database.
+     */
+    fun addUserName(userName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val databaseReference = database.getReference("Users")
+                .child(Authentication.userId)
+            databaseReference.child("UserName").setValue(userName)
+        }
+    }
+
+    /**
      * Retrieves the username of the currently authenticated user from the database.
      *
      * @param callback A function that takes a single String argument representing the retrieved username.
@@ -814,22 +827,46 @@ class FirebaseViewModel : ViewModel() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle error here
             }
         })
     }
 
     /**
-     * Adds the given username for the currently authenticated user to the database.
+     * Adds the sign up date for the currently authenticated user to the database.
      *
-     * @param userName The username to be added to the database.
+     * @param date The date to be added to the database.
      */
-    fun addUserName(userName: String) {
+    private fun addSignUpDate(date: String = chosenDate) {
         viewModelScope.launch(Dispatchers.IO) {
             val databaseReference = database.getReference("Users")
                 .child(Authentication.userId)
-            databaseReference.child("UserName").setValue(userName)
+            databaseReference.child("SignUpDate").setValue(date)
         }
+    }
+
+    /**
+     * Retrieves the sign up date of the currently authenticated user from the database.
+     *
+     * @param callback A function that takes a single String argument representing the retrieved sign up date.
+     */
+    fun displaySignUpDate(callback: (String) -> Unit) {
+        val dateRef = database.getReference("Users")
+            .child(Authentication.userId)
+            .child("SignUpDate")
+
+        dateRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val date = snapshot.value.toString()
+                    callback(date)
+                } else {
+                    callback("")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
     }
 
     /**
@@ -1318,6 +1355,7 @@ class FirebaseViewModel : ViewModel() {
                         Authentication.userEmail = user.email.toString()
                         if (username.isNotEmpty()) {
                             addUserName(username)
+                            addSignUpDate()
                         }
                     }
                     callback(Authentication.SIGNED_UP_SUCCESSFULLY)
