@@ -9,6 +9,10 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -16,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.AccountDialog
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.SetNameDialog
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,6 +31,8 @@ fun HomeScreenTopBar(
     onClick: () -> Unit = {},
     title: String
 ) {
+    var isDialogOpen by rememberSaveable { mutableStateOf(false) }
+
     CenterAlignedTopAppBar(
         title = {
             Text(title)
@@ -45,7 +53,8 @@ fun HomeScreenTopBar(
             ) {
                 IconButton(
                     onClick = {
-                        navController.navigate(Screens.Account.route)
+//                        navController.navigate(Screens.Account.route)
+                              isDialogOpen = true
                     },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
@@ -56,6 +65,13 @@ fun HomeScreenTopBar(
                 }
             }
         }
+    )
+    AccountDialog(
+        dialogIsOpen = isDialogOpen,
+        dialogOpen = { isOpen ->
+            isDialogOpen = isOpen
+        },
+        navController = navController
     )
 }
 

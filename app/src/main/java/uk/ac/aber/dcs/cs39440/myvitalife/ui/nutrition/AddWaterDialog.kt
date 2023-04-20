@@ -1,13 +1,21 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition
 
+import android.widget.Toast
 import androidx.compose.ui.window.Dialog
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -17,6 +25,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,23 +52,57 @@ fun AddWaterDialog(
                 shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colorScheme.tertiaryContainer
             ) {
-                ConstraintLayout(
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp)
-                ) {
-                    val (mainText, firstField, secondField, saveButton, cancelButton, error1, error2) = createRefs()
-
-                    Text(
-                        text = stringResource(id = R.string.your_water_goal),
-                        textAlign = TextAlign.Center,
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                )
+                {
+                    Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp)
-                            .constrainAs(mainText) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                cupSize = ""
+                                hydrationGoal = ""
+                                waterGoalError = false
+                                cupSizeError = false
+                                dialogOpen(false)
+                            })
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = stringResource(id = R.string.close_icon),
+                                modifier = Modifier.alpha(0.7f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        Text(
+                            text = stringResource(id = R.string.your_water_goal),
+                            fontSize = 20.sp
+                        )
+
+                        IconButton(
+                            onClick = {
+                                firebaseViewModel.addWater(cupSize, hydrationGoal)
+                                hydrationGoal = ""
+                                cupSize = ""
+                                dialogOpen(false)
                             },
-                        fontSize = 20.sp
-                    )
+                            enabled = !waterGoalError && !cupSizeError && cupSize.isNotEmpty() && hydrationGoal.isNotEmpty()
+                        )
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Done,
+                                contentDescription = stringResource(id = R.string.save_button),
+                                modifier = Modifier.alpha(0.7f),
+                            )
+                        }
+                    }
                     val maxChar = 5
 
                     OutlinedTextField(
@@ -75,11 +118,7 @@ fun AddWaterDialog(
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                            .constrainAs(firstField) {
-                                start.linkTo(parent.start)
-                                top.linkTo(mainText.bottom)
-                            },
+                            .padding(start = 10.dp, end = 10.dp),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number,
                         ),
@@ -90,11 +129,6 @@ fun AddWaterDialog(
                             text = stringResource(id = R.string.must_be_a_number),
                             fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier
-                                .constrainAs(error1) {
-                                    top.linkTo(firstField.bottom)
-                                    bottom.linkTo(secondField.top)
-                                }
                         )
                     }
 
@@ -110,11 +144,7 @@ fun AddWaterDialog(
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                            .constrainAs(secondField) {
-                                start.linkTo(parent.start)
-                                top.linkTo(firstField.bottom)
-                            },
+                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number,
                         ),
@@ -125,53 +155,7 @@ fun AddWaterDialog(
                             text = stringResource(id = R.string.must_be_a_number),
                             fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.constrainAs(error2) {
-                                top.linkTo(secondField.bottom)
-                                bottom.linkTo(cancelButton.top)
-                            }
                         )
-                    }
-
-                    Button(
-                        onClick = {
-                            cupSize = ""
-                            hydrationGoal = ""
-                            waterGoalError = false
-                            cupSizeError = false
-                            dialogOpen(false)
-                        },
-                        modifier = Modifier
-                            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
-                            .constrainAs(cancelButton) {
-                                top.linkTo(secondField.bottom)
-                                start.linkTo(parent.absoluteLeft)
-                            }
-                            .height(50.dp)
-                            .width(120.dp),
-                    ) {
-                        Text(stringResource(R.string.cancel_button))
-                    }
-
-                    Button(
-                        onClick = {
-                            firebaseViewModel.addWater(cupSize, hydrationGoal)
-
-                            hydrationGoal = ""
-                            cupSize = ""
-
-                            dialogOpen(false)
-                        },
-                        modifier = Modifier
-                            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
-                            .constrainAs(saveButton) {
-                                top.linkTo(secondField.bottom)
-                                end.linkTo(parent.end)
-                            }
-                            .height(50.dp)
-                            .width(120.dp),
-                        enabled = !waterGoalError && !cupSizeError && cupSize.isNotEmpty() && hydrationGoal.isNotEmpty()
-                    ) {
-                        Text(stringResource(R.string.confirm_button))
                     }
                 }
             }

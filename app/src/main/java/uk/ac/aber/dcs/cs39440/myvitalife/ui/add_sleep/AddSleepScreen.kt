@@ -129,9 +129,15 @@ fun AddSleepScreen(
                 fontSize = 25.sp,
                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
             )
+            val maxChar = 20
+
             OutlinedTextField(
                 value = answer,
-                onValueChange = { answer = it },
+                onValueChange = {
+                    if (it.length <= maxChar) {
+                        answer = it
+                    }
+                },
                 modifier = Modifier
                     .padding(bottom = 10.dp)
             )

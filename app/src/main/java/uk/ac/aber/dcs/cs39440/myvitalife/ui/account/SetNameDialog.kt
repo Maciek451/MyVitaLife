@@ -1,12 +1,16 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.account
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,23 +40,55 @@ fun SetNameDialog(
                 shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colorScheme.surface
             ) {
-                ConstraintLayout(
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp)
-                ) {
-                    val (mainText, field, saveButton, cancelButton) = createRefs()
-
-                    Text(
-                        text = stringResource(id = R.string.set_user_name),
-                        textAlign = TextAlign.Center,
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                )
+                {
+                    Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp)
-                            .constrainAs(mainText) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                userName = ""
+                                dialogOpen(false)
+                            })
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = stringResource(id = R.string.close_icon),
+                                modifier = Modifier.alpha(0.7f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        Text(
+                            text = stringResource(id = R.string.set_user_name),
+                            fontSize = 20.sp
+                        )
+
+                        IconButton(
+                            onClick = {
+                                firebaseViewModel.addUserName(userName)
+
+                                userName = ""
+
+                                dialogOpen(false)
                             },
-                        fontSize = 20.sp
-                    )
+                            enabled = userName.isNotEmpty()
+                        )
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Done,
+                                contentDescription = stringResource(id = R.string.save_button),
+                                modifier = Modifier.alpha(0.7f),
+                            )
+                        }
+                    }
                     val maxChar = 10
 
                     OutlinedTextField(
@@ -65,50 +101,8 @@ fun SetNameDialog(
                         label = { Text(text = stringResource(id = R.string.user_name)) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                            .constrainAs(field) {
-                                start.linkTo(parent.start)
-                                top.linkTo(mainText.bottom)
-                            }
+                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
                     )
-
-                    Button(
-                        onClick = {
-                            userName = ""
-                            dialogOpen(false)
-                        },
-                        modifier = Modifier
-                            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
-                            .constrainAs(cancelButton) {
-                                top.linkTo(field.bottom)
-                                start.linkTo(parent.absoluteLeft)
-                            }
-                            .height(50.dp)
-                            .width(120.dp),
-                    ) {
-                        Text(stringResource(R.string.cancel_button))
-                    }
-
-                    Button(
-                        onClick = {
-                            firebaseViewModel.addUserName(userName)
-
-                            userName = ""
-
-                            dialogOpen(false)
-                        },
-                        modifier = Modifier
-                            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
-                            .constrainAs(saveButton) {
-                                top.linkTo(field.bottom)
-                                end.linkTo(parent.end)
-                            }
-                            .height(50.dp)
-                            .width(120.dp),
-                        enabled = userName.isNotEmpty()
-                    ) {
-                        Text(stringResource(R.string.confirm_button))
-                    }
                 }
             }
         }

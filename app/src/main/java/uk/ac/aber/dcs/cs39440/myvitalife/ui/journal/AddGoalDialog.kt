@@ -2,11 +2,17 @@ package uk.ac.aber.dcs.cs39440.myvitalife.ui.journal
 
 import androidx.compose.ui.window.Dialog
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,23 +41,55 @@ fun AddGoalDialog(
                 shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colorScheme.surface
             ) {
-                ConstraintLayout(
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp)
-                ) {
-                    val (mainText, firstField, saveButton, cancelButton) = createRefs()
-
-                    Text(
-                        text = stringResource(id = R.string.add_your_goal),
-                        textAlign = TextAlign.Center,
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                )
+                {
+                    Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp)
-                            .constrainAs(mainText) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                goalTitle = ""
+                                dialogOpen(false)
+                            })
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = stringResource(id = R.string.close_icon),
+                                modifier = Modifier.alpha(0.7f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        Text(
+                            text = stringResource(id = R.string.add_your_goal),
+                            fontSize = 20.sp
+                        )
+
+                        IconButton(
+                            onClick = {
+                                firebaseViewModel.addGoal(goalTitle, false)
+
+                                goalTitle = ""
+
+                                dialogOpen(false)
                             },
-                        fontSize = 20.sp
-                    )
+                            enabled = goalTitle.isNotEmpty()
+                        )
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Done,
+                                contentDescription = stringResource(id = R.string.save_button),
+                                modifier = Modifier.alpha(0.7f),
+                            )
+                        }
+                    }
                     val maxChar = 30
 
                     OutlinedTextField(
@@ -60,54 +98,12 @@ fun AddGoalDialog(
                             if (it.length <= maxChar) {
                                 goalTitle = it
                             }
-                                        },
+                        },
                         label = { Text(text = stringResource(id = R.string.add_your_goal_description)) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                            .constrainAs(firstField) {
-                                start.linkTo(parent.start)
-                                top.linkTo(mainText.bottom)
-                            }
+                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
                     )
-
-                    Button(
-                        onClick = {
-                            firebaseViewModel.addGoal(goalTitle, false)
-
-                            goalTitle = ""
-
-                            dialogOpen(false)
-                        },
-                        modifier = Modifier
-                            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
-                            .constrainAs(saveButton) {
-                                top.linkTo(firstField.bottom)
-                                end.linkTo(parent.end)
-                            }
-                            .height(50.dp)
-                            .width(120.dp),
-                        enabled = goalTitle.isNotEmpty()
-                    ) {
-                        Text(stringResource(R.string.confirm_button))
-                    }
-
-                    Button(
-                        onClick = {
-                            goalTitle = ""
-                            dialogOpen(false)
-                        },
-                        modifier = Modifier
-                            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
-                            .constrainAs(cancelButton) {
-                                top.linkTo(firstField.bottom)
-                                start.linkTo(parent.absoluteLeft)
-                            }
-                            .height(50.dp)
-                            .width(120.dp),
-                    ) {
-                        Text(stringResource(R.string.cancel_button))
-                    }
                 }
             }
         }

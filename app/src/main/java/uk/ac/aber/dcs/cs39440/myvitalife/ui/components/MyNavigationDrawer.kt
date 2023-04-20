@@ -257,7 +257,6 @@ fun DeleteAllDataConfirmationDialog(
                 TextButton(
                     onClick = {
                         dialogOpen(false)
-                        navController.navigate(Screens.Account.route)
                         firebaseViewModel.deleteAllUserData()
                         Toast.makeText(context, prompt, Toast.LENGTH_LONG).show()
                     },

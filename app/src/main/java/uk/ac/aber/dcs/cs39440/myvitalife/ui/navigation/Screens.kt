@@ -12,7 +12,6 @@ sealed class Screens(
     object SignIn : Screens("sign_in")
     object SignUp : Screens("sign_up")
     object AddSleep : Screens("add_sleep")
-    object Account : Screens("account")
     object Info : Screens("info")
 }
 val screens = listOf(

@@ -43,7 +43,6 @@ import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.GenerateQuoteIfEmpty
 import uk.ac.aber.dcs.cs39440.myvitalife.notifications.MyNotification
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.AccountScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.add_sleep.AddSleepScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.authentication.SignInScreen
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.authentication.SignUpScreen
@@ -154,7 +153,6 @@ private fun BuildNavigationGraph() {
         composable(Screens.Stats.route) { StatisticsScreen(navController) }
         composable(Screens.SignUp.route) { SignUpScreen(navController) }
         composable(Screens.AddSleep.route) { AddSleepScreen(navController) }
-        composable(Screens.Account.route) { AccountScreen(navController) }
         composable(Screens.Info.route) { InfoScreen(navController) }
     }
 }

@@ -2,7 +2,9 @@ package uk.ac.aber.dcs.cs39440.myvitalife.ui.journal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -40,33 +42,63 @@ fun AddMoodDialog(
                 shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colorScheme.surface
             ) {
-                ConstraintLayout(
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp)
-                ) {
-                    val (mainText, card, field, saveButton, cancelButton) = createRefs()
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                )
+                {
 
-                    Text(
-                        text = stringResource(id = R.string.add_your_mood_description),
-                        textAlign = TextAlign.Center,
+                    Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp)
-                            .constrainAs(mainText) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                selectedValue = -1
+                                dialogOpen(false)
+                            })
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = stringResource(id = R.string.close_icon),
+                                modifier = Modifier.alpha(0.7f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        Text(
+                            text = stringResource(id = R.string.add_your_mood_description),
+                            fontSize = 20.sp
+                        )
+
+                        IconButton(
+                            onClick = {
+                                firebaseViewModel.addMood(selectedValue, optionalDescription)
+
+                                selectedValue = -1
+                                optionalDescription = ""
+
+                                dialogOpen(false)
                             },
-                        fontSize = 20.sp
-                    )
+                            enabled = selectedValue == 0 || selectedValue == 1 || selectedValue == 2 || selectedValue == 3 || selectedValue == 4
+                        )
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Done,
+                                contentDescription = stringResource(id = R.string.save_button),
+                                modifier = Modifier.alpha(0.7f),
+                            )
+                        }
+                    }
 
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 10.dp, top = 10.dp)
+                            .padding(start = 10.dp, end = 10.dp)
                             .height(100.dp)
-                            .constrainAs(card) {
-                                start.linkTo(parent.start)
-                                top.linkTo(mainText.bottom)
-                            },
                     ) {
                         Row(
                             modifier = Modifier
@@ -104,7 +136,8 @@ fun AddMoodDialog(
                                         icon?.let {
                                             Icon(
                                                 modifier = Modifier
-                                                    .alpha(0.7f).fillMaxSize(),
+                                                    .alpha(0.7f)
+                                                    .fillMaxSize(),
                                                 imageVector = it,
                                                 contentDescription = null,
                                                 tint = Color.Black
@@ -135,51 +168,8 @@ fun AddMoodDialog(
                         label = { Text(text = stringResource(id = R.string.note)) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 10.dp)
-                            .constrainAs(field) {
-                                start.linkTo(parent.start)
-                                top.linkTo(card.bottom)
-                            },
+                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
                     )
-
-                    Button(
-                        onClick = {
-                            firebaseViewModel.addMood(selectedValue, optionalDescription)
-
-                            selectedValue = -1
-                            optionalDescription = ""
-
-                            dialogOpen(false)
-                        },
-                        modifier = Modifier
-                            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
-                            .constrainAs(saveButton) {
-                                top.linkTo(field.bottom)
-                                end.linkTo(parent.end)
-                            }
-                            .height(50.dp)
-                            .width(120.dp),
-                        enabled = selectedValue == 0 || selectedValue == 1 || selectedValue == 2 || selectedValue == 3 || selectedValue == 4
-                    ) {
-                        Text(stringResource(R.string.confirm_button))
-                    }
-
-                    Button(
-                        onClick = {
-                            selectedValue = -1
-                            dialogOpen(false)
-                        },
-                        modifier = Modifier
-                            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
-                            .constrainAs(cancelButton) {
-                                top.linkTo(field.bottom)
-                                start.linkTo(parent.absoluteLeft)
-                            }
-                            .height(50.dp)
-                            .width(120.dp),
-                    ) {
-                        Text(stringResource(R.string.cancel_button))
-                    }
                 }
             }
         }

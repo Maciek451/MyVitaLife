@@ -849,7 +849,7 @@ class FirebaseViewModel : ViewModel() {
      *
      * @param callback A function that takes a single String argument representing the retrieved sign up date.
      */
-    fun displaySignUpDate(callback: (String) -> Unit) {
+    fun getSignUpDate(callback: (String) -> Unit) {
         val dateRef = database.getReference("Users")
             .child(Authentication.userId)
             .child("SignUpDate")

@@ -84,7 +84,7 @@
     <string name="data_exported">Data exported to downloads folder</string>
     <string name="export_data">Do you want to export your data to txt file from %s?</string>
     <string name="forgot_password">Forgot password?</string>
-    <string name="reset_your_password_text">Send password reset email</string>
+    <string name="reset_password">Reset your password</string>
     <string name="email">Email Address</string>
     <string name="warning">Clear all data?</string>
     <string name="warning2">You can\'t undo this. Your data will be permanently deleted after clicking confirm</string>
@@ -177,4 +177,5 @@
     <string name="total_generated_quotes">Total generated quotes</string>
     <string name="total_favourite_quotes">Total favourite quotes</string>
     <string name="created_at">Account created on:</string>
+    <string name="close_icon">Close Icon</string>
 </resources>
