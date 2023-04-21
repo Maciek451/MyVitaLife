@@ -616,13 +616,47 @@ class FirebaseViewModel : ViewModel() {
      * After deletion, it fetches all data from the database again to update the UI.
      */
     fun deleteAllUserData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference("Users")
-                .child(Authentication.userId)
-            databaseReference.removeValue().addOnSuccessListener {
-// Update UI after deletion
-                fetchAllData()
+        val databaseReference = database.getReference("Users")
+            .child(Authentication.userId)
+
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (childSnapshot in snapshot.children) {
+                        if (childSnapshot.key != "SignUpDate") {
+                            childSnapshot.ref.removeValue()
+                        }
+                    }
+                    fetchAllData()
+                }
             }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+    }
+
+    /**
+     * Deletes the current user's account and all associated data from Firebase.
+     *
+     * @param callback a callback function that accepts a boolean value indicating whether the
+     * delete operation was successful or not.
+     */
+    fun deleteAccount(callback: (Boolean) -> Unit) {
+        val currentUser = Firebase.auth.currentUser
+        if (currentUser != null) {
+            val databaseReference = database.getReference("Users").child(currentUser.uid)
+            databaseReference.removeValue().addOnSuccessListener {
+                currentUser.delete().addOnSuccessListener {
+                    callback(true)
+                }.addOnFailureListener {
+                    callback(false)
+                }
+            }.addOnFailureListener {
+                callback(false)
+            }
+        } else {
+            callback(false)
         }
     }
 
@@ -903,6 +937,12 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
+    /**
+     * Converts a Duration object to a String representation of the duration.
+     *
+     * @param duration the duration to convert
+     * @return a String representation of the duration in the format "DD:HH:MM"
+     */
     fun convertDurationToString(duration: Duration): String {
         val minutes = duration.toMinutes() % 60
         val hours = (duration.toHours() % 24).toInt()
@@ -996,6 +1036,7 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
+
     fun getAllTimeFoodData(callback: (DataSummary) -> Unit) {
         val databaseReference = database.getReference("Users")
             .child(Authentication.userId)
@@ -1041,6 +1082,14 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
+    /**
+     * Retrieves all-time mood data for the user from the Firebase Realtime Database.
+     *
+     * @param callback A lambda function that takes a Map<Int, Int> as its parameter
+     * and returns nothing. This function will be called once the data is retrieved from the
+     * database. The map contains the count of each mood type (identified by an integer emoji index)
+     * for all time periods.
+     */
     fun getMoodAllTimeData(callback: (Map<Int, Int>) -> Unit) {
         val databaseReference = database.getReference("Users")
             .child(Authentication.userId)
@@ -1074,6 +1123,14 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
+    /**
+     * Retrieves data about all-time quotes for the current user from Firebase Realtime Database
+     * and calls the specified callback function with a [DataSummary] object that contains the
+     * number of quotes and the number of favourite quotes.
+     *
+     * @param callback the callback function that will be called with a [DataSummary] object
+     * containing the number of quotes and the number of favourite quotes.
+     */
     fun getAllTimeQuoteData(callback: (DataSummary) -> Unit) {
         val databaseReference = database.getReference("Users")
             .child(Authentication.userId)
@@ -1105,6 +1162,14 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
+    /**
+     * Retrieves data about all time goals for the current user from Firebase Realtime Database
+     * and calls the specified callback function with a [DataSummary] object that contains the
+     * number of goals achieved and the total number of goals.
+     *
+     * @param callback the callback function that will be called with a [DataSummary] object
+     * containing the number of goals achieved and the total number of goals.
+     */
     fun getAllTimeGoalData(callback: (DataSummary) -> Unit) {
         val databaseReference = database.getReference("Users")
             .child(Authentication.userId)
@@ -1137,7 +1202,6 @@ class FirebaseViewModel : ViewModel() {
             }
         })
     }
-
 
     /**
      * Retrieves the total number of calories consumed by the currently authenticated user on a specific date.

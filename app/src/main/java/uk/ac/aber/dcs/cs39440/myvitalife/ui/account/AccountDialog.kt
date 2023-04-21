@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.PersonOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import androidx.navigation.NavHostController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.Authentication
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
+import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.DeleteAllDataConfirmationDialog
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 
 @Composable
@@ -44,6 +46,7 @@ fun AccountDialog(
     var signUpDate by rememberSaveable { mutableStateOf("") }
 
     var isNameDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var isRemoveAccountDialogOpen by rememberSaveable { mutableStateOf(false) }
 
     firebaseViewModel.getUserName {
         userName = it
@@ -171,7 +174,6 @@ fun AccountDialog(
                                 text = Authentication.userEmail,
                                 fontSize = 20.sp
                             )
-
                         }
                     }
 
@@ -199,6 +201,28 @@ fun AccountDialog(
                             )
                         }
                     }
+                    Button(
+                        onClick = {
+                            isRemoveAccountDialogOpen = true
+                        },
+                        modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White)
+                    )
+                    {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.PersonOff,
+                                contentDescription = stringResource(id = R.string.remove_account_icon),
+                                modifier = Modifier.alpha(0.7f).padding(end = 3.dp),
+                            )
+                            Text(
+                                text = stringResource(id = R.string.remove_account)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -208,5 +232,12 @@ fun AccountDialog(
         dialogOpen = { isOpen ->
             isNameDialogOpen = isOpen
         }
+    )
+    RemoveAccountDialog(
+        dialogIsOpen = isRemoveAccountDialogOpen,
+        dialogOpen = { isOpen ->
+            isRemoveAccountDialogOpen = isOpen
+        },
+        navController = navController
     )
 }

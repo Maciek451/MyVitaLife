@@ -39,7 +39,7 @@ fun AddGoalDialog(
         ) {
             Surface(
                 shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surface
+                color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Column(
                     modifier = Modifier

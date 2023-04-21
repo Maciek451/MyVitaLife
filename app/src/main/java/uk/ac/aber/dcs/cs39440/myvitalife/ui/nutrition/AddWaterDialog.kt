@@ -50,7 +50,7 @@ fun AddWaterDialog(
         ) {
             Surface(
                 shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.tertiaryContainer
+                color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Column(
                     modifier = Modifier

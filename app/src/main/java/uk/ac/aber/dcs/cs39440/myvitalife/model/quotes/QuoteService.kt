@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.isActive
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -78,10 +80,14 @@ private fun GetRandomQuote(callback: (Quote) -> Unit) {
 fun GenerateQuoteIfEmpty(
     firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
-    if (QuoteOfTheDay.quote.text.isEmpty()) {
-        GetRandomQuote { generatedQuote ->
-            QuoteOfTheDay.quote = generatedQuote
-            firebaseViewModel.addQuote(generatedQuote)
+    val user = Firebase.auth.currentUser
+
+    if (user != null) {
+        if (QuoteOfTheDay.quote.text.isEmpty()) {
+            GetRandomQuote { generatedQuote ->
+                QuoteOfTheDay.quote = generatedQuote
+                firebaseViewModel.addQuote(generatedQuote)
+            }
         }
     }
 }

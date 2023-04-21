@@ -169,6 +169,7 @@ fun AddMoodDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
+
                     )
                 }
             }

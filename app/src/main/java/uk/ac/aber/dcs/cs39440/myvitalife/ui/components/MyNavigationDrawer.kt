@@ -154,8 +154,7 @@ fun MainPageNavigationDrawer(
         dialogIsOpen = isDeleteDataDialogOpen,
         dialogOpen = { isOpen ->
             isDeleteDataDialogOpen = isOpen
-        },
-        navController = navController
+        }
     )
     ChooseThemeDialog(
         dialogIsOpen = isThemeDialogOpen,
@@ -220,8 +219,7 @@ fun ExportConfirmationDialog(
 fun DeleteAllDataConfirmationDialog(
     dialogIsOpen: Boolean,
     dialogOpen: (Boolean) -> Unit = {},
-    firebaseViewModel: FirebaseViewModel = viewModel(),
-    navController: NavController
+    firebaseViewModel: FirebaseViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val prompt = stringResource(id = R.string.data_removed)

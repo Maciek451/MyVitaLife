@@ -196,6 +196,6 @@ fun SetTheme(
 @Composable
 fun DefaultPreview() {
     MyVitaLifeTheme(dynamicColor = false) {
-        BuildNavigationGraph()
+//        BuildNavigationGraph()
     }
 }

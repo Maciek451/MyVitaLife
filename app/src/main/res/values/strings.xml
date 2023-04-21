@@ -178,4 +178,9 @@
     <string name="total_favourite_quotes">Total favourite quotes</string>
     <string name="created_at">Account created on:</string>
     <string name="close_icon">Close Icon</string>
+    <string name="remove_account_icon">Remove account Icon</string>
+    <string name="account_removed">Account removed</string>
+    <string name="remove_account_prompt1">Delete account?</string>
+    <string name="remove_account_prompt2">You can\'t undo this. Your data and account will be permanently deleted after clicking confirm</string>
+    <string name="remove_account">Remove account</string>
 </resources>
