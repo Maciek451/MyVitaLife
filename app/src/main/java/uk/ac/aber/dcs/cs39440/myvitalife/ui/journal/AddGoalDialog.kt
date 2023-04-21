@@ -3,6 +3,7 @@ package uk.ac.aber.dcs.cs39440.myvitalife.ui.journal
 import androidx.compose.ui.window.Dialog
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -102,7 +104,8 @@ fun AddGoalDialog(
                         label = { Text(text = stringResource(id = R.string.add_your_goal_description)) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
                     )
                 }
             }

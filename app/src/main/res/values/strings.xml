@@ -174,8 +174,8 @@
     <string name="days_with_food_data">Days with food data:</string>
     <string name="total_sleep">Time slept (dd:hh:mm):</string>
     <string name="average_sleep_rate">Average sleep score:</string>
-    <string name="total_generated_quotes">Total generated quotes</string>
-    <string name="total_favourite_quotes">Total favourite quotes</string>
+    <string name="total_generated_quotes">Total generated quotes:</string>
+    <string name="total_favourite_quotes">Total favourite quotes:</string>
     <string name="created_at">Account created on:</string>
     <string name="close_icon">Close Icon</string>
     <string name="remove_account_icon">Remove account Icon</string>
