@@ -2,7 +2,6 @@ package uk.ac.aber.dcs.cs39440.myvitalife.ui.nutrition
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,11 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,13 +28,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
-import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.model.Water
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
+/**
+ * Displays Nutrition screen
+ *
+ * @param navController NavController manages app navigation
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun NutritionScreen(
@@ -63,9 +63,6 @@ fun NutritionScreen(
     var isConfirmationDialogOpen by rememberSaveable { mutableStateOf(false) }
 
     var totalCalories by rememberSaveable { mutableStateOf(0) }
-    //The LocalContext is a Compose function that provides access to the current context of the application,
-    // which is required for many operations such as creating views or accessing resources.
-    val context = LocalContext.current
 
     TopLevelScaffold(
         floatingActionButton = {
@@ -94,7 +91,7 @@ fun NutritionScreen(
         navController = navController,
         appBarTitle = appBarTitle,
 
-    ) { innerPadding ->
+        ) { innerPadding ->
         Surface(
             modifier = Modifier
                 .padding(innerPadding)
@@ -239,10 +236,19 @@ fun NutritionScreen(
             isConfirmationDialogOpen = isOpen
         },
         item = foodToDelete,
-        tabIndex = selectedTabIndex
     )
 }
 
+/**
+ * Displays a card representing a goal with a checkbox and title
+ *
+ * @param name The title of the goal
+ * @param amount The title of the goal
+ * @param openConfirmationDialog Function to toggle the dialog's visibility.
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ * @param updateTotalCalories  lambda function that takes an integer argument
+ * representing the total calories
+ */
 @Composable
 fun FoodCard(
     name: String,
@@ -337,6 +343,11 @@ fun FoodCard(
     }
 }
 
+/**
+ * Appears when there is no data in database
+ *
+ * @param tabIndex indicates selected tab
+ */
 @Composable
 private fun EmptyScreen(tabIndex: Int) {
     Column(
@@ -378,6 +389,11 @@ private fun EmptyScreen(tabIndex: Int) {
     }
 }
 
+/**
+ * Appears when water goal has been achieved
+ *
+ * @param waterDrunk indicates drunk water
+ */
 @Composable
 private fun CompletedScreen(waterDrunk: Int) {
     Column(
@@ -407,13 +423,21 @@ private fun CompletedScreen(waterDrunk: Int) {
     }
 }
 
+/**
+ * Displays a alert dialog which asks the user to confirm
+ * removing an item from database
+ *
+ * @param dialogIsOpen Boolean indicating whether the dialog should be displayed or not.
+ * @param dialogOpen Function to toggle the dialog's visibility.
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ * @param item item to be removed
+ */
 @Composable
 fun DeleteConfirmationDialog(
     dialogIsOpen: Boolean,
     dialogOpen: (Boolean) -> Unit = {},
     firebaseViewModel: FirebaseViewModel = viewModel(),
-    item: String,
-    tabIndex: Int
+    item: String
 ) {
     if (dialogIsOpen) {
         AlertDialog(
@@ -435,11 +459,7 @@ fun DeleteConfirmationDialog(
                 TextButton(
                     onClick = {
                         dialogOpen(false)
-                        if (tabIndex == 0) {
-                            firebaseViewModel.deleteWater()
-                        } else {
-                            firebaseViewModel.deleteFood(item)
-                        }
+                        firebaseViewModel.deleteFood(item)
                     }
                 ) {
                     Text(stringResource(R.string.confirm_button))

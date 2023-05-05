@@ -39,6 +39,12 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopLevelScaffold
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
+/**
+ * Displays Journal screen
+ *
+ * @param navController NavController manages app navigation
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun JournalScreen(
@@ -211,6 +217,14 @@ fun JournalScreen(
     )
 }
 
+/**
+ * Displays an icon and text representing a mood.
+ *
+ * @param time The time to be displayed
+ * @param backgroundColor The background color of the icon
+ * @param icon The vector image of the icon
+ * @param contentDescription The content description of the icon
+ */
 @Composable
 private fun MoodEmoji(
     time: String,
@@ -234,6 +248,13 @@ private fun MoodEmoji(
     )
 }
 
+/**
+ * Displays a card representing a mood with an emoji icon,
+ * a time, a note, and a delete button.
+ *
+ * @param mood The mood to be displayed in the card
+ * @param openConfirmationDialog Function to toggle the dialog's visibility.
+ */
 @Composable
 private fun MoodCard(
     mood: Mood,
@@ -320,6 +341,13 @@ private fun MoodCard(
     }
 }
 
+/**
+ * Displays a card representing a goal with a checkbox and title
+ *
+ * @param title The title of the goal
+ * @param openConfirmationDialog Function to toggle the dialog's visibility.
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @Composable
 private fun GoalCard(
     title: String,
@@ -388,6 +416,11 @@ private fun GoalCard(
     }
 }
 
+/**
+ * Appears when there is no data in database
+ *
+ * @param tabIndex indicates selected tab
+ */
 @Composable
 private fun EmptyJournal(tabIndex: Int) {
     Column(
@@ -430,6 +463,16 @@ private fun EmptyJournal(tabIndex: Int) {
     }
 }
 
+/**
+ * Displays a alert dialog which asks the user to confirm
+ * removing an item from database
+ *
+ * @param dialogIsOpen Boolean indicating whether the dialog should be displayed or not.
+ * @param dialogOpen Function to toggle the dialog's visibility.
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ * @param tabIndex indicates selected tab
+ * @param item item to be removed
+ */
 @Composable
 fun DeleteConfirmationDialog(
     dialogIsOpen: Boolean,

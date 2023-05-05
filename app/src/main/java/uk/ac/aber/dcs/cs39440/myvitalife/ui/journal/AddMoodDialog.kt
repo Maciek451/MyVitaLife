@@ -26,6 +26,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 
+/**
+ * Screen for adding mood data
+ *
+ * @param dialogIsOpen Boolean indicating whether the dialog should be displayed or not.
+ * @param dialogOpen Function to toggle the dialog's visibility.
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMoodDialog(

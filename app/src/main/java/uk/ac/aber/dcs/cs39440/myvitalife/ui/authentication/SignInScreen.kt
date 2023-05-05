@@ -32,6 +32,12 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
+/**
+ * Screen for login user to the app
+ *
+ * @param navController NavController manages app navigation
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInScreen(
@@ -195,6 +201,13 @@ fun SignInScreen(
     )
 }
 
+/**
+ * Displays a dialog that informs user about verification process
+ *
+ * @param dialogIsOpen Boolean indicating whether the dialog should be displayed or not.
+ * @param dialogOpen Function to toggle the dialog's visibility.
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @Composable
 fun VerificationDialog(
     dialogIsOpen: Boolean,
@@ -243,6 +256,9 @@ fun VerificationDialog(
     }
 }
 
+/**
+ * Processes error in the UI on the error code provided.
+ */
 private fun processSignInUi(errorCode: Int): String {
     when (errorCode) {
         Authentication.LOGGED_IN_SUCCESSFULLY ->

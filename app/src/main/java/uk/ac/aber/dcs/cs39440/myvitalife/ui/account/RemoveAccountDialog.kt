@@ -17,6 +17,15 @@ import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 
+/**
+ * Displays a alert dialog which asks the user to confirm
+ * removing account operation
+ *
+ * @param dialogIsOpen Boolean indicating whether the dialog should be displayed or not.
+ * @param dialogOpen Function to toggle the dialog's visibility.
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ * @param navController NavController manages app navigation
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RemoveAccountDialog(

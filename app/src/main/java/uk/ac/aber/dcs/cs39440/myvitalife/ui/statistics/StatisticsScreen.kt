@@ -27,6 +27,12 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.insights.MoodCounter
 
+/**
+ * Displays statistics screen
+ *
+ * @param navController NavController manages app navigation
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @Composable
 fun StatisticsScreen(
     navController: NavHostController,

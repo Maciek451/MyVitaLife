@@ -28,6 +28,13 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.*
 import java.util.*
 
+/**
+ * Screen for adding food
+ *
+ * @param dialogIsOpen Boolean indicating whether the dialog should be displayed or not.
+ * @param dialogOpen Function to toggle the dialog's visibility.
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFoodDialog(

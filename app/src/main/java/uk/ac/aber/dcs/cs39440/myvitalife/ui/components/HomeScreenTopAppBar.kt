@@ -1,6 +1,5 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,9 +20,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.AccountDialog
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.account.SetNameDialog
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 
+/**
+ * Displays a top app bar for the Home screens.
+ *
+ * @param navController NavController manages app navigation
+ * @param onClick The click listener for the navigation icon
+ * @param title The title of the screen.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenTopBar(
@@ -53,7 +57,6 @@ fun HomeScreenTopBar(
             ) {
                 IconButton(
                     onClick = {
-//                        navController.navigate(Screens.Account.route)
                               isDialogOpen = true
                     },
                     modifier = Modifier.align(Alignment.CenterVertically)

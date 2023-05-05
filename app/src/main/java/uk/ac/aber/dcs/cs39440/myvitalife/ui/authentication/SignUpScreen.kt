@@ -30,6 +30,12 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 
+/**
+ * Screen for creating user account in the app
+ *
+ * @param navController NavController manages app navigation
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(

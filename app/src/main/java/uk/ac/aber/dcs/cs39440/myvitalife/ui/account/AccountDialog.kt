@@ -35,6 +35,15 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.DeleteAllDataConfirmationDialog
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 
+/**
+ * Displays a dialog with information about the user's account
+ * and allows them to modify their user name or remove their account.
+ *
+ * @param dialogIsOpen Boolean indicating whether the dialog should be displayed or not.
+ * @param dialogOpen Function to toggle the dialog's visibility.
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ * @param navController NavController manages app navigation
+ */
 @Composable
 fun AccountDialog(
     dialogIsOpen: Boolean,

@@ -11,8 +11,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import uk.ac.aber.dcs.cs39440.myvitalife.model.Food
-import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.Quote
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 
 /**

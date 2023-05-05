@@ -3,7 +3,6 @@ package uk.ac.aber.dcs.cs39440.myvitalife.ui.quotes
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,9 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.HeartBroken
-import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -30,19 +27,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.*
 import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.GenerateQuoteIfEmpty
-import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.Quote
 import uk.ac.aber.dcs.cs39440.myvitalife.model.quotes.QuoteOfTheDay
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
-import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
+/**
+ * Displays Quotes screen
+ *
+ * @param navController NavController manages app navigation
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun QuotesScreen(
@@ -177,6 +176,14 @@ fun QuotesScreen(
     )
 }
 
+/**
+ * Displays a card representing a quote
+ *
+ * @param text The quote to be displayed in the card
+ * @param author The author to be displayed in the card
+ * @param date The date to be displayed in the card
+ * @param openConfirmationDialog Function to toggle the dialog's visibility.
+ */
 @Composable
 fun QuoteCard(
     text: String,
@@ -219,6 +226,11 @@ fun QuoteCard(
     }
 }
 
+/**
+ * Appears when there is no data in database
+ *
+ * @param tabIndex indicates selected tab
+ */
 @Composable
 private fun EmptyScreen() {
     Column(
@@ -243,6 +255,15 @@ private fun EmptyScreen() {
     }
 }
 
+/**
+ * Displays a alert dialog which asks the user to confirm
+ * removing a quote as a favourite
+ *
+ * @param dialogIsOpen Boolean indicating whether the dialog should be displayed or not.
+ * @param dialogOpen Function to toggle the dialog's visibility.
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ * @param date indicates selected quote date
+ */
 @Composable
 fun RemoveFromFavouriteConfirmationDialog(
     dialogIsOpen: Boolean,

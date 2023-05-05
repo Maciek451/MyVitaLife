@@ -1,7 +1,6 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.components
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -22,6 +21,14 @@ import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DesiredDate
 import uk.ac.aber.dcs.cs39440.myvitalife.utils.Utils
 
+/**
+ * Displays top level components
+ *
+ * @param navController NavController manages app navigation
+ * @param appBarTitle The title of the top app bar.
+ * @param floatingActionButton creates the floating action button to be shown on the screen
+ * @param pageContent displays the content of the screen
+ */
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

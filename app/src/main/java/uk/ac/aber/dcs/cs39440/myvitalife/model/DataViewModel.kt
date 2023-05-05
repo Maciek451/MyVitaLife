@@ -19,28 +19,6 @@ class DataViewModel @Inject constructor(
 ) : ViewModel() {
 
     /**
-     * Saves a string value with the given key to the data store.
-     *
-     * @param value The string value to save.
-     * @param key The key under which to save the value.
-     */
-    fun saveString(value: String, key: String) {
-        viewModelScope.launch {
-            storage.saveString(value, key)
-        }
-    }
-
-    /**
-     * Retrieves a string value from the data store with the given key.
-     *
-     * @param key The key under which the value is stored.
-     * @return The string value associated with the key, or null if no such value exists.
-     */
-    fun getString(key: String): String? = runBlocking {
-        storage.getString(key)?.trim()
-    }
-
-    /**
      * Saves a boolean value with the given key to the data store.
      *
      * @param value The boolean value to save.

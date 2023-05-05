@@ -17,31 +17,6 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class MyDataStore(
     private val context: Context
 ) {
-
-    /**
-     * Saves a string value for a given key.
-     *
-     * @param value The value to save.
-     * @param key The key associated with the value.
-     */
-    suspend fun saveString(value: String, key: String) {
-        val preferencesKey = stringPreferencesKey(key)
-        context.dataStore.edit { preferences ->
-            preferences[preferencesKey] = value
-        }
-    }
-
-    /**
-     * Returns a string value based on a given key.
-     *
-     * @param key The key associated with the value to retrieve.
-     * @return The value associated with the key, or null if it does not exist.
-     */
-    suspend fun getString(key: String): String? {
-        val preferencesKey = stringPreferencesKey(key)
-        return context.dataStore.data.first()[preferencesKey]
-    }
-
     /**
      * Saves a boolean value for a given key.
      *

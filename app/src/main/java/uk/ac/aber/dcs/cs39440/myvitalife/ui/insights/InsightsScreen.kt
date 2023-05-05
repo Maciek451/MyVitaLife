@@ -34,6 +34,12 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.FirebaseViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 import java.time.LocalTime
 
+/**
+ * Displays insights data screen
+ *
+ * @param navController NavController manages app navigation
+ * @param firebaseViewModel ViewModel providing access to Firebase services.
+ */
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun InsightsScreen(
@@ -158,6 +164,12 @@ fun InsightsScreen(
     }
 }
 
+/**
+ * Generates a greeting message for the given user name based on the current time of day.
+ *
+ * @param userName the name of the user to greet
+ * @return the greeting message
+ */
 @Composable
 fun greeting(userName: String): String {
     val currentTime = LocalTime.now()
@@ -176,6 +188,12 @@ fun greeting(userName: String): String {
     return stringResource(id = R.string.greeting, timeOfDay, userName)
 }
 
+/**
+ * Displays a mood counter component
+ *
+ * @param moodCountMap contains the count of each mood as values,
+ * keys represent the mood levels from 0 to 4
+ */
 @Composable
 fun MoodCounter(
     moodCountMap: Map<Int, Int>,

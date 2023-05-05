@@ -21,6 +21,11 @@ import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.Screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation.screens
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.theme.MyVitaLifeTheme
 
+/**
+ * Displays a navigation bar for the Home screens.
+ *
+ * @param navController NavController manages app navigation
+ */
 @Composable
 fun NavigationBar(
     navController: NavController

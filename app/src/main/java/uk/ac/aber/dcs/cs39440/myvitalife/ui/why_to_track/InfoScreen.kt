@@ -22,10 +22,14 @@ import uk.ac.aber.dcs.cs39440.myvitalife.R
 import uk.ac.aber.dcs.cs39440.myvitalife.model.DataViewModel
 import uk.ac.aber.dcs.cs39440.myvitalife.ui.components.TopAppBarWithArrow
 
+/**
+ * Displays app info screen
+ *
+ * @param navController NavController manages app navigation
+ */
 @Composable
 fun InfoScreen(
     navController: NavHostController,
-    dataViewModel: DataViewModel = hiltViewModel()
 ) {
     val title = R.string.about
 

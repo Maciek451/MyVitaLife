@@ -1,5 +1,15 @@
 package uk.ac.aber.dcs.cs39440.myvitalife.ui.navigation
 
+/**
+ * This class menages all screens in the program
+ *
+ */
+
+/**
+ * To navigate through screens
+ *
+ * @property route
+ */
 sealed class Screens(
     val route: String
 )   {

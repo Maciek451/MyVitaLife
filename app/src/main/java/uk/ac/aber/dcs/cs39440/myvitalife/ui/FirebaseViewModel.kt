@@ -637,30 +637,6 @@ class FirebaseViewModel : ViewModel() {
     }
 
     /**
-     * Deletes the current user's account and all associated data from Firebase.
-     *
-     * @param callback a callback function that accepts a boolean value indicating whether the
-     * delete operation was successful or not.
-     */
-    fun deleteAccount(callback: (Boolean) -> Unit) {
-        val currentUser = Firebase.auth.currentUser
-        if (currentUser != null) {
-            val databaseReference = database.getReference("Users").child(currentUser.uid)
-            databaseReference.removeValue().addOnSuccessListener {
-                currentUser.delete().addOnSuccessListener {
-                    callback(true)
-                }.addOnFailureListener {
-                    callback(false)
-                }
-            }.addOnFailureListener {
-                callback(false)
-            }
-        } else {
-            callback(false)
-        }
-    }
-
-    /**
      * Get the isDone value of a goal.
      *
      * @param title the title of the goal
@@ -754,23 +730,6 @@ class FirebaseViewModel : ViewModel() {
                     }
                 }
             })
-        }
-    }
-
-    /**
-     * Deletes the user's water intake data for a given date or the previously chosen date if not provided.
-     *
-     * @param date: Optional parameter representing the date for which the user's water intake data is being deleted. If not provided, it defaults to a previously chosen date.
-     */
-    fun deleteWater(date: String = chosenDate) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val databaseReference = database.getReference("Users")
-                .child(Authentication.userId)
-                .child(date)
-                .child("WaterData")
-            databaseReference.removeValue().addOnSuccessListener {
-                updateWaterData()
-            }
         }
     }
 
@@ -955,6 +914,13 @@ class FirebaseViewModel : ViewModel() {
         )
     }
 
+    /**
+     * Retrieves all sleep data from Firebase for the current user and calculates the total sleep
+     * duration, number of days sleep was logged, and the average sleep score. Calls the provided
+     * callback with a summary of the data.
+     *
+     * @param callback a function to be called with the calculated data summary
+     */
     fun getAllTimeSleepData(callback: (DataSummary) -> Unit) {
         val databaseReference = database.getReference("Users")
             .child(Authentication.userId)
@@ -1005,6 +971,13 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
+    /**
+     * Retrieves all water data from Firebase for the current user and calculates the total amount of
+     * water drunk and the number of days water was logged. Calls the provided callback with a summary
+     * of the data.
+     *
+     * @param callback a function to be called with the calculated data summary
+     */
     fun getAllTimeWaterData(callback: (DataSummary) -> Unit) {
         val databaseReference = database.getReference("Users")
             .child(Authentication.userId)
@@ -1036,7 +1009,12 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-
+    /**
+     * Retrieves all food data from Firebase for the current user and calculates the total calories and
+     * number of days that food was logged. Calls the provided callback with a summary of the data.
+     *
+     * @param callback a function to be called with the calculated data summary
+     */
     fun getAllTimeFoodData(callback: (DataSummary) -> Unit) {
         val databaseReference = database.getReference("Users")
             .child(Authentication.userId)
@@ -1085,10 +1063,7 @@ class FirebaseViewModel : ViewModel() {
     /**
      * Retrieves all-time mood data for the user from the Firebase Realtime Database.
      *
-     * @param callback A lambda function that takes a Map<Int, Int> as its parameter
-     * and returns nothing. This function will be called once the data is retrieved from the
-     * database. The map contains the count of each mood type (identified by an integer emoji index)
-     * for all time periods.
+     * @param callback a function to be called with the calculated data summary
      */
     fun getMoodAllTimeData(callback: (Map<Int, Int>) -> Unit) {
         val databaseReference = database.getReference("Users")
@@ -1124,12 +1099,10 @@ class FirebaseViewModel : ViewModel() {
     }
 
     /**
-     * Retrieves data about all-time quotes for the current user from Firebase Realtime Database
-     * and calls the specified callback function with a [DataSummary] object that contains the
-     * number of quotes and the number of favourite quotes.
+     * Retrieves data on the user's quotes, including the total number of quotes and the number
+     * of favourite quotes.
      *
-     * @param callback the callback function that will be called with a [DataSummary] object
-     * containing the number of quotes and the number of favourite quotes.
+     * @param callback a function to be called with the calculated data summary
      */
     fun getAllTimeQuoteData(callback: (DataSummary) -> Unit) {
         val databaseReference = database.getReference("Users")
@@ -1505,5 +1478,29 @@ class FirebaseViewModel : ViewModel() {
         isLoggedIn.value = false
         Authentication.userId = ""
         callback(true)
+    }
+
+    /**
+     * Deletes the current user's account and all associated data from Firebase.
+     *
+     * @param callback a callback function that accepts a boolean value indicating whether the
+     * delete operation was successful or not.
+     */
+    fun deleteAccount(callback: (Boolean) -> Unit) {
+        val currentUser = Firebase.auth.currentUser
+        if (currentUser != null) {
+            val databaseReference = database.getReference("Users").child(currentUser.uid)
+            databaseReference.removeValue().addOnSuccessListener {
+                currentUser.delete().addOnSuccessListener {
+                    callback(true)
+                }.addOnFailureListener {
+                    callback(false)
+                }
+            }.addOnFailureListener {
+                callback(false)
+            }
+        } else {
+            callback(false)
+        }
     }
 }

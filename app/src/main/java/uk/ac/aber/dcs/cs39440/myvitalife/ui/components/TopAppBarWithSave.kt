@@ -10,6 +10,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import uk.ac.aber.dcs.cs39440.myvitalife.R
 
+/**
+ * Displays a top app bar for the chosen screens.
+ *
+ * @param navController NavController manages app navigation
+ * @param onClick The click listener for the navigation icon
+ * @param title The title of the screen.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarWithSave(
